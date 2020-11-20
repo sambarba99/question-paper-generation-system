@@ -1,0 +1,59 @@
+.root {
+	-fx-background-color: #1e1e1e;
+}
+
+.flow-pane {
+	-fx-alignment: center;
+	-fx-hgap: 20;
+	-fx-padding: 10 10 10 10;
+	-fx-vgap: 20;
+}
+
+.text-field, .text-area, .button, .choice-box .label, .choice-box .context-menu .label {
+	-fx-font-family: "Arial";
+	-fx-font-size: 15px;
+	-fx-text-fill: #000000;
+	-fx-background-radius: 2;
+}
+
+.label, .check-box {
+	-fx-font-family: "Arial";
+	-fx-font-size: 15px;
+	-fx-text-fill: #dcdcdc;
+}
+
+.list-cell:even {
+	-fx-background-color: #dcdcdc;
+}
+
+.list-cell:odd {
+	-fx-background-color: #ffffff;
+}
+
+.list-cell:filled:selected {
+	-fx-background-color: linear-gradient(#00aaff, #0050ff);
+	-fx-text-fill: #ffffff;
+}
+
+.list-cell:filled:hover {
+	-fx-background-color: linear-gradient(#ffaa00, #ff5000);
+	-fx-text-fill: #ffffff;
+}
+
+.text-field {
+	-fx-background-color: #dcdcdc;
+	-fx-pref-width: 200px;
+}
+
+.text-area {
+	-fx-font-size: 12px;
+	-fx-wrap-text: true;
+}
+
+.text-area .content {
+	-fx-background-color: #dcdcdc;
+}
+
+.button {
+	-fx-background-color: linear-gradient(#dcdcdc, #82c9ff);
+}
