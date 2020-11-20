@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,9 +14,9 @@ import model.Question;
 import model.enums.DifficultyLevel;
 import model.enums.SystemMessageType;
 
-import tools.Constants;
-
 import interfaceviews.SystemMessageView;
+
+import utils.Constants;
 
 public class QuestionDAO {
 
@@ -189,12 +190,7 @@ public class QuestionDAO {
 	 * @return question with specified ID
 	 */
 	public Question getQuestionById(int id) {
-		for (Question q : getAllQuestions()) {
-			if (q.getId() == id) {
-				return q;
-			}
-		}
-		return null;
+		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst().orElse(null);
 	}
 
 	/**
@@ -220,19 +216,14 @@ public class QuestionDAO {
 	}
 
 	/**
-	 * Get highest existing question ID, to be used when adding a new question to
-	 * ensure uniqueness
+	 * Get highest existing question ID, to be used when adding a new question to ensure uniqueness
 	 * 
 	 * @return highest existing question ID
 	 */
 	public int getHighestQuestionId() {
-		List<Question> allQuestions = getAllQuestions();
-		int highest = 0;
-		for (Question q : allQuestions) {
-			if (q.getId() > highest) {
-				highest = q.getId();
-			}
+		if (getAllQuestions().isEmpty()) {
+			return 0;
 		}
-		return highest;
+		return getAllQuestions().stream().max(Comparator.comparing(Question::getId)).get().getId();
 	}
 }

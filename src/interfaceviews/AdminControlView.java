@@ -19,7 +19,7 @@ import model.User;
 import model.enums.BoxType;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
+import utils.BoxMaker;
 
 public class AdminControlView {
 
@@ -84,8 +84,8 @@ public class AdminControlView {
 		Stage stage = new Stage();
 		Scene scene = new Scene(pane, 500, 550);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Admin Control");
 		stage.setScene(scene);
+		stage.setTitle("Admin Control");
 		stage.setResizable(false);
 		stage.show();
 	}

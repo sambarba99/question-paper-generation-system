@@ -67,11 +67,6 @@ public class QuestionDTO {
 		List<QuestionPaper> papersContainingQuestion = questionPaperDao.getQuestionPapersByQuestionId(id);
 
 		String txtAreaStr = "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")";
-		txtAreaStr += "\nStatement: " + question.getStatement();
-		for (int i = 0; i < 4; i++) {
-			txtAreaStr += "\nAnswer option " + (i + 1) + ": " + answerOptions.get(i);
-		}
-		txtAreaStr += "\nCorrect answer option: " + correctAnswerOption;
 		txtAreaStr += "\nDifficulty level: " + question.getDifficultyLevel().toString();
 		txtAreaStr += "\nMarks: " + question.getMarks();
 		txtAreaStr += "\nTime required (mins): " + question.getTimeRequiredMins();
@@ -80,9 +75,14 @@ public class QuestionDTO {
 		} else {
 			txtAreaStr += "\nQuestion papers containing this question:";
 			for (QuestionPaper qp : papersContainingQuestion) {
-				txtAreaStr += "\n" + qp.getTitle() + " (ID " + qp.getId() + ")";
+				txtAreaStr += "\n - " + qp.getTitle() + " (ID " + qp.getId() + ")";
 			}
 		}
+		txtAreaStr += "\n\nStatement: " + question.getStatement();
+		for (int i = 0; i < 4; i++) {
+			txtAreaStr += "\nAnswer option " + (i + 1) + ": " + answerOptions.get(i);
+		}
+		txtAreaStr += "\nCorrect answer option: " + correctAnswerOption;
 
 		return txtAreaStr;
 	}

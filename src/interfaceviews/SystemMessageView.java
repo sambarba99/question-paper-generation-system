@@ -20,8 +20,8 @@ public class SystemMessageView {
 		Stage stage = new Stage();
 		Scene scene = new Scene(pane, 600, 150);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle(msgType.getStrVal());
 		stage.setScene(scene);
+		stage.setTitle(msgType.getStrVal());
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

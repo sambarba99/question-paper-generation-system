@@ -111,8 +111,7 @@ public class QuestionPaperDTO {
 			txtAreaStr += "\nAnswer option 1: " + q.getAnswerOptions().get(0);
 			txtAreaStr += "\nAnswer option 2: " + q.getAnswerOptions().get(1);
 			txtAreaStr += "\nAnswer option 3: " + q.getAnswerOptions().get(2);
-			txtAreaStr += "\nAnswer option 4: " + q.getAnswerOptions().get(3);
-			txtAreaStr += "\nCorrect answer option: " + q.getCorrectAnswerOptionNum() + "\n";
+			txtAreaStr += "\nAnswer option 4: " + q.getAnswerOptions().get(3) + "\n";
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'

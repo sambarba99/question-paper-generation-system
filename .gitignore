@@ -1,0 +1,12 @@
+# ignore everything...
+*
+
+# ...except these...
+!.gitignore
+!*.java
+!*.txt
+!*.csv
+!*.css
+
+# ...even if they're in subdirectories
+!*/

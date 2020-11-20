@@ -35,11 +35,7 @@ public class TutorActionDTO {
 	public TutorAction getSelectedTutorAction(ListView<String> listViewTutorActions) {
 		String actionSelected = listViewTutorActions.getSelectionModel().getSelectedItem();
 		List<TutorAction> allActions = new ArrayList<>(EnumSet.allOf(TutorAction.class));
-		for (TutorAction t : allActions) {
-			if (t.getStrVal().equals(actionSelected)) {
-				return t;
-			}
-		}
-		return TutorAction.NONE;
+		return allActions.stream().filter(t -> t.getStrVal().equals(actionSelected)).findFirst()
+				.orElse(TutorAction.NONE);
 	}
 }

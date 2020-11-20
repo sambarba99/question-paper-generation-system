@@ -5,16 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import model.QuestionPaper;
 import model.enums.DifficultyLevel;
 import model.enums.SystemMessageType;
 
-import tools.Constants;
-
 import interfaceviews.SystemMessageView;
+
+import utils.Constants;
 
 public class QuestionPaperDAO {
 
@@ -224,12 +226,7 @@ public class QuestionPaperDAO {
 	 * @return the question paper with the specified ID
 	 */
 	public QuestionPaper getQuestionPaperById(int id) {
-		for (QuestionPaper qp : getAllQuestionPapers()) {
-			if (qp.getId() == id) {
-				return qp;
-			}
-		}
-		return null;
+		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst().orElse(null);
 	}
 
 	/**
@@ -239,13 +236,8 @@ public class QuestionPaperDAO {
 	 * @return list of papers containing question ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int id) {
-		List<QuestionPaper> result = new ArrayList<>();
-		for (QuestionPaper qp : getAllQuestionPapers()) {
-			if (qp.getQuestionIds().contains(id)) {
-				result.add(qp);
-			}
-		}
-		return result;
+		return getAllQuestionPapers().stream().filter(qp -> qp.getQuestionIds().contains(id))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -273,19 +265,14 @@ public class QuestionPaperDAO {
 	}
 
 	/**
-	 * Get the highest existing question paper ID, to be used when generating a new
-	 * question paper to ensure uniqueness
+	 * Get the highest existing question paper ID, to be used when generating a new question paper to ensure uniqueness
 	 * 
 	 * @returns highest existing paper ID
 	 */
 	public int getHighestQuestionPaperId() {
-		List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-		int highest = 0;
-		for (QuestionPaper qp : allQuestionPapers) {
-			if (qp.getId() > highest) {
-				highest = qp.getId();
-			}
+		if (getAllQuestionPapers().isEmpty()) {
+			return 0;
 		}
-		return highest;
+		return getAllQuestionPapers().stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
 	}
 }

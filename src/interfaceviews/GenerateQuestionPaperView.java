@@ -29,8 +29,8 @@ import model.enums.BoxType;
 import model.enums.DifficultyLevel;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
-import tools.Constants;
+import utils.BoxMaker;
+import utils.Constants;
 
 import questionpapergeneration.QuestionPaperGenerator;
 
@@ -85,7 +85,7 @@ public class GenerateQuestionPaperView {
 				generated = true;
 				stage.close();
 				SystemMessageView.display(SystemMessageType.SUCCESS,
-						"Paper generated! Return to Tutor view to view/export.");
+						"Paper generated! Return to Tutor Control to view/export.");
 			}
 		});
 
@@ -104,8 +104,8 @@ public class GenerateQuestionPaperView {
 
 		Scene scene = new Scene(pane, 550, 400);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Generate Question Paper");
 		stage.setScene(scene);
+		stage.setTitle("Generate Question Paper");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

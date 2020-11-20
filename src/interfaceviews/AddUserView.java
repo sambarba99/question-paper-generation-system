@@ -20,8 +20,8 @@ import model.enums.BoxType;
 import model.enums.SystemMessageType;
 import model.enums.UserType;
 
-import tools.BoxMaker;
-import tools.SecurityTools;
+import utils.BoxMaker;
+import utils.SecurityTools;
 
 public class AddUserView {
 
@@ -73,8 +73,8 @@ public class AddUserView {
 
 		Scene scene = new Scene(pane, 500, 300);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Add User");
 		stage.setScene(scene);
+		stage.setTitle("Add User");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

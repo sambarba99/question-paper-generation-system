@@ -33,8 +33,8 @@ import model.enums.BoxType;
 import model.enums.DifficultyLevel;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
-import tools.Constants;
+import utils.BoxMaker;
+import utils.Constants;
 
 public class AllQuestionsView {
 
@@ -142,8 +142,8 @@ public class AllQuestionsView {
 
 		Scene scene = new Scene(pane, 950, 750);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("View all questions");
 		stage.setScene(scene);
+		stage.setTitle("View All Questions");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

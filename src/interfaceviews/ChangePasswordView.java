@@ -20,8 +20,8 @@ import model.User;
 import model.enums.BoxType;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
-import tools.SecurityTools;
+import utils.BoxMaker;
+import utils.SecurityTools;
 
 public class ChangePasswordView {
 
@@ -69,8 +69,8 @@ public class ChangePasswordView {
 
 		Scene scene = new Scene(pane, 600, 300);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Change password");
 		stage.setScene(scene);
+		stage.setTitle("Change Password");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

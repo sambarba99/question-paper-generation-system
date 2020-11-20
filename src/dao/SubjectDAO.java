@@ -5,15 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 import model.Subject;
 import model.enums.SystemMessageType;
 
-import tools.Constants;
-
 import interfaceviews.SystemMessageView;
+
+import utils.Constants;
 
 public class SubjectDAO {
 
@@ -47,8 +48,7 @@ public class SubjectDAO {
 	}
 
 	/**
-	 * Delete a subject by its unique ID, then any questions and papers of this
-	 * subject
+	 * Delete a subject by its unique ID, then any questions and papers of this subject
 	 * 
 	 * @param id - the ID of the subject to delete
 	 */
@@ -110,28 +110,18 @@ public class SubjectDAO {
 	 * @return subject with specified ID
 	 */
 	public Subject getSubjectById(int id) {
-		for (Subject s : getAllSubjects()) {
-			if (s.getId() == id) {
-				return s;
-			}
-		}
-		return null;
+		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst().orElse(null);
 	}
 
 	/**
-	 * Get the highest existing subject ID, to be used when adding a new subject to
-	 * ensure uniqueness
+	 * Get the highest existing subject ID, to be used when adding a new subject to ensure uniqueness
 	 * 
 	 * @returns highest existing subject ID
 	 */
 	public int getHighestSubjectId() {
-		List<Subject> allSubjects = getAllSubjects();
-		int highest = 0;
-		for (Subject s : allSubjects) {
-			if (s.getId() > highest) {
-				highest = s.getId();
-			}
+		if (getAllSubjects().isEmpty()) {
+			return 0;
 		}
-		return highest;
+		return getAllSubjects().stream().max(Comparator.comparing(Subject::getId)).get().getId();
 	}
 }

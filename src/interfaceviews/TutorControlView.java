@@ -28,7 +28,7 @@ import model.enums.BoxType;
 import model.enums.SystemMessageType;
 import model.enums.TutorAction;
 
-import tools.BoxMaker;
+import utils.BoxMaker;
 
 public class TutorControlView {
 
@@ -163,8 +163,8 @@ public class TutorControlView {
 		Stage stage = new Stage();
 		Scene scene = new Scene(pane, 900, 550);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Tutor Control");
 		stage.setScene(scene);
+		stage.setTitle("Tutor Control");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

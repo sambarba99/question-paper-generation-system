@@ -13,10 +13,10 @@ import model.User;
 import model.enums.SystemMessageType;
 import model.enums.UserType;
 
-import tools.Constants;
-import tools.SecurityTools;
-
 import interfaceviews.SystemMessageView;
+
+import utils.Constants;
+import utils.SecurityTools;
 
 public class UserDAO {
 
@@ -122,11 +122,6 @@ public class UserDAO {
 	 * @return user with specified username
 	 */
 	public User getUserByUsername(String username) {
-		for (User u : getAllUsers()) {
-			if (u.getUsername().equals(username)) {
-				return u;
-			}
-		}
-		return null;
+		return getAllUsers().stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
 	}
 }

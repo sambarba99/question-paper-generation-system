@@ -1,4 +1,4 @@
-package tools;
+package utils;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;

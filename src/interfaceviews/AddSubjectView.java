@@ -18,8 +18,8 @@ import model.Subject;
 import model.enums.BoxType;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
-import tools.Constants;
+import utils.BoxMaker;
+import utils.Constants;
 
 public class AddSubjectView {
 
@@ -64,8 +64,8 @@ public class AddSubjectView {
 
 		Scene scene = new Scene(pane, 450, 150);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Add New Subject");
 		stage.setScene(scene);
+		stage.setTitle("Add New Subject");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

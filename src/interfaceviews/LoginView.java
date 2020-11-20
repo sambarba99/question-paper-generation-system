@@ -23,8 +23,8 @@ import model.enums.BoxType;
 import model.enums.SystemMessageType;
 import model.enums.UserType;
 
-import tools.BoxMaker;
-import tools.SecurityTools;
+import utils.BoxMaker;
+import utils.SecurityTools;
 
 /**
  * Login page
@@ -79,8 +79,8 @@ public class LoginView extends Application {
 
 		Scene scene = new Scene(pane, 650, 300);
 		scene.getStylesheets().add("style.css");
-		primaryStage.setTitle("Login");
 		primaryStage.setScene(scene);
+		primaryStage.setTitle("Login");
 		primaryStage.setResizable(false);
 		primaryStage.show();
 	}

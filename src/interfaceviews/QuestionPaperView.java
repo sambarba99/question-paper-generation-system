@@ -16,7 +16,7 @@ import model.QuestionPaper;
 import model.enums.BoxType;
 import model.enums.SystemMessageType;
 
-import tools.BoxMaker;
+import utils.BoxMaker;
 
 public class QuestionPaperView {
 
@@ -45,8 +45,8 @@ public class QuestionPaperView {
 
 		Scene scene = new Scene(pane, 600, 700);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("View Question Paper");
 		stage.setScene(scene);
+		stage.setTitle("View Question Paper");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

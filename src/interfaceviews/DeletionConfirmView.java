@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 import model.enums.BoxType;
 
-import tools.BoxMaker;
+import utils.BoxMaker;
 
 public class DeletionConfirmView {
 
@@ -41,8 +41,8 @@ public class DeletionConfirmView {
 
 		Scene scene = new Scene(pane, 600, 300);
 		scene.getStylesheets().add("style.css");
-		stage.setTitle("Deletion confirmation");
 		stage.setScene(scene);
+		stage.setTitle("Deletion Confirmation");
 		stage.setResizable(false);
 		// wait for window to be closed before returning 'confirm'
 		stage.initModality(Modality.APPLICATION_MODAL);

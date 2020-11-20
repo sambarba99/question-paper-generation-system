@@ -22,11 +22,7 @@ public class DifficultyLevelDTO {
 	public DifficultyLevel getSelectedDifficulty(ChoiceBox cbDifficulty) {
 		String difficultySelected = cbDifficulty.getSelectionModel().getSelectedItem().toString();
 		List<DifficultyLevel> allDifficultyLevels = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		for (DifficultyLevel d : allDifficultyLevels) {
-			if (d.toString().equals(difficultySelected)) {
-				return d;
-			}
-		}
-		return null;
+		return allDifficultyLevels.stream().filter(d -> d.toString().equals(difficultySelected)).findFirst()
+				.orElse(null);
 	}
 }
