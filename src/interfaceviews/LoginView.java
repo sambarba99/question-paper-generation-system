@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import dao.UserDAO;
+import service.UserService;
 
 import model.User;
 import model.enums.BoxType;
@@ -24,7 +24,6 @@ import model.enums.SystemMessageType;
 import model.enums.UserType;
 
 import utils.BoxMaker;
-import utils.SecurityTools;
 
 /**
  * Login page
@@ -34,11 +33,11 @@ import utils.SecurityTools;
  */
 public class LoginView extends Application {
 
-	private UserDAO userDao = new UserDAO();
+	private UserService userService = UserService.getInstance();
 
 	@Override
 	public void start(Stage primaryStage) {
-		if (!SecurityTools.usersFileExists()) {
+		if (!userService.usersFileExists()) {
 			SystemMessageView.display(SystemMessageType.NEUTRAL,
 					"You are the first user (an admin). Set a secure password.");
 		}
@@ -69,9 +68,10 @@ public class LoginView extends Application {
 			}
 		});
 
-		HBox hboxUsername = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterUsername, txtUsername);
-		HBox hboxPass = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterPass, passField);
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hboxUsername, hboxPass, btnLogin);
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		HBox hboxUsername = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterUsername, txtUsername);
+		HBox hboxPass = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterPass, passField);
+		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hboxUsername, hboxPass, btnLogin);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -95,22 +95,22 @@ public class LoginView extends Application {
 	private User login(String username, String pass)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
-		if (username.length() != 0 && pass.length() != 0 && SecurityTools.usersFileExists()) {
+		if (username.length() != 0 && pass.length() != 0 && userService.usersFileExists()) {
 			User user = new User(username, pass, null);
-			User validatedUser = SecurityTools.checkUserExists(user);
+			User validatedUser = userService.checkUserExists(user);
 			if (validatedUser == null) {
 				SystemMessageView.display(SystemMessageType.ERROR, "Invalid username or password.");
 			} else {
 				return validatedUser;
 			}
-		} else if (username.length() != 0 && pass.length() != 0 && !SecurityTools.usersFileExists()) {
+		} else if (username.length() != 0 && pass.length() != 0 && !userService.usersFileExists()) {
 			// if it's first user of system, make them admin
 			User user = new User(username, pass, UserType.ADMIN);
-			if (SecurityTools.validateFirstTimeLogin(username, pass)) {
-				userDao.addUser(user);
+			if (userService.validateFirstTimeLogin(username, pass)) {
+				userService.addUser(user);
 				// instead of returning only 'user', we must return user with now hashed
 				// password, ass userDao.addUser(user) hashes the password
-				return SecurityTools.checkUserExists(user);
+				return userService.checkUserExists(user);
 			}
 		} else {
 			SystemMessageView.display(SystemMessageType.ERROR, "Please enter credentials.");

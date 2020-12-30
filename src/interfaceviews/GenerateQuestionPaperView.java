@@ -17,8 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.QuestionPaperDAO;
-import dao.SubjectDAO;
+import service.QuestionPaperService;
+import service.SubjectService;
 
 import dto.DifficultyLevelDTO;
 import dto.SubjectDTO;
@@ -35,16 +35,6 @@ import utils.Constants;
 import questionpapergeneration.QuestionPaperGenerator;
 
 public class GenerateQuestionPaperView {
-
-	private static SubjectDAO subjectDao = new SubjectDAO();
-
-	private static SubjectDTO subjectDto = new SubjectDTO();
-
-	private static DifficultyLevelDTO difficultyLevelDto = new DifficultyLevelDTO();
-
-	private static QuestionPaperDAO questionPaperDao = new QuestionPaperDAO();
-
-	private static QuestionPaperGenerator questionPaperGenerator = new QuestionPaperGenerator();
 
 	private static boolean generated;
 
@@ -81,7 +71,7 @@ public class GenerateQuestionPaperView {
 		btnGenerate.setOnAction(action -> {
 			QuestionPaper generatedPaper = generatePaperWithParams();
 			if (generatedPaper != null) {
-				questionPaperDao.addQuestionPaper(generatedPaper);
+				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
 				generated = true;
 				stage.close();
 				SystemMessageView.display(SystemMessageType.SUCCESS,
@@ -89,12 +79,13 @@ public class GenerateQuestionPaperView {
 			}
 		});
 
-		VBox vbox1 = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectSubject, cbSubject, lblEnterTitle,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		VBox vbox1 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectSubject, cbSubject, lblEnterTitle,
 				txtTitle, lblEnterCourseTitle, txtCourseTitle, lblEnterCourseCode, txtCourseCode);
-		VBox vbox2 = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectDifficulty, cbDifficulty,
+		VBox vbox2 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectDifficulty, cbDifficulty,
 				lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired);
-		HBox hbox = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.TOP_CENTER, 20, vbox1, vbox2);
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnGenerate);
+		HBox hbox = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.TOP_CENTER, 20, vbox1, vbox2);
+		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnGenerate);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -147,11 +138,11 @@ public class GenerateQuestionPaperView {
 			return null;
 		}
 
-		int subjectId = subjectDto.getSubjectId(cbSubject);
-		DifficultyLevel difficultyLevel = difficultyLevelDto.getSelectedDifficulty(cbDifficulty);
+		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
+		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
-		QuestionPaper generatedPaper = questionPaperGenerator.generatePaper(subjectId, title, courseTitle, courseCode,
-				difficultyLevel, marks, timeReq);
+		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance().generatePaper(subjectId, title, courseTitle,
+				courseCode, difficultyLevel, marks, timeReq);
 
 		return generatedPaper;
 	}
@@ -166,7 +157,7 @@ public class GenerateQuestionPaperView {
 		txtMarks.setText("");
 		txtTimeRequired.setText("");
 
-		List<Subject> allSubjects = subjectDao.getAllSubjects();
+		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
 		cbSubject.getItems().addAll(
 				allSubjects.stream().map(s -> (s.getTitle() + " (ID " + s.getId() + ")")).collect(Collectors.toList()));

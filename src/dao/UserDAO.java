@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,15 +18,13 @@ import model.enums.UserType;
 import interfaceviews.SystemMessageView;
 
 import utils.Constants;
-import utils.SecurityTools;
 
 public class UserDAO {
 
-	public UserDAO() {
-	}
+	private static UserDAO instance;
 
 	/**
-	 * Adds a user to the user CSV file
+	 * Add a user to the user CSV file
 	 * 
 	 * @param user - the user to add
 	 */
@@ -37,7 +37,7 @@ public class UserDAO {
 			}
 
 			String username = user.getUsername();
-			String passHash = SecurityTools.sha512(user.getPassword());
+			String passHash = sha512(user.getPassword());
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
 			csvWriter.append(username + "," + passHash + "," + user.getType().toString() + "\n");
@@ -115,13 +115,25 @@ public class UserDAO {
 		return users;
 	}
 
-	/**
-	 * Retrieve user by their unique username
-	 * 
-	 * @param username - their unique username
-	 * @return user with specified username
-	 */
-	public User getUserByUsername(String username) {
-		return getAllUsers().stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+	public String sha512(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest md = MessageDigest.getInstance("SHA-512");
+		md.update(text.getBytes("iso-8859-1"), 0, text.length());
+		byte[] sha512hash = md.digest();
+		return convertToHex(sha512hash);
+	}
+
+	private String convertToHex(byte[] data) {
+		String result = "";
+		for (int i = 0; i < data.length; i++) {
+			result += Integer.toString((data[i] & 255) + 256, 16).substring(1);
+		}
+		return result;
+	}
+
+	public synchronized static UserDAO getInstance() {
+		if (instance == null) {
+			instance = new UserDAO();
+		}
+		return instance;
 	}
 }

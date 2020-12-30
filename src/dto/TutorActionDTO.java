@@ -11,8 +11,7 @@ import model.enums.TutorAction;
 
 public class TutorActionDTO {
 
-	public TutorActionDTO() {
-	}
+	private static TutorActionDTO instance;
 
 	/**
 	 * Get a list of all tutor actions for tutor action ListView
@@ -37,5 +36,12 @@ public class TutorActionDTO {
 		List<TutorAction> allActions = new ArrayList<>(EnumSet.allOf(TutorAction.class));
 		return allActions.stream().filter(t -> t.getStrVal().equals(actionSelected)).findFirst()
 				.orElse(TutorAction.NONE);
+	}
+
+	public synchronized static TutorActionDTO getInstance() {
+		if (instance == null) {
+			instance = new TutorActionDTO();
+		}
+		return instance;
 	}
 }

@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import dao.UserDAO;
+import service.UserService;
 
 import dto.UserDTO;
 
@@ -22,10 +22,6 @@ import model.enums.SystemMessageType;
 import utils.BoxMaker;
 
 public class AdminControlView {
-
-	private static UserDAO userDao = new UserDAO();
-
-	private static UserDTO userDto = new UserDTO();
 
 	private static ListView<String> listViewUsers = new ListView<>();
 
@@ -39,7 +35,7 @@ public class AdminControlView {
 		btnAddUser.setOnAction(action -> {
 			if (AddUserView.addUser()) {
 				listViewUsers.getItems().clear();
-				listViewUsers.getItems().addAll(userDto.getUserListViewItems());
+				listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
 				SystemMessageView.display(SystemMessageType.SUCCESS, "User added!");
 			}
 		});
@@ -53,9 +49,9 @@ public class AdminControlView {
 				if (username.equals(currentUser.getUsername())) {
 					SystemMessageView.display(SystemMessageType.ERROR, "You can't delete yourself.");
 				} else if (DeletionConfirmView.confirmDelete("user")) {
-					userDao.deleteUserByUsername(username);
+					UserService.getInstance().deleteUserByUsername(username);
 					listViewUsers.getItems().clear();
-					listViewUsers.getItems().addAll(userDto.getUserListViewItems());
+					listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
 					SystemMessageView.display(SystemMessageType.SUCCESS, "User deleted.");
 				}
 			}
@@ -69,16 +65,17 @@ public class AdminControlView {
 			}
 		});
 
-		HBox hboxUserCtrlBtns = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnAddUser, btnDelUser);
-		VBox vboxUsersView = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblViewModifyUsers, listViewUsers,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		HBox hboxUserCtrlBtns = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnAddUser, btnDelUser);
+		VBox vboxUsersView = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblViewModifyUsers, listViewUsers,
 				hboxUserCtrlBtns);
-		VBox vboxMiscOptions = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 5, btnTutorView, btnChangePassword);
+		VBox vboxMiscOptions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 5, btnTutorView, btnChangePassword);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().addAll(vboxUsersView, vboxMiscOptions);
 
-		listViewUsers.getItems().addAll(userDto.getUserListViewItems());
+		listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
 		listViewUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		Stage stage = new Stage();

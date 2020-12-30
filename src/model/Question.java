@@ -5,8 +5,7 @@ import java.util.List;
 import model.enums.DifficultyLevel;
 
 /**
- * Question object (the GA uses subjectId, level, marks, and timeRequiredMins to
- * calculate question fitness)
+ * Question object (the GA uses subjectId, level, marks, and timeRequiredMins to calculate question fitness)
  * 
  * @author Sam Barba
  *

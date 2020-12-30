@@ -16,8 +16,7 @@ public class Constants {
 	public static final String QUESTION_REGEX = "^([^\\s]\\s?)+$";
 
 	/**
-	 * Subject and question paper titles must be only alphanumeric characters, and
-	 * no repeating spaces
+	 * Subject and question paper titles must be only alphanumeric characters, and no repeating spaces
 	 */
 	public static final String TITLE_REGEX = "^(\\w\\s?)+$";
 
@@ -32,8 +31,8 @@ public class Constants {
 	public static final String PASS_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
 	/**
-	 * The caller references constants using Constants.USER_FILE_PATH etc. Thus, the
-	 * caller should be prevented from constructing objects of this class.
+	 * The caller references constants using Constants.USER_FILE_PATH etc. Thus, the caller should be prevented from
+	 * constructing objects of this class.
 	 */
 	public Constants() {
 		throw new AssertionError();

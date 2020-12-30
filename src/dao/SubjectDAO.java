@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,12 +17,7 @@ import utils.Constants;
 
 public class SubjectDAO {
 
-	private QuestionDAO questionDao = new QuestionDAO();
-
-	private QuestionPaperDAO questionPaperDao = new QuestionPaperDAO();
-
-	public SubjectDAO() {
-	}
+	private static SubjectDAO instance;
 
 	/**
 	 * Add a subject to the subject CSV file
@@ -66,8 +60,8 @@ public class SubjectDAO {
 			csvWriter.flush();
 			csvWriter.close();
 
-			questionDao.deleteQuestionBySubjectId(id);
-			questionPaperDao.deleteQuestionPaperBySubjectId(id);
+			QuestionDAO.getInstance().deleteQuestionBySubjectId(id);
+			QuestionPaperDAO.getInstance().deleteQuestionPaperBySubjectId(id);
 		} catch (IOException e) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
 		}
@@ -113,15 +107,10 @@ public class SubjectDAO {
 		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst().orElse(null);
 	}
 
-	/**
-	 * Get the highest existing subject ID, to be used when adding a new subject to ensure uniqueness
-	 * 
-	 * @returns highest existing subject ID
-	 */
-	public int getHighestSubjectId() {
-		if (getAllSubjects().isEmpty()) {
-			return 0;
+	public synchronized static SubjectDAO getInstance() {
+		if (instance == null) {
+			instance = new SubjectDAO();
 		}
-		return getAllSubjects().stream().max(Comparator.comparing(Subject::getId)).get().getId();
+		return instance;
 	}
 }

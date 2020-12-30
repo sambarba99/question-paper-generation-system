@@ -7,16 +7,13 @@ import java.util.stream.Collectors;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 
-import dao.SubjectDAO;
+import service.SubjectService;
 
 import model.Subject;
 
 public class SubjectDTO {
 
-	private SubjectDAO subjectDao = new SubjectDAO();
-
-	public SubjectDTO() {
-	}
+	private static SubjectDTO instance;
 
 	/**
 	 * Get a list of all subjects for subjects ListView
@@ -24,7 +21,7 @@ public class SubjectDTO {
 	 * @return list of all subjects
 	 */
 	public List<String> getSubjectListViewItems() {
-		List<Subject> allSubjects = subjectDao.getAllSubjects();
+		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		List<String> listViewItems = allSubjects.stream().map(s -> (s.getTitle() + " (ID " + s.getId() + ")"))
 				.collect(Collectors.toList());
 		return listViewItems;
@@ -37,9 +34,8 @@ public class SubjectDTO {
 	 */
 	public int getSubjectId(ChoiceBox cbSubject) {
 		/*
-		 * here and in getSelectedSubjectIds() we are getting element at position
-		 * (length - 1) because there can be multiple spaces in the subject, e.g.
-		 * "Mathematical Analysis (ID 4)". We then remove the closing bracket.
+		 * here and in getSelectedSubjectIds() we are getting element at position (length - 1) because there can be
+		 * multiple spaces in the subject, e.g. "Mathematical Analysis (ID 4)". We then remove the closing bracket.
 		 */
 		String subject = cbSubject.getSelectionModel().getSelectedItem().toString();
 		String[] sSplit = subject.split(" ");
@@ -80,5 +76,12 @@ public class SubjectDTO {
 			result += words[i].substring(1).toLowerCase() + " ";
 		}
 		return result.trim(); // remove last space
+	}
+
+	public synchronized static SubjectDTO getInstance() {
+		if (instance == null) {
+			instance = new SubjectDTO();
+		}
+		return instance;
 	}
 }

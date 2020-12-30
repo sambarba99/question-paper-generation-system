@@ -33,7 +33,7 @@ public class DeletionConfirmView {
 			stage.close();
 		});
 
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, lbl, btnYes, btnNo);
+		VBox vboxMain = (VBox) BoxMaker.getInstance().makeBox(BoxType.VBOX, Pos.CENTER, 20, lbl, btnYes, btnNo);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

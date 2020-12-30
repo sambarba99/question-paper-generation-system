@@ -14,9 +14,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.QuestionDAO;
-import dao.QuestionPaperDAO;
-import dao.SubjectDAO;
+import service.QuestionPaperService;
+import service.QuestionService;
+import service.SubjectService;
 
 import dto.QuestionPaperDTO;
 import dto.SubjectDTO;
@@ -31,18 +31,6 @@ import model.enums.TutorAction;
 import utils.BoxMaker;
 
 public class TutorControlView {
-
-	private static QuestionDAO questionDao = new QuestionDAO();
-
-	private static SubjectDAO subjectDao = new SubjectDAO();
-
-	private static SubjectDTO subjectDto = new SubjectDTO();
-
-	private static QuestionPaperDAO questionPaperDao = new QuestionPaperDAO();
-
-	private static QuestionPaperDTO questionPaperDto = new QuestionPaperDTO();
-
-	private static TutorActionDTO tutorActionDto = new TutorActionDTO();
 
 	private static boolean paperSubjectFilterOn;
 
@@ -63,13 +51,13 @@ public class TutorControlView {
 
 		lblHeader.setStyle("-fx-font-size: 25px");
 		btnExecute.setOnAction(action -> {
-			TutorAction tutorAction = tutorActionDto.getSelectedTutorAction(listViewTutorActions);
+			TutorAction tutorAction = TutorActionDTO.getInstance().getSelectedTutorAction(listViewTutorActions);
 
 			switch (tutorAction) {
 				case ADD_SUBJECT:
 					if (AddSubjectView.addSubject()) {
 						listViewSubjects.getItems().clear();
-						listViewSubjects.getItems().addAll(subjectDto.getSubjectListViewItems());
+						listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
 						SystemMessageView.display(SystemMessageType.SUCCESS, "Subject added!");
 					}
 					break;
@@ -77,10 +65,10 @@ public class TutorControlView {
 					if (listViewSubjects.getSelectionModel().getSelectedItems().size() != 1) {
 						SystemMessageView.display(SystemMessageType.ERROR, "Please select 1 subject.");
 					} else if (DeletionConfirmView.confirmDelete("subject")) {
-						int subjectId = subjectDto.getSelectedSubjectsIds(listViewSubjects).get(0);
-						subjectDao.deleteSubjectById(subjectId);
+						int subjectId = SubjectDTO.getInstance().getSelectedSubjectsIds(listViewSubjects).get(0);
+						SubjectService.getInstance().deleteSubjectById(subjectId);
 						listViewSubjects.getItems().clear();
-						listViewSubjects.getItems().addAll(subjectDto.getSubjectListViewItems());
+						listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
 						refreshPaperListView();
 						SystemMessageView.display(SystemMessageType.SUCCESS, "Subject deleted.");
 					}
@@ -91,10 +79,11 @@ public class TutorControlView {
 							SystemMessageView.display(SystemMessageType.ERROR, "Please select subjects to filter by.");
 						} else {
 							paperSubjectFilterOn = true;
-							List<Integer> subjectIds = subjectDto.getSelectedSubjectsIds(listViewSubjects);
+							List<Integer> subjectIds = SubjectDTO.getInstance()
+									.getSelectedSubjectsIds(listViewSubjects);
 							listViewQuestionPapers.getItems().clear();
-							listViewQuestionPapers.getItems()
-									.addAll(questionPaperDto.getQuestionPaperListViewItemsBySubjectIds(subjectIds));
+							listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance()
+									.getQuestionPaperListViewItemsBySubjectIds(subjectIds));
 							lblPaperFilterStatus.setText("Paper subject filters: ON");
 						}
 					} else {
@@ -102,7 +91,7 @@ public class TutorControlView {
 					}
 					break;
 				case VIEW_MODIFY_ALL_QUESTIONS:
-					if (subjectDao.getAllSubjects().isEmpty()) {
+					if (SubjectService.getInstance().getAllSubjects().isEmpty()) {
 						SystemMessageView.display(SystemMessageType.ERROR, "Add at least 1 subject first.");
 					} else {
 						if (AllQuestionsView.display()) { // if questions are modified
@@ -111,7 +100,7 @@ public class TutorControlView {
 					}
 					break;
 				case GENERATE_QUESTION_PAPER:
-					if (questionDao.getAllQuestions().isEmpty()) {
+					if (QuestionService.getInstance().getAllQuestions().isEmpty()) {
 						SystemMessageView.display(SystemMessageType.ERROR, "Add some questions first.");
 					} else if (GenerateQuestionPaperView.generatePaper()) {
 						refreshPaperListView();
@@ -121,8 +110,8 @@ public class TutorControlView {
 					if (listViewQuestionPapers.getSelectionModel().getSelectedItems().isEmpty()) {
 						SystemMessageView.display(SystemMessageType.ERROR, "Please select a paper.");
 					} else {
-						int id = questionPaperDto.getQpId(listViewQuestionPapers);
-						QuestionPaper qp = questionPaperDao.getQuestionPaperById(id);
+						int id = QuestionPaperDTO.getInstance().getQpId(listViewQuestionPapers);
+						QuestionPaper qp = QuestionPaperService.getInstance().getQuestionPaperById(id);
 						QuestionPaperView.display(qp);
 					}
 					break;
@@ -130,8 +119,8 @@ public class TutorControlView {
 					if (listViewQuestionPapers.getSelectionModel().getSelectedItems().isEmpty()) {
 						SystemMessageView.display(SystemMessageType.ERROR, "Please select a paper.");
 					} else if (DeletionConfirmView.confirmDelete("question paper")) {
-						int paperId = questionPaperDto.getQpId(listViewQuestionPapers);
-						questionPaperDao.deleteQuestionPaperById(paperId);
+						int paperId = QuestionPaperDTO.getInstance().getQpId(listViewQuestionPapers);
+						QuestionPaperService.getInstance().deleteQuestionPaperById(paperId);
 						refreshPaperListView();
 						SystemMessageView.display(SystemMessageType.SUCCESS, "Paper deleted.");
 					}
@@ -146,13 +135,14 @@ public class TutorControlView {
 			}
 		});
 
-		VBox vboxSubjects = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblSubjects, listViewSubjects);
-		VBox vboxQuestionPapers = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblQps, listViewQuestionPapers);
-		VBox vboxActions = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, listViewTutorActions,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		VBox vboxSubjects = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblSubjects, listViewSubjects);
+		VBox vboxQuestionPapers = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblQps, listViewQuestionPapers);
+		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, listViewTutorActions,
 				btnExecute, lblPaperFilterStatus);
-		HBox hboxViews = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vboxSubjects, vboxQuestionPapers,
+		HBox hboxViews = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vboxSubjects, vboxQuestionPapers,
 				vboxActions);
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, lblHeader, hboxViews);
+		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, lblHeader, hboxViews);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -176,15 +166,15 @@ public class TutorControlView {
 	 */
 	private static void setup() {
 		listViewSubjects.getItems().clear();
-		listViewSubjects.getItems().addAll(subjectDto.getSubjectListViewItems());
+		listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
 		listViewSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(questionPaperDto.getQuestionPaperListViewItems());
+		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
 		listViewQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		listViewTutorActions.getItems().clear();
-		listViewTutorActions.getItems().addAll(tutorActionDto.getTutorActionListViewItems());
+		listViewTutorActions.getItems().addAll(TutorActionDTO.getInstance().getTutorActionListViewItems());
 		listViewTutorActions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		listViewTutorActions.setPrefHeight(186);
 
@@ -198,7 +188,7 @@ public class TutorControlView {
 	private static void refreshPaperListView() {
 		paperSubjectFilterOn = false;
 		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(questionPaperDto.getQuestionPaperListViewItems());
+		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
 		lblPaperFilterStatus.setText("Paper subject filters: OFF");
 	}
 }

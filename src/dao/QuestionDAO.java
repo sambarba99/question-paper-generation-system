@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,10 +19,7 @@ import utils.Constants;
 
 public class QuestionDAO {
 
-	private QuestionPaperDAO questionPaperDao = new QuestionPaperDAO();
-
-	public QuestionDAO() {
-	}
+	private static QuestionDAO instance;
 
 	/**
 	 * Add a question to the questions CSV file
@@ -81,7 +77,7 @@ public class QuestionDAO {
 			csvWriter.flush();
 			csvWriter.close();
 
-			questionPaperDao.deleteQuestionPaperByQuestionId(id);
+			QuestionPaperDAO.getInstance().deleteQuestionPaperByQuestionId(id);
 		} catch (IOException e) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
 		}
@@ -215,15 +211,10 @@ public class QuestionDAO {
 		return data;
 	}
 
-	/**
-	 * Get highest existing question ID, to be used when adding a new question to ensure uniqueness
-	 * 
-	 * @return highest existing question ID
-	 */
-	public int getHighestQuestionId() {
-		if (getAllQuestions().isEmpty()) {
-			return 0;
+	public synchronized static QuestionDAO getInstance() {
+		if (instance == null) {
+			instance = new QuestionDAO();
 		}
-		return getAllQuestions().stream().max(Comparator.comparing(Question::getId)).get().getId();
+		return instance;
 	}
 }

@@ -1,10 +1,10 @@
-package utils;
+package service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Scanner;
 
 import dao.UserDAO;
@@ -14,21 +14,73 @@ import model.enums.SystemMessageType;
 
 import interfaceviews.SystemMessageView;
 
-public class SecurityTools {
+import utils.Constants;
 
-	private static UserDAO userDao = new UserDAO();
+public class UserService {
 
-	public static User checkUserExists(User user)
+	private static UserService instance;
+
+	private UserDAO userDao = UserDAO.getInstance();
+
+	/**
+	 * Add a user to the user CSV file
+	 * 
+	 * @param user - the user to add
+	 */
+	public void addUser(User user) {
+		userDao.addUser(user);
+	}
+
+	/**
+	 * Updates user password by deleting user and re-adding with new password
+	 * 
+	 * @param user - user to update password
+	 * @param pass - the new password
+	 */
+	public void updatePassword(User user, String pass) {
+		userDao.updatePassword(user, pass);
+	}
+
+	/**
+	 * Delete a user by username (as usernames are unique)
+	 * 
+	 * @param username - the username of the user to delete
+	 */
+	public void deleteUserByUsername(String username) {
+		userDao.deleteUserByUsername(username);
+	}
+
+	/**
+	 * Retrieve all users from CSV file
+	 * 
+	 * @return list of all users
+	 */
+	public List<User> getAllUsers() {
+		return userDao.getAllUsers();
+	}
+
+	/**
+	 * Retrieve user by their unique username
+	 * 
+	 * @param username - their unique username
+	 * @return user with specified username
+	 */
+	public User getUserByUsername(String username) {
+		return getAllUsers().stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+	}
+
+	public User checkUserExists(User user)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		for (User u : userDao.getAllUsers()) {
-			if (u.getUsername().equals(user.getUsername()) && u.getPassword().equals(sha512(user.getPassword()))) {
+		for (User u : UserDAO.getInstance().getAllUsers()) {
+			if (u.getUsername().equals(user.getUsername())
+					&& u.getPassword().equals(userDao.sha512(user.getPassword()))) {
 				return u;
 			}
 		}
 		return null;
 	}
 
-	public static boolean checkUsernameExists(String username)
+	public boolean checkUsernameExists(String username)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		File csvFile = new File(Constants.USER_FILE_PATH);
 		Scanner input = new Scanner(csvFile);
@@ -46,9 +98,8 @@ public class SecurityTools {
 		return false;
 	}
 
-	public static boolean validateFirstTimeLogin(String username, String pass)
+	public boolean validateFirstTimeLogin(String username, String pass)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-
 		if (username.length() == 0) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Please enter a username.");
 			return false;
@@ -66,14 +117,13 @@ public class SecurityTools {
 		return true;
 	}
 
-	public static boolean validateResetPassword(User currentUser, String currentPass, String newPass,
-			String repeatNewPass) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-
+	public boolean validateResetPassword(User currentUser, String currentPass, String newPass, String repeatNewPass)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (currentPass.length() == 0) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Please enter current password.");
 			return false;
 		}
-		if (!sha512(currentPass).equals(currentUser.getPassword())) {
+		if (!userDao.sha512(currentPass).equals(currentUser.getPassword())) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Current password incorrect.");
 			return false;
 		}
@@ -93,9 +143,8 @@ public class SecurityTools {
 		return true;
 	}
 
-	public static boolean validateAddNewUserCreds(String username, String pass)
+	public boolean validateAddNewUserCreds(String username, String pass)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-
 		if (username.length() == 0) {
 			SystemMessageView.display(SystemMessageType.ERROR, "Please enter a username.");
 			return false;
@@ -117,23 +166,22 @@ public class SecurityTools {
 		return true;
 	}
 
-	public static boolean usersFileExists() {
+	public boolean usersFileExists() {
 		File csvFile = new File(Constants.USER_FILE_PATH);
 		return csvFile.exists();
 	}
 
-	public static String sha512(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance("SHA-512");
-		md.update(text.getBytes("iso-8859-1"), 0, text.length());
-		byte[] sha512hash = md.digest();
-		return convertToHex(sha512hash);
+	private UserService(UserDAO userDao) {
+		if (userDao == null) {
+			throw new IllegalArgumentException("User DAO cannot be null");
+		}
+		this.userDao = userDao;
 	}
 
-	private static String convertToHex(byte[] data) {
-		String result = "";
-		for (int i = 0; i < data.length; i++) {
-			result += Integer.toString((data[i] & 255) + 256, 16).substring(1);
+	public synchronized static UserService getInstance() {
+		if (instance == null) {
+			instance = new UserService(UserDAO.getInstance());
 		}
-		return result;
+		return instance;
 	}
 }

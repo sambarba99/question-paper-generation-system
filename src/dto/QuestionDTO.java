@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import javafx.scene.control.ListView;
 
-import dao.QuestionDAO;
-import dao.QuestionPaperDAO;
-import dao.SubjectDAO;
+import service.QuestionPaperService;
+import service.QuestionService;
+import service.SubjectService;
 
 import model.Question;
 import model.QuestionPaper;
@@ -15,14 +15,7 @@ import model.Subject;
 
 public class QuestionDTO {
 
-	private QuestionDAO questionDao = new QuestionDAO();
-
-	private QuestionPaperDAO questionPaperDao = new QuestionPaperDAO();
-
-	private SubjectDAO subjectDao = new SubjectDAO();
-
-	public QuestionDTO() {
-	}
+	private static QuestionDTO instance;
 
 	/**
 	 * Get a list of all questions for question ListView
@@ -30,7 +23,7 @@ public class QuestionDTO {
 	 * @return list of all questions
 	 */
 	public List<String> getQuestionListViewItems() {
-		List<Question> allQuestions = questionDao.getAllQuestions();
+		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
 		List<String> listViewItems = allQuestions.stream().map(q -> (q.getStatement() + " (ID " + q.getId() + ")"))
 				.collect(Collectors.toList());
 		return listViewItems;
@@ -60,11 +53,12 @@ public class QuestionDTO {
 	 * @return question string
 	 */
 	public String getTxtAreaQuestionStr(int id) {
-		Question question = questionDao.getQuestionById(id);
-		Subject subject = subjectDao.getSubjectById(question.getSubjectId());
+		Question question = QuestionService.getInstance().getQuestionById(id);
+		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
 		List<String> answerOptions = question.getAnswerOptions();
 		int correctAnswerOption = question.getCorrectAnswerOptionNum();
-		List<QuestionPaper> papersContainingQuestion = questionPaperDao.getQuestionPapersByQuestionId(id);
+		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
+				.getQuestionPapersByQuestionId(id);
 
 		String txtAreaStr = "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")";
 		txtAreaStr += "\nDifficulty level: " + question.getDifficultyLevel().toString();
@@ -85,5 +79,12 @@ public class QuestionDTO {
 		txtAreaStr += "\nCorrect answer option: " + correctAnswerOption;
 
 		return txtAreaStr;
+	}
+
+	public synchronized static QuestionDTO getInstance() {
+		if (instance == null) {
+			instance = new QuestionDTO();
+		}
+		return instance;
 	}
 }

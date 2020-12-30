@@ -20,8 +20,6 @@ import utils.BoxMaker;
 
 public class QuestionPaperView {
 
-	private static QuestionPaperDTO questionPaperDto = new QuestionPaperDTO();
-
 	public static void display(QuestionPaper qp) {
 		Stage stage = new Stage();
 
@@ -29,15 +27,16 @@ public class QuestionPaperView {
 		Button btnExport = new Button("Export to .docx");
 
 		txtAreaPaper.setEditable(false);
-		txtAreaPaper.setText(questionPaperDto.getTxtAreaQuestionPaperStr(qp));
+		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(qp));
 		txtAreaPaper.setPrefSize(400, 600);
 
 		btnExport.setOnAction(action -> {
 			SystemMessageView.display(SystemMessageType.NEUTRAL, "Unimplemented");
 		});
 
-		HBox hboxBtns = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnExport);
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, txtAreaPaper, hboxBtns);
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		HBox hboxBtns = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnExport);
+		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, txtAreaPaper, hboxBtns);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

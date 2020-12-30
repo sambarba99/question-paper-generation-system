@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.UserDAO;
+import service.UserService;
 
 import model.User;
 import model.enums.BoxType;
@@ -21,11 +21,8 @@ import model.enums.SystemMessageType;
 import model.enums.UserType;
 
 import utils.BoxMaker;
-import utils.SecurityTools;
 
 public class AddUserView {
-
-	private static UserDAO userDao = new UserDAO();
 
 	private static boolean added;
 
@@ -48,12 +45,12 @@ public class AddUserView {
 		});
 		btnAddUser.setOnAction(action -> {
 			try {
-				if (SecurityTools.validateAddNewUserCreds(txtUsername.getText(), passField.getText())) {
+				if (UserService.getInstance().validateAddNewUserCreds(txtUsername.getText(), passField.getText())) {
 					UserType userType = cbUserType.getSelectionModel().getSelectedItem().equals("TUTOR")
 							? UserType.TUTOR
 							: UserType.ADMIN;
 					User user = new User(txtUsername.getText(), passField.getText(), userType);
-					userDao.addUser(user);
+					UserService.getInstance().addUser(user);
 					added = true;
 					stage.close();
 				}
@@ -62,10 +59,11 @@ public class AddUserView {
 			}
 		});
 
-		VBox vboxLbls = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterUsername, lblEnterPass,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		VBox vboxLbls = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterUsername, lblEnterPass,
 				lblSelectType);
-		VBox vboxCreds = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, txtUsername, passField, cbUserType);
-		HBox hboxUserCreds = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 10, vboxLbls, vboxCreds);
+		VBox vboxCreds = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, txtUsername, passField, cbUserType);
+		HBox hboxUserCreds = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 10, vboxLbls, vboxCreds);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

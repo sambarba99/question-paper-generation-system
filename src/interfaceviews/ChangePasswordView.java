@@ -14,18 +14,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.UserDAO;
+import service.UserService;
 
 import model.User;
 import model.enums.BoxType;
 import model.enums.SystemMessageType;
 
 import utils.BoxMaker;
-import utils.SecurityTools;
 
 public class ChangePasswordView {
-
-	private static UserDAO userDao = new UserDAO();
 
 	private static boolean changed;
 
@@ -43,10 +40,11 @@ public class ChangePasswordView {
 
 		btnUpdate.setOnAction(action -> {
 			try {
-				if (SecurityTools.validateResetPassword(currentUser, passFieldCurrent.getText(), passFieldNew.getText(),
+				UserService userService = UserService.getInstance();
+				if (userService.validateResetPassword(currentUser, passFieldCurrent.getText(), passFieldNew.getText(),
 						passFieldRepeat.getText())) {
-					userDao.updatePassword(currentUser, passFieldNew.getText());
-					String newPassHash = userDao.getUserByUsername(currentUser.getUsername()).getPassword();
+					userService.updatePassword(currentUser, passFieldNew.getText());
+					String newPassHash = userService.getUserByUsername(currentUser.getUsername()).getPassword();
 					currentUser.setPassword(newPassHash);
 					changed = true;
 					stage.close();
@@ -56,12 +54,13 @@ public class ChangePasswordView {
 			}
 		});
 
-		VBox vboxLbls = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterCurrentPass,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		VBox vboxLbls = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterCurrentPass,
 				lblEnterNewPass, lblRepeatNewPass);
-		VBox vboxPassFields = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, passFieldCurrent, passFieldNew,
+		VBox vboxPassFields = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, passFieldCurrent, passFieldNew,
 				passFieldRepeat);
-		HBox hbox = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, vboxLbls, vboxPassFields);
-		VBox vboxMain = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnUpdate);
+		HBox hbox = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, vboxLbls, vboxPassFields);
+		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnUpdate);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

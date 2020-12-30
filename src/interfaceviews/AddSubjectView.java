@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.SubjectDAO;
+import service.SubjectService;
 
 import dto.SubjectDTO;
 
@@ -22,10 +22,6 @@ import utils.BoxMaker;
 import utils.Constants;
 
 public class AddSubjectView {
-
-	private static SubjectDAO subjectDao = new SubjectDAO();
-
-	private static SubjectDTO subjectDto = new SubjectDTO();
 
 	private static boolean added;
 
@@ -43,10 +39,10 @@ public class AddSubjectView {
 			} else {
 				String title = txtTitle.getText();
 				if (title.matches(Constants.TITLE_REGEX)) {
-					title = subjectDto.formatTitle(title);
-					int subjectId = subjectDao.getHighestSubjectId() + 1;
+					title = SubjectDTO.getInstance().formatTitle(title);
+					int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
 					Subject subject = new Subject(subjectId, title);
-					subjectDao.addSubject(subject);
+					SubjectService.getInstance().addSubject(subject);
 					added = true;
 					stage.close();
 				} else {
@@ -56,7 +52,7 @@ public class AddSubjectView {
 			}
 		});
 
-		HBox hboxTitle = (HBox) BoxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterTitle, txtTitle);
+		HBox hboxTitle = (HBox) BoxMaker.getInstance().makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterTitle, txtTitle);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

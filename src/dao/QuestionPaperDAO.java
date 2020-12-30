@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -20,8 +19,7 @@ import utils.Constants;
 
 public class QuestionPaperDAO {
 
-	public QuestionPaperDAO() {
-	}
+	private static QuestionPaperDAO instance;
 
 	/**
 	 * Add a question paper to the question paper CSV file
@@ -232,11 +230,11 @@ public class QuestionPaperDAO {
 	/**
 	 * Retrieve all papers containing specified question ID
 	 * 
-	 * @param id - ID of the question to search for
+	 * @param questionId - ID of the question to search for
 	 * @return list of papers containing question ID
 	 */
-	public List<QuestionPaper> getQuestionPapersByQuestionId(int id) {
-		return getAllQuestionPapers().stream().filter(qp -> qp.getQuestionIds().contains(id))
+	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
+		return getAllQuestionPapers().stream().filter(qp -> qp.getQuestionIds().contains(questionId))
 				.collect(Collectors.toList());
 	}
 
@@ -264,15 +262,10 @@ public class QuestionPaperDAO {
 		return data;
 	}
 
-	/**
-	 * Get the highest existing question paper ID, to be used when generating a new question paper to ensure uniqueness
-	 * 
-	 * @returns highest existing paper ID
-	 */
-	public int getHighestQuestionPaperId() {
-		if (getAllQuestionPapers().isEmpty()) {
-			return 0;
+	public synchronized static QuestionPaperDAO getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperDAO();
 		}
-		return getAllQuestionPapers().stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
+		return instance;
 	}
 }

@@ -20,8 +20,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import dao.QuestionDAO;
-import dao.SubjectDAO;
+import service.QuestionService;
+import service.SubjectService;
 
 import dto.DifficultyLevelDTO;
 import dto.QuestionDTO;
@@ -37,16 +37,6 @@ import utils.BoxMaker;
 import utils.Constants;
 
 public class AllQuestionsView {
-
-	private static QuestionDAO questionDao = new QuestionDAO();
-
-	private static QuestionDTO questionDto = new QuestionDTO();
-
-	private static SubjectDAO subjectDao = new SubjectDAO();
-
-	private static SubjectDTO subjectDto = new SubjectDTO();
-
-	private static DifficultyLevelDTO difficultyLevelDto = new DifficultyLevelDTO();
 
 	private static ListView<String> listViewQuestions = new ListView<>();
 
@@ -97,15 +87,15 @@ public class AllQuestionsView {
 		Button btnDelQuestion = new Button("Delete question");
 
 		listViewQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
-			int questionId = questionDto.getQuestionId(listViewQuestions);
+			int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
 			if (questionId != 0) {
-				txtAreaQuestion.setText(questionDto.getTxtAreaQuestionStr(questionId));
+				txtAreaQuestion.setText(QuestionDTO.getInstance().getTxtAreaQuestionStr(questionId));
 			}
 		});
 		btnAddQuestion.setOnAction(action -> {
 			if (addQuestion()) {
 				listViewQuestions.getItems().clear();
-				listViewQuestions.getItems().addAll(questionDto.getQuestionListViewItems());
+				listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
 				resetAddQuestionFields();
 				txtAreaQuestion.setText("");
 				modified = true;
@@ -116,19 +106,20 @@ public class AllQuestionsView {
 			if (listViewQuestions.getSelectionModel().getSelectedItems().isEmpty()) {
 				SystemMessageView.display(SystemMessageType.ERROR, "Please select a question.");
 			} else if (DeletionConfirmView.confirmDelete("question")) {
-				int questionId = questionDto.getQuestionId(listViewQuestions);
-				questionDao.deleteQuestionById(questionId);
+				int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
+				QuestionService.getInstance().deleteQuestionById(questionId);
 				listViewQuestions.getItems().clear();
-				listViewQuestions.getItems().addAll(questionDto.getQuestionListViewItems());
+				listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
 				txtAreaQuestion.setText("");
 				modified = true;
 				SystemMessageView.display(SystemMessageType.SUCCESS, "Question deleted.");
 			}
 		});
 
-		VBox vboxViewQuestion = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblSelectQuestion,
+		BoxMaker boxMaker = BoxMaker.getInstance();
+		VBox vboxViewQuestion = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblSelectQuestion,
 				listViewQuestions, txtAreaQuestion);
-		VBox vboxQuestionValues = (VBox) BoxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 7, lblAddQueston,
+		VBox vboxQuestionValues = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 7, lblAddQueston,
 				lblSelectSubject, cbSubject, lblEnterStatement, txtStatement, lblEnterOpt1, txtOpt1, lblEnterOpt2,
 				txtOpt2, lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4, lblSelectCorrect, cbCorrectNum,
 				lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired,
@@ -156,14 +147,14 @@ public class AllQuestionsView {
 	 */
 	private static void setup() {
 		listViewQuestions.getItems().clear();
-		listViewQuestions.getItems().addAll(questionDto.getQuestionListViewItems());
+		listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
 		listViewQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		txtAreaQuestion.setEditable(false);
 		txtAreaQuestion.setPrefHeight(200);
 		txtAreaQuestion.setText("");
 
-		List<Subject> allSubjects = subjectDao.getAllSubjects();
+		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
 		cbSubject.getItems().addAll(
 				allSubjects.stream().map(s -> (s.getTitle() + " (ID " + s.getId() + ")")).collect(Collectors.toList()));
@@ -217,14 +208,14 @@ public class AllQuestionsView {
 			SystemMessageView.display(SystemMessageType.ERROR, "Invalid time required.");
 			return false;
 		}
-		int id = questionDao.getHighestQuestionId() + 1;
-		int subjectId = subjectDto.getSubjectId(cbSubject);
+		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
+		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
 		int answerNo = Integer.parseInt(cbCorrectNum.getSelectionModel().getSelectedItem().toString());
-		DifficultyLevel difficultyLevel = difficultyLevelDto.getSelectedDifficulty(cbDifficulty);
+		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
 		Question q = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4), answerNo,
 				difficultyLevel, marks, timeReq);
-		questionDao.addQuestion(q);
+		QuestionService.getInstance().addQuestion(q);
 
 		return true;
 	}

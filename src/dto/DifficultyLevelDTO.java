@@ -10,8 +10,7 @@ import model.enums.DifficultyLevel;
 
 public class DifficultyLevelDTO {
 
-	public DifficultyLevelDTO() {
-	}
+	private static DifficultyLevelDTO instance;
 
 	/**
 	 * Get enum value of selected difficulty in ChoiceBox
@@ -24,5 +23,12 @@ public class DifficultyLevelDTO {
 		List<DifficultyLevel> allDifficultyLevels = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		return allDifficultyLevels.stream().filter(d -> d.toString().equals(difficultySelected)).findFirst()
 				.orElse(null);
+	}
+
+	public synchronized static DifficultyLevelDTO getInstance() {
+		if (instance == null) {
+			instance = new DifficultyLevelDTO();
+		}
+		return instance;
 	}
 }
