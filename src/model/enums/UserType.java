@@ -1,10 +1,9 @@
 package model.enums;
 
 /**
- * Type of user
+ * Represents the type of user which determines their privilege.
  *
  * @author Sam Barba
- *
  */
 public enum UserType {
 	ADMIN,

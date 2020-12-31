@@ -9,20 +9,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import interfacecontroller.SystemNotification;
+
 import model.Question;
 import model.enums.DifficultyLevel;
-import model.enums.SystemMessageType;
-
-import interfaceviews.SystemMessageView;
+import model.enums.SystemNotificationType;
 
 import utils.Constants;
 
+/**
+ * This class is a singleton, the use of which is any database operation regarding paper questions.
+ *
+ * @author Sam Barba
+ */
 public class QuestionDAO {
 
 	private static QuestionDAO instance;
 
 	/**
-	 * Add a question to the questions CSV file
+	 * Add a question to the questions CSV file.
 	 * 
 	 * @param question - the question to add
 	 */
@@ -36,22 +41,31 @@ public class QuestionDAO {
 			String[] data = getQuestionStrData(question);
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(data[0] + "," + data[1] + "," + data[2] + "\n"); // ID, subject ID, statement
-			csvWriter.append(data[3] + "\n"); // answer option 1
-			csvWriter.append(data[4] + "\n"); // answer option 2
-			csvWriter.append(data[5] + "\n"); // answer option 3
-			csvWriter.append(data[6] + "\n"); // answer option 4
-			// correct answer num, difficulty level, marks, time required (mins)
-			csvWriter.append(data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "\n");
+			// ID, subject ID, statement
+			csvWriter.append(data[0] + Constants.COMMA);
+			csvWriter.append(data[1] + Constants.COMMA);
+			csvWriter.append(data[2] + Constants.NEWLINE);
+			// 4 answer options
+			csvWriter.append(data[3] + Constants.NEWLINE);
+			csvWriter.append(data[4] + Constants.NEWLINE);
+			csvWriter.append(data[5] + Constants.NEWLINE);
+			csvWriter.append(data[6] + Constants.NEWLINE);
+			// Correct answer num, difficulty level, marks, time required (mins)
+			csvWriter.append(data[7] + Constants.COMMA);
+			csvWriter.append(data[8] + Constants.COMMA);
+			csvWriter.append(data[9] + Constants.COMMA);
+			csvWriter.append(data[10] + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
 	/**
-	 * Delete a question by its unique ID
+	 * Delete a question by its unique ID.
 	 * 
 	 * @param id - the ID of the question to delete
 	 */
@@ -61,17 +75,10 @@ public class QuestionDAO {
 			File csvFile = new File(Constants.QUESTIONS_FILE_PATH);
 			FileWriter csvWriter = new FileWriter(csvFile, false);
 
-			for (Question q : allQuestions) {
-				if (q.getId() != id) {
-					String[] data = getQuestionStrData(q);
-
-					csvWriter.write(data[0] + "," + data[1] + "," + data[2] + "\n"); // ID, subject ID, statement
-					csvWriter.write(data[3] + "\n"); // answer option 1
-					csvWriter.write(data[4] + "\n"); // answer option 2
-					csvWriter.write(data[5] + "\n"); // answer option 3
-					csvWriter.write(data[6] + "\n"); // answer option 4
-					// correct answer num, difficulty level, marks, time required (mins)
-					csvWriter.write(data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "\n");
+			for (Question question : allQuestions) {
+				if (question.getId() != id) {
+					String[] data = getQuestionStrData(question);
+					writeQuestionDataToFile(data, csvWriter);
 				}
 			}
 			csvWriter.flush();
@@ -79,12 +86,14 @@ public class QuestionDAO {
 
 			QuestionPaperDAO.getInstance().deleteQuestionPaperByQuestionId(id);
 		} catch (IOException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
 	/**
-	 * Delete question(s) a subject ID
+	 * Delete question(s) a subject ID.
 	 * 
 	 * @param subjectId - the subject ID of the question(s) to delete
 	 */
@@ -98,28 +107,23 @@ public class QuestionDAO {
 			File csvFile = new File(Constants.QUESTIONS_FILE_PATH);
 			FileWriter csvWriter = new FileWriter(csvFile, false);
 
-			for (Question q : allQuestions) {
-				if (q.getSubjectId() != subjectId) {
-					String[] data = getQuestionStrData(q);
-
-					csvWriter.write(data[0] + "," + data[1] + "," + data[2] + "\n"); // ID, subject ID, statement
-					csvWriter.write(data[3] + "\n"); // answer option 1
-					csvWriter.write(data[4] + "\n"); // answer option 2
-					csvWriter.write(data[5] + "\n"); // answer option 3
-					csvWriter.write(data[6] + "\n"); // answer option 4
-					// correct answer num, difficulty level, marks, time required (mins)
-					csvWriter.write(data[7] + "," + data[8] + "," + data[9] + "," + data[10] + "\n");
+			for (Question question : allQuestions) {
+				if (question.getSubjectId() != subjectId) {
+					String[] data = getQuestionStrData(question);
+					writeQuestionDataToFile(data, csvWriter);
 				}
 			}
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (IOException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
 	/**
-	 * Retrieve all questions from CSV file
+	 * Retrieve all questions from CSV file.
 	 * 
 	 * @return list of all questions
 	 */
@@ -140,32 +144,21 @@ public class QuestionDAO {
 						String line4 = input.nextLine(); // answer option 3
 						String line5 = input.nextLine(); // answer option 4
 						String line6 = input.nextLine(); // correct answer num, difficulty level, marks, time required
-						String[] line1split = line1.split(",");
-						String[] line6split = line6.split(",");
+						String[] line1split = line1.split(Constants.COMMA);
+						String[] line6split = line6.split(Constants.COMMA);
 
 						int id = Integer.parseInt(line1split[0]);
 						int subjectId = Integer.parseInt(line1split[1]);
 						String statement = line1split[2];
 						List<String> answerOptions = Arrays.asList(line2, line3, line4, line5);
-						int answerNo = Integer.parseInt(line6split[0]);
-						DifficultyLevel difficultyLevel = null;
-						switch (line6split[1]) {
-							case "EASY":
-								difficultyLevel = DifficultyLevel.EASY;
-								break;
-							case "MEDIUM":
-								difficultyLevel = DifficultyLevel.MEDIUM;
-								break;
-							case "DIFFICULT":
-								difficultyLevel = DifficultyLevel.DIFFICULT;
-								break;
-						}
+						int correctAnsNo = Integer.parseInt(line6split[0]);
+						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(line6split[1]));
 						int marks = Integer.parseInt(line6split[2]);
 						int timeRequireMins = Integer.parseInt(line6split[3]);
 
-						Question q = new Question(id, subjectId, statement, answerOptions, answerNo, difficultyLevel,
-								marks, timeRequireMins);
-						questions.add(q);
+						Question question = new Question(id, subjectId, statement, answerOptions, correctAnsNo,
+								difficultyLevel, marks, timeRequireMins);
+						questions.add(question);
 					} catch (Exception e) { // reached last line
 						input.close();
 						return questions;
@@ -174,23 +167,25 @@ public class QuestionDAO {
 				input.close();
 			}
 		} catch (FileNotFoundException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return questions;
 	}
 
 	/**
-	 * Retrieve question using its unique ID
+	 * Retrieve question using its unique ID.
 	 * 
 	 * @param id - the ID of the question to retrieve
 	 * @return question with specified ID
 	 */
 	public Question getQuestionById(int id) {
-		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst().orElse(null);
+		return getAllQuestions().stream().filter(question -> question.getId() == id).findFirst().orElse(null);
 	}
 
 	/**
-	 * Get string value of each attribute of a question
+	 * Get string value of each attribute of a question.
 	 * 
 	 * @param question - the question of which to get String values
 	 * @return array of attributes converted to String
@@ -205,10 +200,33 @@ public class QuestionDAO {
 		data[5] = question.getAnswerOptions().get(2);
 		data[6] = question.getAnswerOptions().get(3);
 		data[7] = Integer.toString(question.getCorrectAnswerOptionNum());
-		data[8] = question.getDifficultyLevel().toString();
+		data[8] = Integer.toString(question.getDifficultyLevel().getIntLevelVal());
 		data[9] = Integer.toString(question.getMarks());
 		data[10] = Integer.toString(question.getTimeRequiredMins());
 		return data;
+	}
+
+	/**
+	 * Write question data to the questions CSV file.
+	 * 
+	 * @param data      - the string values of the question data
+	 * @param csvWriter - the file writer
+	 */
+	private void writeQuestionDataToFile(String[] data, FileWriter csvWriter) throws IOException {
+		// ID, subject ID, statement
+		csvWriter.write(data[0] + Constants.COMMA);
+		csvWriter.write(data[1] + Constants.COMMA);
+		csvWriter.write(data[2] + Constants.NEWLINE);
+		// 4 answer options
+		csvWriter.write(data[3] + Constants.NEWLINE);
+		csvWriter.write(data[4] + Constants.NEWLINE);
+		csvWriter.write(data[5] + Constants.NEWLINE);
+		csvWriter.write(data[6] + Constants.NEWLINE);
+		// Correct answer num, difficulty level, marks, time required (mins)
+		csvWriter.write(data[7] + Constants.COMMA);
+		csvWriter.write(data[8] + Constants.COMMA);
+		csvWriter.write(data[9] + Constants.COMMA);
+		csvWriter.write(data[10] + Constants.NEWLINE);
 	}
 
 	public synchronized static QuestionDAO getInstance() {

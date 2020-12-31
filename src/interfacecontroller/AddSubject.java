@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,40 +16,37 @@ import dto.SubjectDTO;
 
 import model.Subject;
 import model.enums.BoxType;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
 
 import utils.BoxMaker;
 import utils.Constants;
 
-public class AddSubjectView {
+/**
+ * Allows user to add a new subject.
+ *
+ * @author Sam Barba
+ */
+public class AddSubject {
+
+	private static Stage stage = new Stage();
 
 	private static boolean added;
 
+	/**
+	 * Add a new subject.
+	 * 
+	 * @return whether or not a subject has been added successfully
+	 */
 	public static boolean addSubject() {
 		added = false;
-		Stage stage = new Stage();
 
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
 		Button btnAdd = new Button("Add subject");
 
 		btnAdd.setOnAction(action -> {
-			if (txtTitle.getText().trim().length() == 0) {
-				SystemMessageView.display(SystemMessageType.ERROR, "Please enter the subject title.");
-			} else {
-				String title = txtTitle.getText();
-				if (title.matches(Constants.TITLE_REGEX)) {
-					title = SubjectDTO.getInstance().formatTitle(title);
-					int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
-					Subject subject = new Subject(subjectId, title);
-					SubjectService.getInstance().addSubject(subject);
-					added = true;
-					stage.close();
-				} else {
-					SystemMessageView.display(SystemMessageType.ERROR,
-							"Title must be only alphanumeric, and no repeating spaces.");
-				}
-			}
+			String subjectTitle = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
+			addSubject(subjectTitle);
 		});
 
 		HBox hboxTitle = (HBox) BoxMaker.getInstance().makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterTitle, txtTitle);
@@ -67,5 +64,27 @@ public class AddSubjectView {
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
 		return added;
+	}
+
+	/**
+	 * Add a new subject.
+	 * 
+	 * @param subjectTitle - the title of the subject
+	 */
+	private static void addSubject(String subjectTitle) {
+		if (subjectTitle.length() == 0) {
+			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
+		} else {
+			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
+				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
+				Subject subject = new Subject(subjectId, subjectTitle);
+				SubjectService.getInstance().addSubject(subject);
+				added = true;
+				stage.close();
+			} else {
+				SystemNotification.display(SystemNotificationType.ERROR,
+						"Title must be only alphanumeric, and no repeating spaces.");
+			}
+		}
 	}
 }

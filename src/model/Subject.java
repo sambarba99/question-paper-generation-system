@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * Represents a subject.
+ *
+ * @author Sam Barba
+ */
 public class Subject {
 
 	private int id;

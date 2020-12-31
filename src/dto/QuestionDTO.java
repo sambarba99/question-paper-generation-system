@@ -13,24 +13,32 @@ import model.Question;
 import model.QuestionPaper;
 import model.Subject;
 
+import utils.Constants;
+
+/**
+ * This class is a singleton which contains methods related to ListViews used to modify and view questions.
+ *
+ * @author Sam Barba
+ */
 public class QuestionDTO {
 
 	private static QuestionDTO instance;
 
 	/**
-	 * Get a list of all questions for question ListView
+	 * Get a list of all questions for question ListView objects.
 	 * 
 	 * @return list of all questions
 	 */
 	public List<String> getQuestionListViewItems() {
 		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
-		List<String> listViewItems = allQuestions.stream().map(q -> (q.getStatement() + " (ID " + q.getId() + ")"))
+		List<String> listViewItems = allQuestions.stream()
+				.map(question -> (question.getStatement() + " (ID " + question.getId() + ")"))
 				.collect(Collectors.toList());
 		return listViewItems;
 	}
 
 	/**
-	 * Get ID of selected question in list view
+	 * Get ID of selected question in ListView.
 	 * 
 	 * @param listViewQuestions - the ListView of questions
 	 * @return question ID
@@ -40,14 +48,14 @@ public class QuestionDTO {
 		if (question == null) {
 			return 0;
 		}
-		String[] qSplit = question.split(" ");
+		String[] qSplit = question.split(Constants.SPACE);
 		String questionIdStr = qSplit[qSplit.length - 1];
 		questionIdStr = questionIdStr.replace(")", "");
 		return Integer.parseInt(questionIdStr);
 	}
 
 	/**
-	 * Get a formatted question string for question TextArea
+	 * Get a formatted question string for question TextArea.
 	 * 
 	 * @param id - the ID of the question to format
 	 * @return question string
@@ -60,25 +68,26 @@ public class QuestionDTO {
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 				.getQuestionPapersByQuestionId(id);
 
-		String txtAreaStr = "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")";
-		txtAreaStr += "\nDifficulty level: " + question.getDifficultyLevel().toString();
-		txtAreaStr += "\nMarks: " + question.getMarks();
-		txtAreaStr += "\nTime required (mins): " + question.getTimeRequiredMins();
+		StringBuilder txtAreaStr = new StringBuilder();
+		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
+		txtAreaStr.append("\nDifficulty level: " + question.getDifficultyLevel().toString());
+		txtAreaStr.append("\nMarks: " + question.getMarks());
+		txtAreaStr.append("\nTime required (mins): " + question.getTimeRequiredMins());
 		if (papersContainingQuestion.isEmpty()) {
-			txtAreaStr += "\nThere are no papers which contain this question";
+			txtAreaStr.append("\nThere are no papers which contain this question");
 		} else {
-			txtAreaStr += "\nQuestion papers containing this question:";
-			for (QuestionPaper qp : papersContainingQuestion) {
-				txtAreaStr += "\n - " + qp.getTitle() + " (ID " + qp.getId() + ")";
+			txtAreaStr.append("\nQuestion papers containing this question:");
+			for (QuestionPaper questionPaper : papersContainingQuestion) {
+				txtAreaStr.append("\n - " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
 			}
 		}
-		txtAreaStr += "\n\nStatement: " + question.getStatement();
-		for (int i = 0; i < 4; i++) {
-			txtAreaStr += "\nAnswer option " + (i + 1) + ": " + answerOptions.get(i);
+		txtAreaStr.append("\n\nStatement: " + question.getStatement());
+		for (int i = 0; i < Constants.ANSWERS_PER_QUESTION; i++) {
+			txtAreaStr.append("\nAnswer option " + (i + 1) + ": " + answerOptions.get(i));
 		}
-		txtAreaStr += "\nCorrect answer option: " + correctAnswerOption;
+		txtAreaStr.append("\nCorrect answer option: " + correctAnswerOption);
 
-		return txtAreaStr;
+		return txtAreaStr.toString();
 	}
 
 	public synchronized static QuestionDTO getInstance() {

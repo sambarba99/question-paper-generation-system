@@ -5,10 +5,9 @@ import java.util.List;
 import model.enums.DifficultyLevel;
 
 /**
- * Question object (the GA uses subjectId, level, marks, and timeRequiredMins to calculate question fitness)
+ * Represents a question (the GA uses the subject ID, level, marks, and time required to calculate question fitness).
  * 
  * @author Sam Barba
- *
  */
 public class Question {
 
@@ -28,13 +27,13 @@ public class Question {
 
 	private int timeRequiredMins;
 
-	public Question(int id, int subjectId, String statement, List<String> answerOptions, int answerNo,
+	public Question(int id, int subjectId, String statement, List<String> answerOptions, int correctAnsNo,
 			DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
 		this.answerOptions = answerOptions;
-		this.correctAnswerOptionNum = answerNo;
+		this.correctAnswerOptionNum = correctAnsNo;
 		this.difficultyLevel = difficultyLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;

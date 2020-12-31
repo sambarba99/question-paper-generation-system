@@ -14,96 +14,108 @@ import model.Question;
 import model.QuestionPaper;
 import model.Subject;
 
+import utils.Constants;
+
+/**
+ * This class is a singleton which contains methods related to ListViews used to modify and display question papers.
+ *
+ * @author Sam Barba
+ */
 public class QuestionPaperDTO {
 
 	private static QuestionPaperDTO instance;
 
 	/**
-	 * Get a list of all question papers for paper ListView
+	 * Get a list of all question papers for paper ListView objects.
 	 * 
 	 * @return list of all question papers
 	 */
 	public List<String> getQuestionPaperListViewItems() {
 		List<QuestionPaper> allQuestionPapers = QuestionPaperService.getInstance().getAllQuestionPapers();
-		List<String> listViewItems = allQuestionPapers.stream().map(qp -> (qp.getTitle() + " (ID " + qp.getId() + ")"))
+		List<String> listViewItems = allQuestionPapers.stream()
+				.map(questionPaper -> (questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")"))
 				.collect(Collectors.toList());
 		return listViewItems;
 	}
 
 	/**
-	 * Get a list of question papers of specified subject IDs
+	 * Get a list of question papers of specified subject IDs.
 	 * 
 	 * @param subjectIds - the list of subject IDs
 	 * @return list of specified subject papers
 	 */
 	public List<String> getQuestionPaperListViewItemsBySubjectIds(List<Integer> subjectIds) {
 		List<String> listViewItems = new ArrayList<>();
-		for (QuestionPaper qp : QuestionPaperService.getInstance().getAllQuestionPapers()) {
-			if (subjectIds.contains(qp.getSubjectId())) {
-				listViewItems.add(qp.getTitle() + " (ID " + qp.getId() + ")");
+		for (QuestionPaper questionPaper : QuestionPaperService.getInstance().getAllQuestionPapers()) {
+			if (subjectIds.contains(questionPaper.getSubjectId())) {
+				listViewItems.add(questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
 			}
 		}
 		return listViewItems;
 	}
 
 	/**
-	 * Get ID of selected question paper in list view
+	 * Get ID of selected question paper in ListView.
 	 * 
 	 * @param listViewQuestionPapers - the ListView of papers
 	 * @return ID of selected paper
 	 */
-	public int getQpId(ListView<String> listViewQuestionPapers) {
+	public int getQuestionPaperId(ListView<String> listViewQuestionPapers) {
 		/*
 		 * here we are getting the element at position (length - 1) because there can be multiple spaces in the string,
 		 * e.g. "Mathematics (ID 1)". We then remove the closing bracket.
 		 */
-		String qp = listViewQuestionPapers.getSelectionModel().getSelectedItem();
-		String[] qpSplit = qp.split(" ");
-		String qpIdStr = qpSplit[qpSplit.length - 1];
-		qpIdStr = qpIdStr.replace(")", "");
-		return Integer.parseInt(qpIdStr);
+		String questionPaper = listViewQuestionPapers.getSelectionModel().getSelectedItem();
+		String[] questionPaperSplit = questionPaper.split(Constants.SPACE);
+		String questionPaperIdStr = questionPaperSplit[questionPaperSplit.length - 1];
+		questionPaperIdStr = questionPaperIdStr.replace(")", "");
+		return Integer.parseInt(questionPaperIdStr);
 	}
 
 	/**
-	 * Capitalise each word in title and trim whitespace
+	 * Capitalise each word in paper title and trim whitespace.
 	 * 
 	 * @param title - the title to format
 	 * @return formatted title
 	 */
 	public String formatTitle(String title) {
-		String[] words = title.trim().split(" ");
-		String result = "";
+		String[] words = title.trim().split(Constants.SPACE);
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < words.length; i++) {
-			result += Character.toString(words[i].charAt(0)).toUpperCase();
-			result += words[i].substring(1).toLowerCase() + " ";
+			result.append(Character.toString(words[i].charAt(0)).toUpperCase());
+			result.append(words[i].substring(1).toLowerCase() + Constants.SPACE);
 		}
-		return result.trim(); // remove last space
+		return result.toString().trim(); // remove last space
 	}
 
 	/**
-	 * Get a formatted question paper string for question paper TextArea
+	 * Get a formatted question paper string for question paper TextArea object.
 	 * 
-	 * @param qp - the paper to format
+	 * @param questionPaper - the paper to format
 	 * @return question string
 	 */
-	public String getTxtAreaQuestionPaperStr(QuestionPaper qp) {
-		Subject subject = SubjectService.getInstance().getSubjectById(qp.getSubjectId());
+	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
+		Subject subject = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
 
-		String txtAreaStr = qp.getTitle() + " (ID " + qp.getId() + ")";
-		txtAreaStr += "\nSubject: " + subject.getTitle() + " (ID " + subject.getId() + ")";
-		txtAreaStr += "\nCourse: " + qp.getCourseTitle() + " (" + qp.getCourseCode() + ")";
-		txtAreaStr += "\nDifficulty level: " + qp.getDifficultyLevel().toString();
-		txtAreaStr += "\nMarks: " + qp.getMarks();
-		txtAreaStr += "\nTime required (mins): " + qp.getTimeRequiredMins() + "\n";
+		StringBuilder txtAreaStr = new StringBuilder();
+		txtAreaStr.append(questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
+		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
+		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
+				+ questionPaper.getCourseCode() + ")");
+		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().toString());
+		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
+		txtAreaStr.append(
+				Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);
 
-		List<Integer> questionIds = qp.getQuestionIds();
+		List<Integer> questionIds = questionPaper.getQuestionIds();
 		for (int i = 0; i < questionIds.size(); i++) {
 			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i));
-			txtAreaStr += "\nQuestion " + (i + 1) + ": " + question.getStatement();
-			txtAreaStr += "\nAnswer option 1: " + question.getAnswerOptions().get(0);
-			txtAreaStr += "\nAnswer option 2: " + question.getAnswerOptions().get(1);
-			txtAreaStr += "\nAnswer option 3: " + question.getAnswerOptions().get(2);
-			txtAreaStr += "\nAnswer option 4: " + question.getAnswerOptions().get(3) + "\n";
+			txtAreaStr.append(Constants.NEWLINE + "Question " + (i + 1) + ": " + question.getStatement());
+			txtAreaStr.append(Constants.NEWLINE + "Answer option 1: " + question.getAnswerOptions().get(0));
+			txtAreaStr.append(Constants.NEWLINE + "Answer option 2: " + question.getAnswerOptions().get(1));
+			txtAreaStr.append(Constants.NEWLINE + "Answer option 3: " + question.getAnswerOptions().get(2));
+			txtAreaStr.append(
+					Constants.NEWLINE + "Answer option 4: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'

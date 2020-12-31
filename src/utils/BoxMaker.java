@@ -6,8 +6,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import model.enums.BoxType;
+import interfacecontroller.SystemNotification;
 
+import model.enums.BoxType;
+import model.enums.SystemNotificationType;
+
+/**
+ * This class is a singleton, the use of which is to generate HBox or VBox panes used in UI pages.
+ *
+ * @author Sam Barba
+ */
 public class BoxMaker {
 
 	private static BoxMaker instance;
@@ -40,7 +48,9 @@ public class BoxMaker {
 				}
 				return vbox;
 			default:
-				return null;
+				SystemNotification.display(SystemNotificationType.ERROR,
+						Constants.UNEXPECTED_ERROR + "Invalid box type passed: " + boxType.toString());
+				throw new IllegalArgumentException("Invalid box type passed: " + boxType.toString());
 		}
 	}
 

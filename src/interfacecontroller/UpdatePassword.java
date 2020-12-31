@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -18,17 +18,30 @@ import service.UserService;
 
 import model.User;
 import model.enums.BoxType;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
 
 import utils.BoxMaker;
+import utils.Constants;
 
-public class ChangePasswordView {
+/**
+ * Allows the user to update their password.
+ *
+ * @author Sam Barba
+ */
+public class UpdatePassword {
 
-	private static boolean changed;
+	private static Stage stage = new Stage();
 
-	public static boolean changePassword(User currentUser) {
-		changed = false;
-		Stage stage = new Stage();
+	private static boolean updated;
+
+	/**
+	 * Update the user's password.
+	 * 
+	 * @param currentUser - the user calling this method
+	 * @return whether or not the password has been updated
+	 */
+	public static boolean updatePassword(User currentUser) {
+		updated = false;
 
 		Label lblEnterCurrentPass = new Label("Enter current password:");
 		PasswordField passFieldCurrent = new PasswordField();
@@ -39,19 +52,10 @@ public class ChangePasswordView {
 		Button btnUpdate = new Button("Update");
 
 		btnUpdate.setOnAction(action -> {
-			try {
-				UserService userService = UserService.getInstance();
-				if (userService.validateResetPassword(currentUser, passFieldCurrent.getText(), passFieldNew.getText(),
-						passFieldRepeat.getText())) {
-					userService.updatePassword(currentUser, passFieldNew.getText());
-					String newPassHash = userService.getUserByUsername(currentUser.getUsername()).getPassword();
-					currentUser.setPassword(newPassHash);
-					changed = true;
-					stage.close();
-				}
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-				SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
-			}
+			String currentPass = passFieldCurrent.getText();
+			String newPass = passFieldNew.getText();
+			String repeatPass = passFieldRepeat.getText();
+			updatePassword(currentPass, newPass, repeatPass, currentUser);
 		});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
@@ -69,11 +73,36 @@ public class ChangePasswordView {
 		Scene scene = new Scene(pane, 600, 300);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
-		stage.setTitle("Change Password");
+		stage.setTitle("Update Password");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
-		return changed;
+		return updated;
+	}
+
+	/**
+	 * Update the current user's password.
+	 * 
+	 * @param currentPass - the user's current password
+	 * @param newPass     - the user's new password
+	 * @param repeatPass  - the user's repeated new password
+	 * @param currentUser - the user currently in session
+	 */
+	private static void updatePassword(String currentPass, String newPass, String repeatPass, User currentUser) {
+		try {
+			UserService userService = UserService.getInstance();
+			if (userService.validateResetPassword(currentUser, currentPass, newPass, repeatPass)) {
+				userService.updatePassword(currentUser, newPass);
+				String newPassHash = userService.getUserByUsername(currentUser.getUsername()).getPassword();
+				currentUser.setPassword(newPassHash);
+				updated = true;
+				stage.close();
+			}
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+		}
 	}
 }

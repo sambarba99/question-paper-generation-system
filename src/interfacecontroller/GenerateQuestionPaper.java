@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -27,19 +27,26 @@ import model.QuestionPaper;
 import model.Subject;
 import model.enums.BoxType;
 import model.enums.DifficultyLevel;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
+
+import questionpapergeneration.QuestionPaperGenerator;
 
 import utils.BoxMaker;
 import utils.Constants;
 
-import questionpapergeneration.QuestionPaperGenerator;
+/**
+ * Allows the user to generate a question paper with specified parameters such as subject and difficulty.
+ *
+ * @author Sam Barba
+ */
+public class GenerateQuestionPaper {
 
-public class GenerateQuestionPaperView {
+	private static Stage stage = new Stage();
 
 	private static boolean generated;
 
 	/*
-	 * Nodes for adding a new paper
+	 * Nodes for specifying question paper parameters
 	 */
 	private static ChoiceBox cbSubject = new ChoiceBox();
 
@@ -55,9 +62,13 @@ public class GenerateQuestionPaperView {
 
 	private static TextField txtTimeRequired = new TextField();
 
+	/**
+	 * Return whether a paper has been generated successfully or not.
+	 * 
+	 * @return whether or not the paper has been generated successfully
+	 */
 	public static boolean generatePaper() {
 		generated = false;
-		Stage stage = new Stage();
 
 		Label lblSelectSubject = new Label("Select the subject:");
 		Label lblEnterTitle = new Label("Enter the title:");
@@ -74,8 +85,8 @@ public class GenerateQuestionPaperView {
 				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
 				generated = true;
 				stage.close();
-				SystemMessageView.display(SystemMessageType.SUCCESS,
-						"Paper generated! Return to Tutor Control to view/export.");
+				SystemNotification.display(SystemNotificationType.SUCCESS,
+						"Paper generated! Return to Academic Material to view/export.");
 			}
 		});
 
@@ -105,7 +116,7 @@ public class GenerateQuestionPaperView {
 	}
 
 	/**
-	 * Generate a paper and add it via QuestionPaperDAO
+	 * Generate a paper and add it via QuestionPaperService.
 	 * 
 	 * @return whether or not paper has been generated successfully
 	 */
@@ -114,11 +125,12 @@ public class GenerateQuestionPaperView {
 		String courseTitle = txtCourseTitle.getText().trim();
 		String courseCode = txtCourseCode.getText().trim();
 		if (title.length() == 0 || courseTitle.length() == 0 || courseCode.length() == 0) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Please enter the title, course title and course code.");
+			SystemNotification.display(SystemNotificationType.ERROR,
+					"Please enter the title, course title and course code.");
 			return null;
 		} else if (!title.matches(Constants.TITLE_REGEX) || !courseTitle.matches(Constants.TITLE_REGEX)
 				|| !courseCode.matches(Constants.TITLE_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Titles and codes must be only alphanumeric, and no repeating spaces.");
 			return null;
 		}
@@ -127,14 +139,16 @@ public class GenerateQuestionPaperView {
 		try {
 			marks = Integer.parseInt(txtMarks.getText());
 		} catch (NumberFormatException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Invalid number of marks.");
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of marks.");
 			return null;
 		}
 		int timeReq = 0;
 		try {
 			timeReq = Integer.parseInt(txtTimeRequired.getText());
 		} catch (NumberFormatException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Invalid time required.");
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR, "Invalid time required.");
 			return null;
 		}
 
@@ -148,7 +162,7 @@ public class GenerateQuestionPaperView {
 	}
 
 	/**
-	 * Set up choice boxes
+	 * Set up choice boxes.
 	 */
 	private static void setup() {
 		txtTitle.setText("");
@@ -159,14 +173,15 @@ public class GenerateQuestionPaperView {
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
-		cbSubject.getItems().addAll(
-				allSubjects.stream().map(s -> (s.getTitle() + " (ID " + s.getId() + ")")).collect(Collectors.toList()));
+		cbSubject.getItems().addAll(allSubjects.stream()
+				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
 		cbSubject.setPrefWidth(200);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		cbDifficulty.getItems().clear();
-		cbDifficulty.getItems().addAll(allDifficulties.stream().map(d -> d.toString()).collect(Collectors.toList()));
+		cbDifficulty.getItems()
+				.addAll(allDifficulties.stream().map(difficulty -> difficulty.toString()).collect(Collectors.toList()));
 		cbDifficulty.getSelectionModel().select(0);
 		cbDifficulty.setPrefWidth(200);
 	}

@@ -6,10 +6,9 @@ import model.QuestionPaper;
 import model.enums.DifficultyLevel;
 
 /**
- * Individual.java
+ * Represents an individual question paper.
  *
  * @author Sam Barba
- *
  */
 public class Individual extends QuestionPaper {
 

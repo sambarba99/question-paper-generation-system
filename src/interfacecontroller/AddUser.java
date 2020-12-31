@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,18 +17,30 @@ import service.UserService;
 
 import model.User;
 import model.enums.BoxType;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
 import model.enums.UserType;
 
 import utils.BoxMaker;
+import utils.Constants;
 
-public class AddUserView {
+/**
+ * Allows admin users to add new tutor or admin users.
+ *
+ * @author Sam Barba
+ */
+public class AddUser {
+
+	private static Stage stage = new Stage();
 
 	private static boolean added;
 
+	/**
+	 * Add a new user.
+	 * 
+	 * @return whether or not a user has been added successfully
+	 */
 	public static boolean addUser() {
 		added = false;
-		Stage stage = new Stage();
 
 		Label lblEnterUsername = new Label("Enter their username:");
 		TextField txtUsername = new TextField();
@@ -38,25 +50,16 @@ public class AddUserView {
 		ChoiceBox cbUserType = new ChoiceBox();
 		Button btnAddUser = new Button("Add user");
 
-		cbUserType.getItems().addAll("TUTOR", "ADMIN");
+		cbUserType.getItems().addAll(Constants.USER_TYPE_ADMIN, Constants.USER_TYPE_TUTOR);
 		cbUserType.getSelectionModel().selectFirst();
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(txtUsername.getText().toLowerCase());
 		});
 		btnAddUser.setOnAction(action -> {
-			try {
-				if (UserService.getInstance().validateAddNewUserCreds(txtUsername.getText(), passField.getText())) {
-					UserType userType = cbUserType.getSelectionModel().getSelectedItem().equals("TUTOR")
-							? UserType.TUTOR
-							: UserType.ADMIN;
-					User user = new User(txtUsername.getText(), passField.getText(), userType);
-					UserService.getInstance().addUser(user);
-					added = true;
-					stage.close();
-				}
-			} catch (Exception e) {
-				SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
-			}
+			UserType userType = cbUserType.getSelectionModel().getSelectedItem().equals(Constants.USER_TYPE_TUTOR)
+					? UserType.TUTOR
+					: UserType.ADMIN;
+			addUser(txtUsername.getText(), passField.getText(), userType);
 		});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
@@ -78,5 +81,27 @@ public class AddUserView {
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
 		return added;
+	}
+
+	/**
+	 * Add a new user.
+	 * 
+	 * @param username - the new user's username
+	 * @param password - the new user's raw password
+	 * @param userType - the new user's user type, i.e. tutor or admin
+	 */
+	private static void addUser(String username, String password, UserType userType) {
+		try {
+			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
+				User user = new User(username, password, userType);
+				UserService.getInstance().addUser(user);
+				added = true;
+				stage.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+		}
 	}
 }

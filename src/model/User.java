@@ -2,6 +2,11 @@ package model;
 
 import model.enums.UserType;
 
+/**
+ * Represents a user.
+ *
+ * @author Sam Barba
+ */
 public class User {
 
 	private String username;

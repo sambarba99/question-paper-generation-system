@@ -7,18 +7,24 @@ import service.UserService;
 
 import model.User;
 
+/**
+ * This class is a singleton which contains methods related to ListViews used to modify other users (admin privilege).
+ *
+ * @author Sam Barba
+ */
 public class UserDTO {
 
 	private static UserDTO instance;
 
 	/**
-	 * Get a list of all usernames and types for user ListView
+	 * Get a list of all usernames and user types, for users ListView objects.
 	 * 
 	 * @return list of all usernames and types
 	 */
 	public List<String> getUserListViewItems() {
 		List<User> allUsers = UserService.getInstance().getAllUsers();
-		List<String> listViewItems = allUsers.stream().map(u -> (u.getUsername() + " (" + u.getType().toString() + ")"))
+		List<String> listViewItems = allUsers.stream()
+				.map(user -> (user.getUsername() + " (" + user.getType().toString() + ")"))
 				.collect(Collectors.toList());
 		return listViewItems;
 	}

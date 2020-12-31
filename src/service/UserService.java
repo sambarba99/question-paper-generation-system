@@ -7,15 +7,21 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Scanner;
 
+import interfacecontroller.SystemNotification;
+
 import dao.UserDAO;
 
 import model.User;
-import model.enums.SystemMessageType;
-
-import interfaceviews.SystemMessageView;
+import model.enums.SystemNotificationType;
+import model.enums.UserType;
 
 import utils.Constants;
 
+/**
+ * This class is a singleton, the use of which is to perform any functionality regarding users.
+ *
+ * @author Sam Barba
+ */
 public class UserService {
 
 	private static UserService instance;
@@ -23,7 +29,7 @@ public class UserService {
 	private UserDAO userDao = UserDAO.getInstance();
 
 	/**
-	 * Add a user to the user CSV file
+	 * Add a user to the users CSV file.
 	 * 
 	 * @param user - the user to add
 	 */
@@ -32,7 +38,7 @@ public class UserService {
 	}
 
 	/**
-	 * Updates user password by deleting user and re-adding with new password
+	 * Update a user password by deleting user and re-adding with new password.
 	 * 
 	 * @param user - user to update password
 	 * @param pass - the new password
@@ -42,7 +48,7 @@ public class UserService {
 	}
 
 	/**
-	 * Delete a user by username (as usernames are unique)
+	 * Delete a user by their unique username.
 	 * 
 	 * @param username - the username of the user to delete
 	 */
@@ -51,7 +57,7 @@ public class UserService {
 	}
 
 	/**
-	 * Retrieve all users from CSV file
+	 * Retrieve all users from users CSV file.
 	 * 
 	 * @return list of all users
 	 */
@@ -60,34 +66,46 @@ public class UserService {
 	}
 
 	/**
-	 * Retrieve user by their unique username
+	 * Retrieve user by their unique username.
 	 * 
 	 * @param username - their unique username
 	 * @return user with specified username
 	 */
 	public User getUserByUsername(String username) {
-		return getAllUsers().stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
+		return getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
 	}
 
-	public User checkUserExists(User user)
+	/**
+	 * Check whether or not a user exists.
+	 * 
+	 * @param checkUser - the user to check
+	 * @return the user if found (if not, returns null)
+	 */
+	public User checkUserExists(User checkUser)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		for (User u : UserDAO.getInstance().getAllUsers()) {
-			if (u.getUsername().equals(user.getUsername())
-					&& u.getPassword().equals(userDao.sha512(user.getPassword()))) {
-				return u;
+		for (User user : userDao.getAllUsers()) {
+			if (user.getUsername().equals(checkUser.getUsername())
+					&& user.getPassword().equals(userDao.sha512(checkUser.getPassword()))) {
+				return user;
 			}
 		}
 		return null;
 	}
 
-	public boolean checkUsernameExists(String username)
+	/**
+	 * Check if a username already exists, to be used when an admin adds a new user.
+	 * 
+	 * @param username - the username to check
+	 * @return whether or not it exists
+	 */
+	public boolean checkUsernameAlreadyExists(String username)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		File csvFile = new File(Constants.USER_FILE_PATH);
+		File csvFile = new File(Constants.USERS_FILE_PATH);
 		Scanner input = new Scanner(csvFile);
 
 		while (input.hasNextLine()) {
 			String line = input.nextLine();
-			String[] lineSplit = line.split(",");
+			String[] lineSplit = line.split(Constants.COMMA);
 			String usernameRead = lineSplit[0];
 			if (usernameRead.equals(username)) {
 				input.close();
@@ -98,81 +116,145 @@ public class UserService {
 		return false;
 	}
 
+	/**
+	 * Retrieve the validated user once they attempt login.
+	 * 
+	 * @param username - the entered username
+	 * @param pass     - the entered password
+	 * @return the validated user, with hashed password
+	 */
+	public User login(String username, String pass)
+			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+
+		if (username.length() != 0 && pass.length() != 0 && usersFileExists()) {
+			User user = new User(username, pass, null);
+			User validatedUser = checkUserExists(user);
+			if (validatedUser == null) {
+				SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
+			} else {
+				return validatedUser;
+			}
+		} else if (username.length() != 0 && pass.length() != 0 && !usersFileExists()) {
+			// if it's first user of system, make them admin
+			User user = new User(username, pass, UserType.ADMIN);
+			if (validateFirstTimeLogin(username, pass)) {
+				addUser(user);
+				/*
+				 * instead of returning only 'user', we must return user with now hashed password, as addUser(user)
+				 * hashes the password
+				 */
+				return checkUserExists(user);
+			}
+		} else {
+			SystemNotification.display(SystemNotificationType.ERROR, "Please enter credentials.");
+		}
+		return null;
+	}
+
+	/**
+	 * Validate the first user's login.
+	 * 
+	 * @param username - the user's new username
+	 * @param pass     - the user's new password
+	 * @return whether or not credentials are valid
+	 */
 	public boolean validateFirstTimeLogin(String username, String pass)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (username.length() == 0) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Please enter a username.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
 		if (!pass.matches(Constants.PASS_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		return true;
 	}
 
+	/**
+	 * Validate a password update.
+	 * 
+	 * @param currentUser   - the user performing this action
+	 * @param currentPass   - the user's current password
+	 * @param newPass       - the user's new password
+	 * @param repeatNewPass - the user's repeated new password
+	 * @return whether or not the new passwords are valid
+	 */
 	public boolean validateResetPassword(User currentUser, String currentPass, String newPass, String repeatNewPass)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (currentPass.length() == 0) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Please enter current password.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Please enter current password.");
 			return false;
 		}
 		if (!userDao.sha512(currentPass).equals(currentUser.getPassword())) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Current password incorrect.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Current password incorrect.");
 			return false;
 		}
 		if (!newPass.matches(Constants.PASS_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		if (!newPass.equals(repeatNewPass)) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Those passwords don't match.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Those passwords don't match.");
 			return false;
 		}
 		if (currentPass.equals(newPass)) {
-			SystemMessageView.display(SystemMessageType.ERROR, "New password must be different to current.");
+			SystemNotification.display(SystemNotificationType.ERROR, "New password must be different to current.");
 			return false;
 		}
 		return true;
 	}
 
+	/**
+	 * Validate the addition of a new user by an admin.
+	 * 
+	 * @param username - the username of the new user
+	 * @param pass     - the temporary password of the new user
+	 * @return whether or not the new credentials are valid
+	 */
 	public boolean validateAddNewUserCreds(String username, String pass)
 			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (username.length() == 0) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Please enter a username.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
 		}
-		if (checkUsernameExists(username)) {
-			SystemMessageView.display(SystemMessageType.ERROR, "That username already exists.");
+		if (checkUsernameAlreadyExists(username)) {
+			SystemNotification.display(SystemNotificationType.ERROR, "That username already exists.");
 			return false;
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
 		if (!pass.matches(Constants.PASS_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR,
+			SystemNotification.display(SystemNotificationType.ERROR,
 					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		return true;
 	}
 
+	/**
+	 * Check if the user CSV file exists
+	 * 
+	 * @return whether or not the file exists
+	 */
 	public boolean usersFileExists() {
-		File csvFile = new File(Constants.USER_FILE_PATH);
+		File csvFile = new File(Constants.USERS_FILE_PATH);
 		return csvFile.exists();
 	}
 
 	private UserService(UserDAO userDao) {
 		if (userDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR, Constants.UNEXPECTED_ERROR + "User DAO is null!");
 			throw new IllegalArgumentException("User DAO cannot be null");
 		}
 		this.userDao = userDao;

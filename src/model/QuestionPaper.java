@@ -4,6 +4,11 @@ import java.util.List;
 
 import model.enums.DifficultyLevel;
 
+/**
+ * Represents a question paper.
+ *
+ * @author Sam Barba
+ */
 public class QuestionPaper {
 
 	private int id;

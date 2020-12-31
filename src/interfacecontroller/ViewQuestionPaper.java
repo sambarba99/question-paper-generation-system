@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,24 +14,32 @@ import dto.QuestionPaperDTO;
 
 import model.QuestionPaper;
 import model.enums.BoxType;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
 
 import utils.BoxMaker;
 
-public class QuestionPaperView {
+/**
+ * Allows the user to view a question paper.
+ * 
+ * @author Sam Barba
+ */
+public class ViewQuestionPaper {
 
-	public static void display(QuestionPaper qp) {
-		Stage stage = new Stage();
+	private static Stage stage = new Stage();
 
+	/**
+	 * Display a question paper.
+	 */
+	public static void display(QuestionPaper questionPaper) {
 		TextArea txtAreaPaper = new TextArea();
 		Button btnExport = new Button("Export to .docx");
 
 		txtAreaPaper.setEditable(false);
-		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(qp));
+		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
 		txtAreaPaper.setPrefSize(400, 600);
 
 		btnExport.setOnAction(action -> {
-			SystemMessageView.display(SystemMessageType.NEUTRAL, "Unimplemented");
+			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
 		});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();

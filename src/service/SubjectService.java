@@ -3,10 +3,20 @@ package service;
 import java.util.Comparator;
 import java.util.List;
 
+import interfacecontroller.SystemNotification;
+
 import dao.SubjectDAO;
 
 import model.Subject;
+import model.enums.SystemNotificationType;
 
+import utils.Constants;
+
+/**
+ * This class is a singleton, the use of which is to perform any functionality regarding subjects.
+ *
+ * @author Sam Barba
+ */
 public class SubjectService {
 
 	private static SubjectService instance;
@@ -14,7 +24,7 @@ public class SubjectService {
 	private SubjectDAO subjectDao = SubjectDAO.getInstance();
 
 	/**
-	 * Add a subject to the subject CSV file
+	 * Add a subject to the subjects CSV file.
 	 * 
 	 * @param subject - the subject to add
 	 */
@@ -23,7 +33,7 @@ public class SubjectService {
 	}
 
 	/**
-	 * Delete a subject by its unique ID, then any questions and papers of this subject
+	 * Delete a subject by its unique ID, then any questions and papers of this subject.
 	 * 
 	 * @param id - the ID of the subject to delete
 	 */
@@ -32,7 +42,7 @@ public class SubjectService {
 	}
 
 	/**
-	 * Retrieve all subjects from CSV file
+	 * Retrieve all subjects from subjects CSV file.
 	 * 
 	 * @return list of all subjects
 	 */
@@ -41,7 +51,7 @@ public class SubjectService {
 	}
 
 	/**
-	 * Retrieve subject using its unique ID
+	 * Retrieve subject using its unique ID.
 	 * 
 	 * @param id - the ID of the subject to retrieve
 	 * @return subject with specified ID
@@ -51,7 +61,7 @@ public class SubjectService {
 	}
 
 	/**
-	 * Get the highest existing subject ID, to be used when adding a new subject to ensure uniqueness
+	 * Get the highest existing subject ID, to be used when adding a new subject to ensure uniqueness.
 	 * 
 	 * @returns highest existing subject ID
 	 */
@@ -65,6 +75,8 @@ public class SubjectService {
 
 	private SubjectService(SubjectDAO subjectDao) {
 		if (subjectDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + "Subject DAO is null!");
 			throw new IllegalArgumentException("Subject DAO cannot be null");
 		}
 		this.subjectDao = subjectDao;

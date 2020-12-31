@@ -11,26 +11,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import model.User;
-import model.enums.SystemMessageType;
-import model.enums.UserType;
+import interfacecontroller.SystemNotification;
 
-import interfaceviews.SystemMessageView;
+import model.User;
+import model.enums.SystemNotificationType;
+import model.enums.UserType;
 
 import utils.Constants;
 
+/**
+ * This class is a singleton, the use of which is any database operation regarding users.
+ *
+ * @author Sam Barba
+ */
 public class UserDAO {
 
 	private static UserDAO instance;
 
 	/**
-	 * Add a user to the user CSV file
+	 * Add a user to the users CSV file.
 	 * 
 	 * @param user - the user to add
 	 */
 	public void addUser(User user) {
 		try {
-			File csvFile = new File(Constants.USER_FILE_PATH);
+			File csvFile = new File(Constants.USERS_FILE_PATH);
 			if (!csvFile.exists()) {
 				csvFile.getParentFile().mkdirs();
 				csvFile.createNewFile();
@@ -40,16 +45,20 @@ public class UserDAO {
 			String passHash = sha512(user.getPassword());
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(username + "," + passHash + "," + user.getType().toString() + "\n");
+			csvWriter.append(username + Constants.COMMA);
+			csvWriter.append(passHash + Constants.COMMA);
+			csvWriter.append(user.getType().toString() + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (IOException | NoSuchAlgorithmException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
 	/**
-	 * Updates user password by deleting user and re-adding with new password
+	 * Update a user password by deleting user and re-adding with new password.
 	 * 
 	 * @param user - user to update password
 	 * @param pass - the new password
@@ -61,33 +70,34 @@ public class UserDAO {
 	}
 
 	/**
-	 * Delete a user by username (as usernames are unique)
+	 * Delete a user by their unique username.
 	 * 
 	 * @param username - the username of the user to delete
 	 */
 	public void deleteUserByUsername(String username) {
 		try {
 			List<User> allUsers = getAllUsers();
-			File csvFile = new File(Constants.USER_FILE_PATH);
+			File csvFile = new File(Constants.USERS_FILE_PATH);
 			FileWriter csvWriter = new FileWriter(csvFile, false);
 
-			for (User u : allUsers) {
-				if (!u.getUsername().equals(username)) {
-					String name = u.getUsername();
-					String passHash = u.getPassword();
-					String userType = u.getType().toString();
-					csvWriter.write(name + "," + passHash + "," + userType + "\n");
+			for (User user : allUsers) {
+				if (!user.getUsername().equals(username)) {
+					csvWriter.write(user.getUsername() + Constants.COMMA);
+					csvWriter.write(user.getPassword() + Constants.COMMA);
+					csvWriter.write(user.getType().toString() + Constants.NEWLINE);
 				}
 			}
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
 	/**
-	 * Retrieve all users from CSV file
+	 * Retrieve all users from users CSV file.
 	 * 
 	 * @return list of all users
 	 */
@@ -95,26 +105,34 @@ public class UserDAO {
 		List<User> users = new ArrayList<>();
 
 		try {
-			File csvFile = new File(Constants.USER_FILE_PATH);
+			File csvFile = new File(Constants.USERS_FILE_PATH);
 			Scanner input = new Scanner(csvFile);
 
 			while (input.hasNextLine()) {
 				String line = input.nextLine();
-				String[] lineSplit = line.split(",");
+				String[] lineSplit = line.split(Constants.COMMA);
 				String username = lineSplit[0];
 				String passHash = lineSplit[1];
 				String userTypeStr = lineSplit[2];
-				UserType userType = "ADMIN".equals(userTypeStr) ? UserType.ADMIN : UserType.TUTOR;
+				UserType userType = Constants.USER_TYPE_ADMIN.equals(userTypeStr) ? UserType.ADMIN : UserType.TUTOR;
 				User user = new User(username, passHash, userType);
 				users.add(user);
 			}
 			input.close();
 		} catch (FileNotFoundException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Unexpected error: " + e.getClass().getName());
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return users;
 	}
 
+	/**
+	 * Encrypt a string with SHA-512.
+	 * 
+	 * @param text - the string to encrypt
+	 * @return the encrypted text
+	 */
 	public String sha512(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
 		md.update(text.getBytes("iso-8859-1"), 0, text.length());
@@ -122,12 +140,18 @@ public class UserDAO {
 		return convertToHex(sha512hash);
 	}
 
+	/**
+	 * Convert an array of bytes to hexadecimal.
+	 * 
+	 * @param data - the byte array to convert
+	 * @return the string hexadecimal result
+	 */
 	private String convertToHex(byte[] data) {
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < data.length; i++) {
-			result += Integer.toString((data[i] & 255) + 256, 16).substring(1);
+			result.append(Integer.toString((data[i] & 255) + 256, 16).substring(1));
 		}
-		return result;
+		return result.toString();
 	}
 
 	public synchronized static UserDAO getInstance() {

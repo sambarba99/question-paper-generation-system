@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,13 +13,26 @@ import model.enums.BoxType;
 
 import utils.BoxMaker;
 
-public class DeletionConfirmView {
+/**
+ * Requests confirmation from the user to delete academic material e.g. a subject, or to delete another user (admin
+ * capability only).
+ *
+ * @author Sam Barba
+ */
+public class DeletionConfirm {
+
+	private static Stage stage = new Stage();
 
 	private static boolean deleted;
 
+	/**
+	 * Display the name of the item to delete, and return whether or not it has been deleted when the window closes.
+	 * 
+	 * @param deleteItem - the type of item to delete, e.g. a user or subject
+	 * @return whether or not the item has been deleted
+	 */
 	public static boolean confirmDelete(String deleteItem) {
 		deleted = false;
-		Stage stage = new Stage();
 
 		Label lbl = new Label("Are you sure you wish to delete this " + deleteItem + "?");
 		Button btnYes = new Button("Yes");

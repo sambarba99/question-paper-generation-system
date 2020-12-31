@@ -1,4 +1,4 @@
-package interfaceviews;
+package interfacecontroller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,18 +31,25 @@ import model.Question;
 import model.Subject;
 import model.enums.BoxType;
 import model.enums.DifficultyLevel;
-import model.enums.SystemMessageType;
+import model.enums.SystemNotificationType;
 
 import utils.BoxMaker;
 import utils.Constants;
 
-public class AllQuestionsView {
+/**
+ * Allows the user to view all stored questions.
+ *
+ * @author Sam Barba
+ */
+public class AllQuestions {
+
+	private static Stage stage = new Stage();
+
+	private static boolean modified;
 
 	private static ListView<String> listViewQuestions = new ListView<>();
 
 	private static TextArea txtAreaQuestion = new TextArea();
-
-	private static boolean modified;
 
 	/*
 	 * Nodes for adding a new question
@@ -67,9 +74,13 @@ public class AllQuestionsView {
 
 	private static TextField txtTimeRequired = new TextField();
 
+	/**
+	 * Display all questions, and return whether or not a modification has occurred upon closing the window.
+	 * 
+	 * @return whether or not the user has made a modification
+	 */
 	public static boolean display() {
 		modified = false;
-		Stage stage = new Stage();
 
 		Label lblSelectQuestion = new Label("Select a question to view:");
 		Label lblAddQueston = new Label("Add a question?");
@@ -93,27 +104,10 @@ public class AllQuestionsView {
 			}
 		});
 		btnAddQuestion.setOnAction(action -> {
-			if (addQuestion()) {
-				listViewQuestions.getItems().clear();
-				listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
-				resetAddQuestionFields();
-				txtAreaQuestion.setText("");
-				modified = true;
-				SystemMessageView.display(SystemMessageType.SUCCESS, "Question added!");
-			}
+			addQuestion();
 		});
 		btnDelQuestion.setOnAction(action -> {
-			if (listViewQuestions.getSelectionModel().getSelectedItems().isEmpty()) {
-				SystemMessageView.display(SystemMessageType.ERROR, "Please select a question.");
-			} else if (DeletionConfirmView.confirmDelete("question")) {
-				int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
-				QuestionService.getInstance().deleteQuestionById(questionId);
-				listViewQuestions.getItems().clear();
-				listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
-				txtAreaQuestion.setText("");
-				modified = true;
-				SystemMessageView.display(SystemMessageType.SUCCESS, "Question deleted.");
-			}
+			deleteQuestion();
 		});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
@@ -143,7 +137,90 @@ public class AllQuestionsView {
 	}
 
 	/**
-	 * Set up window
+	 * Verify the validity of the new question's attributes, and add the new question.
+	 */
+	private static void addQuestion() {
+		if (questionAdded()) {
+			listViewQuestions.getItems().clear();
+			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
+			resetAddQuestionFields();
+			txtAreaQuestion.setText("");
+			modified = true;
+			SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
+		}
+	}
+
+	/**
+	 * Delete selected question with confirmation.
+	 */
+	private static void deleteQuestion() {
+		if (listViewQuestions.getSelectionModel().getSelectedItems().isEmpty()) {
+			SystemNotification.display(SystemNotificationType.ERROR, "Please select a question.");
+		} else if (DeletionConfirm.confirmDelete("question")) {
+			int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
+			QuestionService.getInstance().deleteQuestionById(questionId);
+			listViewQuestions.getItems().clear();
+			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
+			txtAreaQuestion.setText("");
+			modified = true;
+			SystemNotification.display(SystemNotificationType.SUCCESS, "Question deleted.");
+		}
+	}
+
+	/**
+	 * Add a question via QuestionService based on entered/selected attribute values.
+	 * 
+	 * @return whether or not question has been added successfully
+	 */
+	private static boolean questionAdded() {
+		String statement = txtStatement.getText();
+		String opt1 = txtOpt1.getText().trim();
+		String opt2 = txtOpt2.getText().trim();
+		String opt3 = txtOpt3.getText().trim();
+		String opt4 = txtOpt4.getText().trim();
+		if (statement.length() == 0 || opt1.length() == 0 || opt2.length() == 0 || opt3.length() == 0
+				|| opt4.length() == 0) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+					"Please enter the statement and all answer options.");
+			return false;
+		} else if (!statement.matches(Constants.QUESTION_REGEX) || !opt1.matches(Constants.QUESTION_REGEX)
+				|| !opt2.matches(Constants.QUESTION_REGEX) || !opt3.matches(Constants.QUESTION_REGEX)
+				|| !opt4.matches(Constants.QUESTION_REGEX)) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+					"Statement and answers must not have repeating spaces.");
+			return false;
+		}
+
+		int marks = 0;
+		try {
+			marks = Integer.parseInt(txtMarks.getText());
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of marks.");
+			return false;
+		}
+		int timeReq = 0;
+		try {
+			timeReq = Integer.parseInt(txtTimeRequired.getText());
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR, "Invalid time required.");
+			return false;
+		}
+		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
+		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
+		int correctAnsNo = Integer.parseInt(cbCorrectNum.getSelectionModel().getSelectedItem().toString());
+		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
+
+		Question question = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4), correctAnsNo,
+				difficultyLevel, marks, timeReq);
+		QuestionService.getInstance().addQuestion(question);
+
+		return true;
+	}
+
+	/**
+	 * Set up window.
 	 */
 	private static void setup() {
 		listViewQuestions.getItems().clear();
@@ -156,8 +233,8 @@ public class AllQuestionsView {
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
-		cbSubject.getItems().addAll(
-				allSubjects.stream().map(s -> (s.getTitle() + " (ID " + s.getId() + ")")).collect(Collectors.toList()));
+		cbSubject.getItems().addAll(allSubjects.stream()
+				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
 		cbSubject.setPrefWidth(200);
 
@@ -167,61 +244,14 @@ public class AllQuestionsView {
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		cbDifficulty.getItems().clear();
-		cbDifficulty.getItems().addAll(allDifficulties.stream().map(d -> d.toString()).collect(Collectors.toList()));
+		cbDifficulty.getItems()
+				.addAll(allDifficulties.stream().map(difficulty -> difficulty.toString()).collect(Collectors.toList()));
 		cbDifficulty.getSelectionModel().select(0);
 		cbDifficulty.setPrefWidth(200);
 	}
 
 	/**
-	 * Add a question via QuestionDAO based on entered/selected attribute values
-	 * 
-	 * @return whether or not question has been added successfully
-	 */
-	public static boolean addQuestion() {
-		String statement = txtStatement.getText();
-		String opt1 = txtOpt1.getText().trim();
-		String opt2 = txtOpt2.getText().trim();
-		String opt3 = txtOpt3.getText().trim();
-		String opt4 = txtOpt4.getText().trim();
-		if (statement.length() == 0 || opt1.length() == 0 || opt2.length() == 0 || opt3.length() == 0
-				|| opt4.length() == 0) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Please enter the statement and all answer options.");
-			return false;
-		} else if (!statement.matches(Constants.QUESTION_REGEX) || !opt1.matches(Constants.QUESTION_REGEX)
-				|| !opt2.matches(Constants.QUESTION_REGEX) || !opt3.matches(Constants.QUESTION_REGEX)
-				|| !opt4.matches(Constants.QUESTION_REGEX)) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Statement and answers must not have repeating spaces.");
-			return false;
-		}
-
-		int marks = 0;
-		try {
-			marks = Integer.parseInt(txtMarks.getText());
-		} catch (NumberFormatException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Invalid number of marks.");
-			return false;
-		}
-		int timeReq = 0;
-		try {
-			timeReq = Integer.parseInt(txtTimeRequired.getText());
-		} catch (NumberFormatException e) {
-			SystemMessageView.display(SystemMessageType.ERROR, "Invalid time required.");
-			return false;
-		}
-		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
-		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
-		int answerNo = Integer.parseInt(cbCorrectNum.getSelectionModel().getSelectedItem().toString());
-		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
-
-		Question q = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4), answerNo,
-				difficultyLevel, marks, timeReq);
-		QuestionService.getInstance().addQuestion(q);
-
-		return true;
-	}
-
-	/**
-	 * Reset all nodes for adding a question
+	 * Reset all nodes for adding a question.
 	 */
 	private static void resetAddQuestionFields() {
 		cbSubject.getSelectionModel().select(0);
