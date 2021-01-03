@@ -102,7 +102,7 @@ public class QuestionPaperDTO {
 		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 				+ questionPaper.getCourseCode() + ")");
-		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().toString());
+		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().getStrVal());
 		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		txtAreaStr.append(
 				Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);

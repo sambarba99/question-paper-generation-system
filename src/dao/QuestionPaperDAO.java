@@ -247,7 +247,7 @@ public class QuestionPaperDAO {
 		}
 		String questionIds = questionIdsStrBld.toString();
 		data[5] = questionIds.substring(0, questionIds.length() - 1); // remove last comma
-		data[6] = Integer.toString(questionPaper.getDifficultyLevel().getIntLevelVal());
+		data[6] = Integer.toString(questionPaper.getDifficultyLevel().getIntVal());
 		data[7] = Integer.toString(questionPaper.getMarks());
 		data[8] = Integer.toString(questionPaper.getTimeRequiredMins());
 		return data;

@@ -200,7 +200,7 @@ public class QuestionDAO {
 		data[5] = question.getAnswerOptions().get(2);
 		data[6] = question.getAnswerOptions().get(3);
 		data[7] = Integer.toString(question.getCorrectAnswerOptionNum());
-		data[8] = Integer.toString(question.getDifficultyLevel().getIntLevelVal());
+		data[8] = Integer.toString(question.getDifficultyLevel().getIntVal());
 		data[9] = Integer.toString(question.getMarks());
 		data[10] = Integer.toString(question.getTimeRequiredMins());
 		return data;

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import service.QuestionPaperService;
 import service.QuestionService;
 
+import model.Question;
 import model.QuestionPaper;
 import model.enums.DifficultyLevel;
 
@@ -21,7 +22,7 @@ public class QuestionPaperGenerator {
 	public QuestionPaper generatePaper(int subjectId, String title, String courseTitle, String courseCode,
 			DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		int id = QuestionPaperService.getInstance().getHighestQuestionPaperId() + 1;
-		List<Integer> questionIds = QuestionService.getInstance().getAllQuestions().stream().map(question -> question.getId())
+		List<Integer> questionIds = QuestionService.getInstance().getAllQuestions().stream().map(Question::getId)
 				.collect(Collectors.toList());
 
 		QuestionPaper questionPaper = new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds,

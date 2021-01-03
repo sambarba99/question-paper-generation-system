@@ -70,7 +70,7 @@ public class QuestionDTO {
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
-		txtAreaStr.append("\nDifficulty level: " + question.getDifficultyLevel().toString());
+		txtAreaStr.append("\nDifficulty level: " + question.getDifficultyLevel().getStrVal());
 		txtAreaStr.append("\nMarks: " + question.getMarks());
 		txtAreaStr.append("\nTime required (mins): " + question.getTimeRequiredMins());
 		if (papersContainingQuestion.isEmpty()) {

@@ -42,11 +42,18 @@ public enum UserAction {
 		return intVal;
 	}
 
+	/**
+	 * Retrieve UserAction given an int value. Throw an IllegalArgumentException if the int value doesn't exist.
+	 * 
+	 * @param intVal - the int value of the UserAction
+	 * @return action - the UserAction with the specified int value
+	 */
 	public static UserAction getFromInt(int intVal) {
 		List<UserAction> allActions = new ArrayList<>(EnumSet.allOf(UserAction.class));
-		UserAction action = allActions.stream().filter(act -> act.getIntVal() == intVal).findFirst().orElse(null);
-		if (action != null) {
-			return action;
+		UserAction userAction = allActions.stream().filter(userAct -> userAct.getIntVal() == intVal).findFirst()
+				.orElse(null);
+		if (userAction != null) {
+			return userAction;
 		}
 		SystemNotification.display(SystemNotificationType.ERROR,
 				Constants.UNEXPECTED_ERROR + "Invalid User Action int value passed: " + intVal);

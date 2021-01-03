@@ -26,7 +26,7 @@ public class UserActionDTO {
 	public List<String> getUserActionListViewItems() {
 		List<UserAction> allActions = new ArrayList<>(EnumSet.allOf(UserAction.class));
 		allActions.remove(allActions.size() - 1); // remove NONE action
-		List<String> listViewItems = allActions.stream().map(action -> action.getStrVal()).collect(Collectors.toList());
+		List<String> listViewItems = allActions.stream().map(UserAction::getStrVal).collect(Collectors.toList());
 		return listViewItems;
 	}
 

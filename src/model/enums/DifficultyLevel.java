@@ -15,29 +15,42 @@ import utils.Constants;
  */
 public enum DifficultyLevel {
 
-	EASY(1),
-	MEDIUM(2),
-	DIFFICULT(3);
+	EASY("EASY", 1),
+	MEDIUM("MEDIUM", 2),
+	DIFFICULT("DIFFICULT", 3);
 
-	private int intLevelVal;
+	private String strVal;
 
-	DifficultyLevel(int intLevelVal) {
-		this.intLevelVal = intLevelVal;
+	private int intVal;
+
+	DifficultyLevel(String strVal, int intVal) {
+		this.strVal = strVal;
+		this.intVal = intVal;
 	}
 
-	public int getIntLevelVal() {
-		return intLevelVal;
+	public String getStrVal() {
+		return strVal;
 	}
 
-	public static DifficultyLevel getFromInt(int intLevelVal) {
+	public int getIntVal() {
+		return intVal;
+	}
+
+	/**
+	 * Retrieve DifficultyLevel given an int value. Throw an IllegalArgumentException if the int value doesn't exist.
+	 * 
+	 * @param intVal - the int value of the DifficultyLevel
+	 * @return difficultyLevel - the DifficultyLevel with the specified int value
+	 */
+	public static DifficultyLevel getFromInt(int intVal) {
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		DifficultyLevel difficulty = allDifficulties.stream().filter(diff -> diff.getIntLevelVal() == intLevelVal)
-				.findFirst().orElse(null);
-		if (difficulty != null) {
-			return difficulty;
+		DifficultyLevel difficultyLevel = allDifficulties.stream()
+				.filter(difficultyLvl -> difficultyLvl.getIntVal() == intVal).findFirst().orElse(null);
+		if (difficultyLevel != null) {
+			return difficultyLevel;
 		}
 		SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level passed: " + intLevelVal);
-		throw new IllegalArgumentException("Invalid Difficulty Level passed: " + intLevelVal);
+				Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level passed: " + intVal);
+		throw new IllegalArgumentException("Invalid Difficulty Level passed: " + intVal);
 	}
 }

@@ -245,7 +245,7 @@ public class AllQuestions {
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		cbDifficulty.getItems().clear();
 		cbDifficulty.getItems()
-				.addAll(allDifficulties.stream().map(difficulty -> difficulty.toString()).collect(Collectors.toList()));
+				.addAll(allDifficulties.stream().map(DifficultyLevel::getStrVal).collect(Collectors.toList()));
 		cbDifficulty.getSelectionModel().select(0);
 		cbDifficulty.setPrefWidth(200);
 	}

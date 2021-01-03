@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 import service.UserService;
 
+import dto.UserTypeDTO;
+
 import model.User;
 import model.enums.BoxType;
 import model.enums.SystemNotificationType;
@@ -50,15 +52,13 @@ public class AddUser {
 		ChoiceBox cbUserType = new ChoiceBox();
 		Button btnAddUser = new Button("Add user");
 
-		cbUserType.getItems().addAll(Constants.USER_TYPE_ADMIN, Constants.USER_TYPE_TUTOR);
+		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
 		cbUserType.getSelectionModel().selectFirst();
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(txtUsername.getText().toLowerCase());
 		});
 		btnAddUser.setOnAction(action -> {
-			UserType userType = cbUserType.getSelectionModel().getSelectedItem().equals(Constants.USER_TYPE_TUTOR)
-					? UserType.TUTOR
-					: UserType.ADMIN;
+			UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
 			addUser(txtUsername.getText(), passField.getText(), userType);
 		});
 

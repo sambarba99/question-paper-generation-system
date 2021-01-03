@@ -47,10 +47,6 @@ public class Constants {
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
 
-	public static final String USER_TYPE_ADMIN = "ADMIN";
-
-	public static final String USER_TYPE_TUTOR = "TUTOR";
-
 	public static final int ANSWERS_PER_QUESTION = 4;
 
 	/**
