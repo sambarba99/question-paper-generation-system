@@ -43,7 +43,7 @@ import utils.Constants;
  */
 public class AllQuestions {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean modified;
 
@@ -80,6 +80,7 @@ public class AllQuestions {
 	 * @return whether or not the user has made a modification
 	 */
 	public static boolean display() {
+		stage = new Stage();
 		modified = false;
 
 		Label lblSelectQuestion = new Label("Select a question to view:");

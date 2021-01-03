@@ -53,7 +53,7 @@ public class UserDAO {
 		} catch (IOException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -92,7 +92,7 @@ public class UserDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -121,7 +121,7 @@ public class UserDAO {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return users;
 	}
@@ -158,5 +158,8 @@ public class UserDAO {
 			instance = new UserDAO();
 		}
 		return instance;
+	}
+
+	private UserDAO() {
 	}
 }

@@ -47,4 +47,7 @@ public class UserTypeDTO {
 		}
 		return instance;
 	}
+
+	private UserTypeDTO() {
+	}
 }

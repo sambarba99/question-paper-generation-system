@@ -48,4 +48,7 @@ public class UserActionDTO {
 		}
 		return instance;
 	}
+
+	private UserActionDTO() {
+	}
 }

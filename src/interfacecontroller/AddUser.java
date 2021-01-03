@@ -32,7 +32,7 @@ import utils.Constants;
  */
 public class AddUser {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean added;
 
@@ -42,6 +42,7 @@ public class AddUser {
 	 * @return whether or not a user has been added successfully
 	 */
 	public static boolean addUser() {
+		stage = new Stage();
 		added = false;
 
 		Label lblEnterUsername = new Label("Enter their username:");
@@ -55,7 +56,7 @@ public class AddUser {
 		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
 		cbUserType.getSelectionModel().selectFirst();
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
-			txtUsername.setText(txtUsername.getText().toLowerCase());
+			txtUsername.setText(newText.toLowerCase());
 		});
 		btnAddUser.setOnAction(action -> {
 			UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);

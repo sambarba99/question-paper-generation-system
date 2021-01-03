@@ -99,19 +99,19 @@ public class QuestionPaperService {
 		return allQuestionPapers.stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
 	}
 
-	private QuestionPaperService(QuestionPaperDAO questionPaperDao) {
-		if (questionPaperDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + "Question paper DAO is null!");
-			throw new IllegalArgumentException("Question paper DAO cannot be null");
-		}
-		this.questionPaperDao = questionPaperDao;
-	}
-
 	public synchronized static QuestionPaperService getInstance() {
 		if (instance == null) {
 			instance = new QuestionPaperService(QuestionPaperDAO.getInstance());
 		}
 		return instance;
+	}
+
+	private QuestionPaperService(QuestionPaperDAO questionPaperDao) {
+		if (questionPaperDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + "Question paper DAO cannot be null!");
+			throw new IllegalArgumentException("Question paper DAO cannot be null!");
+		}
+		this.questionPaperDao = questionPaperDao;
 	}
 }

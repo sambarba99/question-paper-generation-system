@@ -59,7 +59,7 @@ public class QuestionPaperDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -85,7 +85,7 @@ public class QuestionPaperDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -115,7 +115,7 @@ public class QuestionPaperDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -145,7 +145,7 @@ public class QuestionPaperDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -187,7 +187,7 @@ public class QuestionPaperDAO {
 						int timeRequiredMins = Integer.parseInt(line4split[2]);
 
 						QuestionPaper questionPaper = new QuestionPaper(id, subjectId, title, courseTitle, courseCode,
-								questionIds, difficultyLevel, marks, timeRequiredMins);
+							questionIds, difficultyLevel, marks, timeRequiredMins);
 						questionPapers.add(questionPaper);
 					} catch (Exception e) { // reached last line
 						input.close();
@@ -199,7 +199,7 @@ public class QuestionPaperDAO {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return questionPapers;
 	}
@@ -212,7 +212,7 @@ public class QuestionPaperDAO {
 	 */
 	public QuestionPaper getQuestionPaperById(int id) {
 		return getAllQuestionPapers().stream().filter(questionPaper -> questionPaper.getId() == id).findFirst()
-				.orElse(null);
+			.orElse(null);
 	}
 
 	/**
@@ -223,8 +223,7 @@ public class QuestionPaperDAO {
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
 		return getAllQuestionPapers().stream()
-				.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId))
-				.collect(Collectors.toList());
+			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId)).collect(Collectors.toList());
 	}
 
 	/**
@@ -280,5 +279,8 @@ public class QuestionPaperDAO {
 			instance = new QuestionPaperDAO();
 		}
 		return instance;
+	}
+
+	private QuestionPaperDAO() {
 	}
 }

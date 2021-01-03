@@ -49,7 +49,7 @@ public class BoxMaker {
 				return vbox;
 			default:
 				SystemNotification.display(SystemNotificationType.ERROR,
-						Constants.UNEXPECTED_ERROR + "Invalid box type passed: " + boxType.toString());
+					Constants.UNEXPECTED_ERROR + "Invalid box type passed: " + boxType.toString());
 				throw new IllegalArgumentException("Invalid box type passed: " + boxType.toString());
 		}
 	}
@@ -59,5 +59,8 @@ public class BoxMaker {
 			instance = new BoxMaker();
 		}
 		return instance;
+	}
+
+	private BoxMaker() {
 	}
 }

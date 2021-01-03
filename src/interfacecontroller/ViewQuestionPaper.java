@@ -25,12 +25,13 @@ import utils.BoxMaker;
  */
 public class ViewQuestionPaper {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	/**
 	 * Display a question paper.
 	 */
 	public static void display(QuestionPaper questionPaper) {
+		stage = new Stage();
 		TextArea txtAreaPaper = new TextArea();
 		Button btnExport = new Button("Export to .docx");
 

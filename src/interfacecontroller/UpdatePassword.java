@@ -30,7 +30,7 @@ import utils.Constants;
  */
 public class UpdatePassword {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean updated;
 
@@ -41,6 +41,7 @@ public class UpdatePassword {
 	 * @return whether or not the password has been updated
 	 */
 	public static boolean updatePassword(User currentUser) {
+		stage = new Stage();
 		updated = false;
 
 		Label lblEnterCurrentPass = new Label("Enter current password:");

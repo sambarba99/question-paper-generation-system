@@ -37,7 +37,7 @@ import utils.BoxMaker;
  */
 public class AcademicMaterial {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean paperSubjectFilterOn;
 
@@ -55,6 +55,8 @@ public class AcademicMaterial {
 	 * @param currentUser - the user currently in session
 	 */
 	public static void display(User currentUser) {
+		stage = new Stage();
+
 		Label lblHeader = new Label("View & Modify Academic Material");
 		Label lblSubjects = new Label("Subjects");
 		Label lblQuestionPapers = new Label("Question Papers");
@@ -123,7 +125,8 @@ public class AcademicMaterial {
 			case TOGGLE_FILTER_PAPERS:
 				if (!paperSubjectFilterOn) {
 					if (listViewSubjects.getSelectionModel().getSelectedItems().isEmpty()) {
-						SystemNotification.display(SystemNotificationType.ERROR, "Please select subjects to filter by.");
+						SystemNotification.display(SystemNotificationType.ERROR,
+								"Please select subjects to filter by.");
 					} else {
 						paperSubjectFilterOn = true;
 						List<Integer> subjectIds = SubjectDTO.getInstance().getSelectedSubjectsIds(listViewSubjects);

@@ -72,7 +72,8 @@ public class UserService {
 	 * @return user with specified username
 	 */
 	public User getUserByUsername(String username) {
-		return getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
+		return userDao.getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst()
+			.orElse(null);
 	}
 
 	/**
@@ -82,10 +83,10 @@ public class UserService {
 	 * @return the user if found (if not, returns null)
 	 */
 	public User checkUserExists(User checkUser)
-			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		for (User user : userDao.getAllUsers()) {
 			if (user.getUsername().equals(checkUser.getUsername())
-					&& user.getPassword().equals(userDao.sha512(checkUser.getPassword()))) {
+				&& user.getPassword().equals(userDao.sha512(checkUser.getPassword()))) {
 				return user;
 			}
 		}
@@ -99,7 +100,7 @@ public class UserService {
 	 * @return whether or not it exists
 	 */
 	public boolean checkUsernameAlreadyExists(String username)
-			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		File csvFile = new File(Constants.USERS_FILE_PATH);
 		Scanner input = new Scanner(csvFile);
 
@@ -124,26 +125,30 @@ public class UserService {
 	 * @return the validated user, with hashed password
 	 */
 	public User login(String username, String pass)
-			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
-		if (username.length() != 0 && pass.length() != 0 && usersFileExists()) {
-			User user = new User(username, pass, null);
-			User validatedUser = checkUserExists(user);
-			if (validatedUser == null) {
-				SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
+		if (username.length() != 0 && pass.length() != 0) {
+			if (usersFileExists()) {
+				User user = new User(username, pass, null);
+				User validatedUser = checkUserExists(user);
+				if (validatedUser == null) {
+					SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
+				} else {
+					return validatedUser;
+				}
 			} else {
-				return validatedUser;
-			}
-		} else if (username.length() != 0 && pass.length() != 0 && !usersFileExists()) {
-			// if it's first user of system, make them admin
-			User user = new User(username, pass, UserType.ADMIN);
-			if (validateFirstTimeLogin(username, pass)) {
-				addUser(user);
 				/*
-				 * instead of returning only 'user', we must return user with now hashed password, as addUser(user)
-				 * hashes the password
+				 * If we are here, the users file doesn't exist, so this user is the first user - so make them an admin.
 				 */
-				return checkUserExists(user);
+				User user = new User(username, pass, UserType.ADMIN);
+				if (validateFirstTimeLogin(username, pass)) {
+					userDao.addUser(user);
+					/*
+					 * instead of returning only 'user', we must return user with now hashed password, as addUser(user)
+					 * hashes the password
+					 */
+					return checkUserExists(user);
+				}
 			}
 		} else {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter credentials.");
@@ -159,19 +164,19 @@ public class UserService {
 	 * @return whether or not credentials are valid
 	 */
 	public boolean validateFirstTimeLogin(String username, String pass)
-			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (username.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-					"Username must be letters only, and optionally end with digits.");
+				"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
 		if (!pass.matches(Constants.PASS_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
+				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		return true;
@@ -187,7 +192,7 @@ public class UserService {
 	 * @return whether or not the new passwords are valid
 	 */
 	public boolean validateResetPassword(User currentUser, String currentPass, String newPass, String repeatNewPass)
-			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (currentPass.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter current password.");
 			return false;
@@ -198,7 +203,7 @@ public class UserService {
 		}
 		if (!newPass.matches(Constants.PASS_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
+				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		if (!newPass.equals(repeatNewPass)) {
@@ -220,7 +225,7 @@ public class UserService {
 	 * @return whether or not the new credentials are valid
 	 */
 	public boolean validateAddNewUserCreds(String username, String pass)
-			throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		if (username.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
@@ -231,12 +236,12 @@ public class UserService {
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-					"Username must be letters only, and optionally end with digits.");
+				"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
 		if (!pass.matches(Constants.PASS_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-					"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
+				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
 		}
 		return true;
@@ -252,18 +257,19 @@ public class UserService {
 		return csvFile.exists();
 	}
 
-	private UserService(UserDAO userDao) {
-		if (userDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR, Constants.UNEXPECTED_ERROR + "User DAO is null!");
-			throw new IllegalArgumentException("User DAO cannot be null");
-		}
-		this.userDao = userDao;
-	}
-
 	public synchronized static UserService getInstance() {
 		if (instance == null) {
 			instance = new UserService(UserDAO.getInstance());
 		}
 		return instance;
+	}
+
+	private UserService(UserDAO userDao) {
+		if (userDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + "User DAO cannot be null!");
+			throw new IllegalArgumentException("User DAO cannot be null!");
+		}
+		this.userDao = userDao;
 	}
 }

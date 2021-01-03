@@ -21,20 +21,21 @@ import utils.BoxMaker;
  */
 public class DeletionConfirm {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean deleted;
 
 	/**
 	 * Display the name of the item to delete, and return whether or not it has been deleted when the window closes.
 	 * 
-	 * @param deleteItem - the type of item to delete, e.g. a user or subject
+	 * @param deletingItem - the type of item to delete, e.g. 'user' or 'subject'
 	 * @return whether or not the item has been deleted
 	 */
-	public static boolean confirmDelete(String deleteItem) {
+	public static boolean confirmDelete(String deletingItem) {
+		stage = new Stage();
 		deleted = false;
 
-		Label lbl = new Label("Are you sure you wish to delete this " + deleteItem + "?");
+		Label lbl = new Label("Are you sure you wish to delete this " + deletingItem + "?");
 		Button btnYes = new Button("Yes");
 		Button btnNo = new Button("No");
 

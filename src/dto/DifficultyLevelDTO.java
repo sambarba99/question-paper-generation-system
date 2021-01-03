@@ -31,4 +31,7 @@ public class DifficultyLevelDTO {
 		}
 		return instance;
 	}
+
+	private DifficultyLevelDTO() {
+	}
 }

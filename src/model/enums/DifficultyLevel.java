@@ -40,7 +40,7 @@ public enum DifficultyLevel {
 	 * Retrieve DifficultyLevel given an int value. Throw an IllegalArgumentException if the int value doesn't exist.
 	 * 
 	 * @param intVal - the int value of the DifficultyLevel
-	 * @return difficultyLevel - the DifficultyLevel with the specified int value
+	 * @return the DifficultyLevel with the specified int value
 	 */
 	public static DifficultyLevel getFromInt(int intVal) {
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));

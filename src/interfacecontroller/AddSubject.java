@@ -28,7 +28,7 @@ import utils.Constants;
  */
 public class AddSubject {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean added;
 
@@ -38,6 +38,7 @@ public class AddSubject {
 	 * @return whether or not a subject has been added successfully
 	 */
 	public static boolean addSubject() {
+		stage = new Stage();
 		added = false;
 
 		Label lblEnterTitle = new Label("Enter the subject title:");

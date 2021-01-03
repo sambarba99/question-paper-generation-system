@@ -82,19 +82,19 @@ public class QuestionService {
 		return allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId();
 	}
 
-	private QuestionService(QuestionDAO questionDao) {
-		if (questionDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + "Question DAO is null!");
-			throw new IllegalArgumentException("Question DAO cannot be null");
-		}
-		this.questionDao = questionDao;
-	}
-
 	public synchronized static QuestionService getInstance() {
 		if (instance == null) {
 			instance = new QuestionService(QuestionDAO.getInstance());
 		}
 		return instance;
+	}
+
+	private QuestionService(QuestionDAO questionDao) {
+		if (questionDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + "Question DAO cannot be null!");
+			throw new IllegalArgumentException("Question DAO cannot be null!");
+		}
+		this.questionDao = questionDao;
 	}
 }

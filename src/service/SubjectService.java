@@ -73,19 +73,19 @@ public class SubjectService {
 		return allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId();
 	}
 
-	private SubjectService(SubjectDAO subjectDao) {
-		if (subjectDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + "Subject DAO is null!");
-			throw new IllegalArgumentException("Subject DAO cannot be null");
-		}
-		this.subjectDao = subjectDao;
-	}
-
 	public synchronized static SubjectService getInstance() {
 		if (instance == null) {
 			instance = new SubjectService(SubjectDAO.getInstance());
 		}
 		return instance;
+	}
+
+	private SubjectService(SubjectDAO subjectDao) {
+		if (subjectDao == null) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + "Subject DAO cannot be null!");
+			throw new IllegalArgumentException("Subject DAO cannot be null!");
+		}
+		this.subjectDao = subjectDao;
 	}
 }

@@ -32,8 +32,7 @@ public class QuestionDTO {
 	public List<String> getQuestionListViewItems() {
 		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
 		List<String> listViewItems = allQuestions.stream()
-				.map(question -> (question.getStatement() + " (ID " + question.getId() + ")"))
-				.collect(Collectors.toList());
+			.map(question -> (question.getStatement() + " (ID " + question.getId() + ")")).collect(Collectors.toList());
 		return listViewItems;
 	}
 
@@ -66,7 +65,7 @@ public class QuestionDTO {
 		List<String> answerOptions = question.getAnswerOptions();
 		int correctAnswerOption = question.getCorrectAnswerOptionNum();
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
-				.getQuestionPapersByQuestionId(id);
+			.getQuestionPapersByQuestionId(id);
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
@@ -95,5 +94,8 @@ public class QuestionDTO {
 			instance = new QuestionDTO();
 		}
 		return instance;
+	}
+
+	private QuestionDTO() {
 	}
 }

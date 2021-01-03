@@ -60,7 +60,7 @@ public class QuestionDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -88,7 +88,7 @@ public class QuestionDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -118,7 +118,7 @@ public class QuestionDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -157,7 +157,7 @@ public class QuestionDAO {
 						int timeRequireMins = Integer.parseInt(line6split[3]);
 
 						Question question = new Question(id, subjectId, statement, answerOptions, correctAnsNo,
-								difficultyLevel, marks, timeRequireMins);
+							difficultyLevel, marks, timeRequireMins);
 						questions.add(question);
 					} catch (Exception e) { // reached last line
 						input.close();
@@ -169,7 +169,7 @@ public class QuestionDAO {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return questions;
 	}
@@ -234,5 +234,8 @@ public class QuestionDAO {
 			instance = new QuestionDAO();
 		}
 		return instance;
+	}
+
+	private QuestionDAO() {
 	}
 }

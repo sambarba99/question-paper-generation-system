@@ -46,7 +46,7 @@ public enum UserAction {
 	 * Retrieve UserAction given an int value. Throw an IllegalArgumentException if the int value doesn't exist.
 	 * 
 	 * @param intVal - the int value of the UserAction
-	 * @return action - the UserAction with the specified int value
+	 * @return the UserAction with the specified int value
 	 */
 	public static UserAction getFromInt(int intVal) {
 		List<UserAction> allActions = new ArrayList<>(EnumSet.allOf(UserAction.class));

@@ -33,8 +33,8 @@ public class QuestionPaperDTO {
 	public List<String> getQuestionPaperListViewItems() {
 		List<QuestionPaper> allQuestionPapers = QuestionPaperService.getInstance().getAllQuestionPapers();
 		List<String> listViewItems = allQuestionPapers.stream()
-				.map(questionPaper -> (questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")"))
-				.collect(Collectors.toList());
+			.map(questionPaper -> (questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")"))
+			.collect(Collectors.toList());
 		return listViewItems;
 	}
 
@@ -101,11 +101,11 @@ public class QuestionPaperDTO {
 		txtAreaStr.append(questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
 		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
-				+ questionPaper.getCourseCode() + ")");
+			+ questionPaper.getCourseCode() + ")");
 		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().getStrVal());
 		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		txtAreaStr.append(
-				Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);
+			Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);
 
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		for (int i = 0; i < questionIds.size(); i++) {
@@ -115,7 +115,7 @@ public class QuestionPaperDTO {
 			txtAreaStr.append(Constants.NEWLINE + "Answer option 2: " + question.getAnswerOptions().get(1));
 			txtAreaStr.append(Constants.NEWLINE + "Answer option 3: " + question.getAnswerOptions().get(2));
 			txtAreaStr.append(
-					Constants.NEWLINE + "Answer option 4: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
+				Constants.NEWLINE + "Answer option 4: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'
@@ -126,5 +126,8 @@ public class QuestionPaperDTO {
 			instance = new QuestionPaperDTO();
 		}
 		return instance;
+	}
+
+	private QuestionPaperDTO() {
 	}
 }

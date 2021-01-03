@@ -29,7 +29,7 @@ import utils.Constants;
  */
 public class AdminControl {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static ListView<String> listViewUsers = new ListView<>();
 
@@ -39,6 +39,8 @@ public class AdminControl {
 	 * @param currentUser - the user currently in session
 	 */
 	public static void display(User currentUser) {
+		stage = new Stage();
+
 		Label lblViewModifyUsers = new Label("Modify users");
 		Button btnAddUser = new Button("Add user");
 		Button btnDelUser = new Button("Delete user");

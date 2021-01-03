@@ -45,7 +45,7 @@ public class SubjectDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -74,7 +74,7 @@ public class SubjectDAO {
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
 
@@ -105,7 +105,7 @@ public class SubjectDAO {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return subjects;
 	}
@@ -125,5 +125,8 @@ public class SubjectDAO {
 			instance = new SubjectDAO();
 		}
 		return instance;
+	}
+
+	private SubjectDAO() {
 	}
 }

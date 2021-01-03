@@ -20,13 +20,13 @@ public class QuestionPaperGenerator {
 	private static QuestionPaperGenerator instance;
 
 	public QuestionPaper generatePaper(int subjectId, String title, String courseTitle, String courseCode,
-			DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		int id = QuestionPaperService.getInstance().getHighestQuestionPaperId() + 1;
 		List<Integer> questionIds = QuestionService.getInstance().getAllQuestions().stream().map(Question::getId)
-				.collect(Collectors.toList());
+			.collect(Collectors.toList());
 
 		QuestionPaper questionPaper = new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds,
-				difficultyLevel, marks, timeRequiredMins);
+			difficultyLevel, marks, timeRequiredMins);
 		return questionPaper;
 	}
 
@@ -35,5 +35,8 @@ public class QuestionPaperGenerator {
 			instance = new QuestionPaperGenerator();
 		}
 		return instance;
+	}
+
+	private QuestionPaperGenerator() {
 	}
 }

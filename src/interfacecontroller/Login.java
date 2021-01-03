@@ -43,7 +43,7 @@ public class Login extends Application {
 		Button btnLogin = new Button("Login");
 
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
-			txtUsername.setText(txtUsername.getText().toLowerCase());
+			txtUsername.setText(newText.toLowerCase());
 		});
 		btnLogin.setOnAction(action -> {
 			login(txtUsername.getText(), passField.getText(), primaryStage);
@@ -78,10 +78,18 @@ public class Login extends Application {
 			User currentUser = UserService.getInstance().login(username, password);
 			if (currentUser != null) {
 				stage.close();
-				if (currentUser.getType().equals(UserType.ADMIN)) {
-					AdminControl.display(currentUser);
-				} else { // TUTOR
-					AcademicMaterial.display(currentUser);
+				UserType userType = currentUser.getType();
+				switch (userType) {
+					case ADMIN:
+						AdminControl.display(currentUser);
+						break;
+					case TUTOR:
+						AcademicMaterial.display(currentUser);
+						break;
+					default:
+						SystemNotification.display(SystemNotificationType.ERROR,
+								Constants.UNEXPECTED_ERROR + "Invalid User Type passed: " + userType.getStrVal());
+						throw new IllegalArgumentException("Invalid User Type passed: " + userType.getStrVal());
 				}
 			}
 		} catch (Exception e) {

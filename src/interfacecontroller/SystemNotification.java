@@ -15,12 +15,13 @@ import model.enums.SystemNotificationType;
  */
 public class SystemNotification {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	/**
 	 * Display a system notification.
 	 */
 	public static void display(SystemNotificationType notificationType, String notification) {
+		stage = new Stage();
 		Label lblNotification = new Label(notification);
 
 		FlowPane pane = new FlowPane();

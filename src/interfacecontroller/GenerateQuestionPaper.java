@@ -41,7 +41,7 @@ import utils.Constants;
  */
 public class GenerateQuestionPaper {
 
-	private static Stage stage = new Stage();
+	private static Stage stage;
 
 	private static boolean generated;
 
@@ -68,6 +68,7 @@ public class GenerateQuestionPaper {
 	 * @return whether or not the paper has been generated successfully
 	 */
 	public static boolean generatePaper() {
+		stage = new Stage();
 		generated = false;
 
 		Label lblSelectSubject = new Label("Select the subject:");
