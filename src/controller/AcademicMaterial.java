@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 
 import model.dto.QuestionPaperDTO;
 import model.dto.SubjectDTO;
-import model.dto.UserActionDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.User;
 import model.service.QuestionPaperService;
@@ -35,6 +34,8 @@ import view.enums.UserAction;
  */
 public class AcademicMaterial {
 
+	private static final double BTN_WIDTH = 238;
+
 	private static Stage stage;
 
 	private static boolean paperSubjectFilterOn;
@@ -44,8 +45,6 @@ public class AcademicMaterial {
 	private static ListView<String> listViewSubjects = new ListView<>();
 
 	private static ListView<String> listViewQuestionPapers = new ListView<>();
-
-	private static ListView<String> listViewUserActions = new ListView<>();
 
 	/**
 	 * Display academic material and related options.
@@ -58,21 +57,57 @@ public class AcademicMaterial {
 		Label lblHeader = new Label("View & Modify Academic Material");
 		Label lblSubjects = new Label("Subjects");
 		Label lblQuestionPapers = new Label("Question Papers");
-		Label lblActions = new Label("Select an action:");
-		Button btnExecute = new Button("Perform action");
+		Label lblActions = new Label("Actions");
+		Button btnAddSubject = new Button(UserAction.ADD_SUBJECT.getStrVal());
+		Button btnDelSubject = new Button(UserAction.DELETE_SUBJECT.getStrVal());
+		Button btnAllQuestions = new Button(UserAction.VIEW_MODIFY_ALL_QUESTIONS.getStrVal());
+		Button btnGeneratePaper = new Button(UserAction.GENERATE_QUESTION_PAPER.getStrVal());
+		Button btnViewPaper = new Button(UserAction.VIEW_QUESTION_PAPER.getStrVal());
+		Button btnDelPaper = new Button(UserAction.DELETE_QUESTION_PAPER.getStrVal());
+		Button btnToggleFilter = new Button(UserAction.TOGGLE_FILTER_PAPERS.getStrVal());
+		Button btnUpdatePassword = new Button(UserAction.UPDATE_PASSWORD.getStrVal());
 
 		lblHeader.setStyle("-fx-font-size: 25px");
-		btnExecute.setOnAction(action -> {
-			UserAction userAction = UserActionDTO.getInstance().getSelectedUserAction(listViewUserActions);
-			performAction(userAction, currentUser);
+		btnAddSubject.setOnAction(action -> {
+			performAction(UserAction.ADD_SUBJECT, currentUser);
 		});
+		btnDelSubject.setOnAction(action -> {
+			performAction(UserAction.DELETE_SUBJECT, currentUser);
+		});
+		btnAllQuestions.setOnAction(action -> {
+			performAction(UserAction.VIEW_MODIFY_ALL_QUESTIONS, currentUser);
+		});
+		btnGeneratePaper.setOnAction(action -> {
+			performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
+		});
+		btnViewPaper.setOnAction(action -> {
+			performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
+		});
+		btnDelPaper.setOnAction(action -> {
+			performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
+		});
+		btnToggleFilter.setOnAction(action -> {
+			performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
+		});
+		btnUpdatePassword.setOnAction(action -> {
+			performAction(UserAction.UPDATE_PASSWORD, currentUser);
+		});
+		btnAddSubject.setMinWidth(BTN_WIDTH);
+		btnDelSubject.setMinWidth(BTN_WIDTH);
+		btnAllQuestions.setMinWidth(BTN_WIDTH);
+		btnGeneratePaper.setMinWidth(BTN_WIDTH);
+		btnViewPaper.setMinWidth(BTN_WIDTH);
+		btnDelPaper.setMinWidth(BTN_WIDTH);
+		btnToggleFilter.setMinWidth(BTN_WIDTH);
+		btnUpdatePassword.setMinWidth(BTN_WIDTH);
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
 		VBox vboxSubjects = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblSubjects, listViewSubjects);
 		VBox vboxQuestionPapers = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblQuestionPapers,
 			listViewQuestionPapers);
-		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, listViewUserActions,
-			btnExecute, lblPaperFilterStatus);
+		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, btnAddSubject,
+			btnDelSubject, btnAllQuestions, btnGeneratePaper, btnViewPaper, btnDelPaper, btnToggleFilter,
+			btnUpdatePassword, lblPaperFilterStatus);
 		HBox hboxViews = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vboxSubjects, vboxQuestionPapers,
 			vboxActions);
 		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, lblHeader, hboxViews);
@@ -178,7 +213,7 @@ public class AcademicMaterial {
 				}
 				break;
 			default: // NONE
-				SystemNotification.display(SystemNotificationType.ERROR, "Please select an action.");
+				SystemNotification.display(SystemNotificationType.ERROR, "Unexpected error.");
 		}
 	}
 
@@ -193,11 +228,6 @@ public class AcademicMaterial {
 		listViewQuestionPapers.getItems().clear();
 		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
 		listViewQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
-		listViewUserActions.getItems().clear();
-		listViewUserActions.getItems().addAll(UserActionDTO.getInstance().getUserActionListViewItems());
-		listViewUserActions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		listViewUserActions.setPrefHeight(186);
 
 		paperSubjectFilterOn = false;
 		lblPaperFilterStatus.setText("Paper subject filters: OFF");

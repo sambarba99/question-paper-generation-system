@@ -1,4 +1,4 @@
-package model.service.questionpapergeneration;
+package model.questionpapergeneration;
 
 /**
  * This class contains evolutionary methods.

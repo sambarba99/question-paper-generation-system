@@ -45,6 +45,8 @@ public class DeletionConfirm {
 		btnNo.setOnAction(action -> {
 			stage.close();
 		});
+		btnYes.setMinWidth(75);
+		btnNo.setMinWidth(75);
 
 		VBox vboxMain = (VBox) BoxMaker.getInstance().makeBox(BoxType.VBOX, Pos.CENTER, 20, lbl, btnYes, btnNo);
 

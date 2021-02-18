@@ -72,7 +72,7 @@ public class QuestionDTO {
 		txtAreaStr.append("\nMarks: " + question.getMarks());
 		txtAreaStr.append("\nTime required (mins): " + question.getTimeRequiredMins());
 		if (papersContainingQuestion.isEmpty()) {
-			txtAreaStr.append("\nThere are no papers which contain this question");
+			txtAreaStr.append("\nThere are no papers which contain this question.");
 		} else {
 			txtAreaStr.append("\nQuestion papers containing this question:");
 			for (QuestionPaper questionPaper : papersContainingQuestion) {

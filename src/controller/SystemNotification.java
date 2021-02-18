@@ -19,6 +19,9 @@ public class SystemNotification {
 
 	/**
 	 * Display a system notification.
+	 * 
+	 * @param notificationType - the type of system notification
+	 * @param notification     - the message to display
 	 */
 	public static void display(SystemNotificationType notificationType, String notification) {
 		stage = new Stage();

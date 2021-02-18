@@ -1,4 +1,4 @@
-package model.service.questionpapergeneration;
+package model.questionpapergeneration;
 
 import java.util.List;
 import java.util.stream.Collectors;

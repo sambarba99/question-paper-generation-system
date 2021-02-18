@@ -21,9 +21,9 @@ import model.dto.DifficultyLevelDTO;
 import model.dto.SubjectDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
+import model.questionpapergeneration.QuestionPaperGenerator;
 import model.service.QuestionPaperService;
 import model.service.SubjectService;
-import model.service.questionpapergeneration.QuestionPaperGenerator;
 
 import view.BoxMaker;
 import view.Constants;
