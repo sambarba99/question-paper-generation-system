@@ -5,7 +5,8 @@ import java.util.List;
 import view.enums.DifficultyLevel;
 
 /**
- * Represents a question paper.
+ * Represents a question paper (the GA uses the subject ID, difficulty level, marks, and time required to calculate
+ * paper fitness).
  *
  * @author Sam Barba
  */
@@ -30,7 +31,7 @@ public class QuestionPaper {
 	private int timeRequiredMins;
 
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-			List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+		List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.title = title;

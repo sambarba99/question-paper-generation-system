@@ -43,8 +43,6 @@ public class AllQuestions {
 
 	private static Stage stage;
 
-	private static boolean modified;
-
 	private static ListView<String> listViewQuestions = new ListView<>();
 
 	private static TextArea txtAreaQuestion = new TextArea();
@@ -73,13 +71,10 @@ public class AllQuestions {
 	private static TextField txtTimeRequired = new TextField();
 
 	/**
-	 * Display all questions, and return whether or not a modification has occurred upon closing the window.
-	 * 
-	 * @return whether or not the user has made a modification
+	 * Display all questions and capability to modify them.
 	 */
-	public static boolean display() {
+	public static void display() {
 		stage = new Stage();
-		modified = false;
 
 		Label lblSelectQuestion = new Label("Select a question to view:");
 		Label lblAddQueston = new Label("Add a question?");
@@ -131,7 +126,6 @@ public class AllQuestions {
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
-		return modified;
 	}
 
 	/**
@@ -143,7 +137,6 @@ public class AllQuestions {
 			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
 			resetAddQuestionFields();
 			txtAreaQuestion.setText("");
-			modified = true;
 			SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
 		}
 	}
@@ -160,7 +153,6 @@ public class AllQuestions {
 			listViewQuestions.getItems().clear();
 			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
 			txtAreaQuestion.setText("");
-			modified = true;
 			SystemNotification.display(SystemNotificationType.SUCCESS, "Question deleted.");
 		}
 	}

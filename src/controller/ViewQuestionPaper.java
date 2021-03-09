@@ -32,7 +32,7 @@ public class ViewQuestionPaper {
 	public static void display(QuestionPaper questionPaper) {
 		stage = new Stage();
 		TextArea txtAreaPaper = new TextArea();
-		Button btnExport = new Button("Export to .docx");
+		Button btnExport = new Button("Export to .txt");
 
 		txtAreaPaper.setEditable(false);
 		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(questionPaper));

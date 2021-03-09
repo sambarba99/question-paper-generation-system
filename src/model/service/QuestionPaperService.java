@@ -41,24 +41,6 @@ public class QuestionPaperService {
 	}
 
 	/**
-	 * Delete question paper(s) by a subject ID.
-	 * 
-	 * @param subjectId - the subject ID of the paper(s) to delete
-	 */
-	public void deleteQuestionPaperBySubjectId(int subjectId) {
-		questionPaperDao.deleteQuestionPaperBySubjectId(subjectId);
-	}
-
-	/**
-	 * Delete question paper(s) by a question ID.
-	 * 
-	 * @param questionId - the question ID in paper(s) to delete
-	 */
-	public void deleteQuestionPaperByQuestionId(int questionId) {
-		questionPaperDao.deleteQuestionPaperByQuestionId(questionId);
-	}
-
-	/**
 	 * Retrieve all question papers from question papers CSV file.
 	 */
 	public List<QuestionPaper> getAllQuestionPapers() {

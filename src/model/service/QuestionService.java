@@ -41,15 +41,6 @@ public class QuestionService {
 	}
 
 	/**
-	 * Delete question(s) a subject ID.
-	 * 
-	 * @param subjectId - the subject ID of the question(s) to delete
-	 */
-	public void deleteQuestionBySubjectId(int id) {
-		questionDao.deleteQuestionBySubjectId(id);
-	}
-
-	/**
 	 * Retrieve all questions from questions CSV file.
 	 * 
 	 * @return list of all questions

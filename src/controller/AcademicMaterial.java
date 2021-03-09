@@ -151,7 +151,6 @@ public class AcademicMaterial {
 					SubjectService.getInstance().deleteSubjectById(subjectId);
 					listViewSubjects.getItems().clear();
 					listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
-					refreshQuestionPapersListView();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject deleted.");
 				}
 				break;
@@ -176,9 +175,7 @@ public class AcademicMaterial {
 				if (SubjectService.getInstance().getAllSubjects().isEmpty()) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Add at least 1 subject first.");
 				} else {
-					if (AllQuestions.display()) { // if questions are modified
-						refreshQuestionPapersListView();
-					}
+					AllQuestions.display();
 				}
 				break;
 			case GENERATE_QUESTION_PAPER:

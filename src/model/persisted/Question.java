@@ -5,7 +5,7 @@ import java.util.List;
 import view.enums.DifficultyLevel;
 
 /**
- * Represents a question (the GA uses the subject ID, level, marks, and time required to calculate question fitness).
+ * Represents a question.
  * 
  * @author Sam Barba
  */
@@ -28,7 +28,7 @@ public class Question {
 	private int timeRequiredMins;
 
 	public Question(int id, int subjectId, String statement, List<String> answerOptions, int correctAnsNo,
-			DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;

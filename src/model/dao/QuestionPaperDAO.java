@@ -90,66 +90,6 @@ public class QuestionPaperDAO {
 	}
 
 	/**
-	 * Delete question paper(s) by a subject ID.
-	 * 
-	 * @param subjectId - the subject ID of the paper(s) to delete
-	 */
-	public void deleteQuestionPaperBySubjectId(int subjectId) {
-		if (getAllQuestionPapers().isEmpty()) {
-			return;
-		}
-
-		try {
-			List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-			File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // writing, not appending
-
-			for (QuestionPaper questionPaper : allQuestionPapers) {
-				if (questionPaper.getSubjectId() != subjectId) {
-					String[] data = getQuestionPaperStrData(questionPaper);
-					writeQuestionPaperDataToFile(data, csvWriter);
-				}
-			}
-			csvWriter.flush();
-			csvWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-	}
-
-	/**
-	 * Delete question paper(s) by a question ID.
-	 * 
-	 * @param questionId - the question ID in paper(s) to delete
-	 */
-	public void deleteQuestionPaperByQuestionId(int questionId) {
-		if (getAllQuestionPapers().isEmpty()) {
-			return;
-		}
-
-		try {
-			List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-			File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // writing, not appending
-
-			for (QuestionPaper questionPaper : allQuestionPapers) {
-				if (!questionPaper.getQuestionIds().contains(questionId)) {
-					String[] data = getQuestionPaperStrData(questionPaper);
-					writeQuestionPaperDataToFile(data, csvWriter);
-				}
-			}
-			csvWriter.flush();
-			csvWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-	}
-
-	/**
 	 * Retrieve all question papers from CSV file.
 	 * 
 	 * @return list of all question papers

@@ -50,7 +50,7 @@ public class SubjectDAO {
 	}
 
 	/**
-	 * Delete a subject by its unique ID, then any questions and papers of this subject.
+	 * Delete a subject by its unique ID (but not any questions and papers of this subject).
 	 * 
 	 * @param id - the ID of the subject to delete
 	 */
@@ -68,9 +68,6 @@ public class SubjectDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
-
-			QuestionDAO.getInstance().deleteQuestionBySubjectId(id);
-			QuestionPaperDAO.getInstance().deleteQuestionPaperBySubjectId(id);
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,

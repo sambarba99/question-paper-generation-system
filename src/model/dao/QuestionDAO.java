@@ -83,38 +83,6 @@ public class QuestionDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
-
-			QuestionPaperDAO.getInstance().deleteQuestionPaperByQuestionId(id);
-		} catch (IOException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-	}
-
-	/**
-	 * Delete question(s) a subject ID.
-	 * 
-	 * @param subjectId - the subject ID of the question(s) to delete
-	 */
-	public void deleteQuestionBySubjectId(int subjectId) {
-		if (getAllQuestions().isEmpty()) {
-			return;
-		}
-
-		try {
-			List<Question> allQuestions = getAllQuestions();
-			File csvFile = new File(Constants.QUESTIONS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false);
-
-			for (Question question : allQuestions) {
-				if (question.getSubjectId() != subjectId) {
-					String[] data = getQuestionStrData(question);
-					writeQuestionDataToFile(data, csvWriter);
-				}
-			}
-			csvWriter.flush();
-			csvWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
