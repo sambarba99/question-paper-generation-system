@@ -1,20 +1,38 @@
 package model.questionpapergeneration;
 
-import java.util.List;
-
-import model.persisted.QuestionPaper;
-
-import view.enums.DifficultyLevel;
+import model.persisted.Question;
 
 /**
- * Represents an individual question paper.
+ * Represents an individual question paper. The gene of an individual is a list of questions (i.e. each question is a
+ * chromosome).
  *
  * @author Sam Barba
  */
-public class Individual extends QuestionPaper {
+public class Individual {
 
-	public Individual(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
-		super(id, subjectId, title, courseTitle, courseCode, questionIds, difficultyLevel, marks, timeRequiredMins);
+	private Question[] genes;
+
+	private double fitness;
+
+	public Individual(int numGenes) {
+		this.genes = new Question[numGenes];
+		this.fitness = 0;
+	}
+
+	public Question[] getGenes() {
+		return genes;
+	}
+
+	public void copyGenes(Question[] genes) {
+		for (int i = 0; i < genes.length; i++) {
+			this.genes[i] = genes[i];
+		}
+	}
+
+	public double calculateFitness() {
+		/*
+		 * magic
+		 */
+		return fitness;
 	}
 }

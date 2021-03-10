@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -78,7 +79,14 @@ public class GenerateQuestionPaper {
 		Button btnGenerate = new Button("Generate");
 
 		btnGenerate.setOnAction(action -> {
-			QuestionPaper generatedPaper = generatePaperWithParams();
+			QuestionPaper generatedPaper = null;
+			try {
+				generatedPaper = generatePaperWithParams();
+			} catch (IOException e) {
+				e.printStackTrace();
+				SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName());
+			}
 			if (generatedPaper != null) {
 				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
 				generated = true;
@@ -118,7 +126,7 @@ public class GenerateQuestionPaper {
 	 * 
 	 * @return whether or not paper has been generated successfully
 	 */
-	private static QuestionPaper generatePaperWithParams() {
+	private static QuestionPaper generatePaperWithParams() throws IOException {
 		String title = txtTitle.getText().trim();
 		String courseTitle = txtCourseTitle.getText().trim();
 		String courseCode = txtCourseCode.getText().trim();
