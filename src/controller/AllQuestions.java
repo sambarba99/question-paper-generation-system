@@ -62,7 +62,7 @@ public class AllQuestions {
 
 	private static TextField txtOpt4 = new TextField();
 
-	private static ChoiceBox cbCorrectNum = new ChoiceBox();
+	private static ChoiceBox cbCorrectAns = new ChoiceBox();
 
 	private static ChoiceBox cbDifficulty = new ChoiceBox();
 
@@ -80,11 +80,11 @@ public class AllQuestions {
 		Label lblAddQueston = new Label("Add a question?");
 		Label lblSelectSubject = new Label("Select the subject:");
 		Label lblEnterStatement = new Label("Enter question statement:");
-		Label lblEnterOpt1 = new Label("Enter answer option 1:");
-		Label lblEnterOpt2 = new Label("Enter answer option 2:");
-		Label lblEnterOpt3 = new Label("Enter answer option 3:");
-		Label lblEnterOpt4 = new Label("Enter answer option 4:");
-		Label lblSelectCorrect = new Label("Select correct answer no.:");
+		Label lblEnterOpt1 = new Label("Enter answer option A:");
+		Label lblEnterOpt2 = new Label("Enter answer option B:");
+		Label lblEnterOpt3 = new Label("Enter answer option C:");
+		Label lblEnterOpt4 = new Label("Enter answer option D:");
+		Label lblSelectCorrect = new Label("Select correct answer:");
 		Label lblSelectDIfficulty = new Label("Select difficulty level:");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
@@ -109,7 +109,7 @@ public class AllQuestions {
 			listViewQuestions, txtAreaQuestion);
 		VBox vboxQuestionValues = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 7, lblAddQueston,
 			lblSelectSubject, cbSubject, lblEnterStatement, txtStatement, lblEnterOpt1, txtOpt1, lblEnterOpt2, txtOpt2,
-			lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4, lblSelectCorrect, cbCorrectNum, lblSelectDIfficulty,
+			lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4, lblSelectCorrect, cbCorrectAns, lblSelectDIfficulty,
 			cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion);
 
 		setup();
@@ -199,11 +199,11 @@ public class AllQuestions {
 		}
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
 		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
-		int correctAnsNo = Integer.parseInt(cbCorrectNum.getSelectionModel().getSelectedItem().toString());
+		String correctAnsOption = cbCorrectAns.getSelectionModel().getSelectedItem().toString();
 		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
-		Question question = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4), correctAnsNo,
-			difficultyLevel, marks, timeReq);
+		Question question = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4),
+			correctAnsOption, difficultyLevel, marks, timeReq);
 		QuestionService.getInstance().addQuestion(question);
 
 		return true;
@@ -228,9 +228,9 @@ public class AllQuestions {
 		cbSubject.getSelectionModel().select(0);
 		cbSubject.setPrefWidth(200);
 
-		cbCorrectNum.getItems().clear();
-		cbCorrectNum.getItems().addAll("1", "2", "3", "4");
-		cbCorrectNum.getSelectionModel().select(0);
+		cbCorrectAns.getItems().clear();
+		cbCorrectAns.getItems().addAll("A", "B", "C", "D");
+		cbCorrectAns.getSelectionModel().select(0);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		cbDifficulty.getItems().clear();
@@ -250,7 +250,7 @@ public class AllQuestions {
 		txtOpt2.setText("");
 		txtOpt3.setText("");
 		txtOpt4.setText("");
-		cbCorrectNum.getSelectionModel().select(0);
+		cbCorrectAns.getSelectionModel().select(0);
 		cbDifficulty.getSelectionModel().select(0);
 		txtMarks.setText("");
 		txtTimeRequired.setText("");

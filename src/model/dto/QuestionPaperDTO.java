@@ -110,11 +110,11 @@ public class QuestionPaperDTO {
 		for (int i = 0; i < questionIds.size(); i++) {
 			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i));
 			txtAreaStr.append(Constants.NEWLINE + "Question " + (i + 1) + ": " + question.getStatement());
-			txtAreaStr.append(Constants.NEWLINE + "Answer option 1: " + question.getAnswerOptions().get(0));
-			txtAreaStr.append(Constants.NEWLINE + "Answer option 2: " + question.getAnswerOptions().get(1));
-			txtAreaStr.append(Constants.NEWLINE + "Answer option 3: " + question.getAnswerOptions().get(2));
+			txtAreaStr.append(Constants.NEWLINE + "Answer option A: " + question.getAnswerOptions().get(0));
+			txtAreaStr.append(Constants.NEWLINE + "Answer option B: " + question.getAnswerOptions().get(1));
+			txtAreaStr.append(Constants.NEWLINE + "Answer option C: " + question.getAnswerOptions().get(2));
 			txtAreaStr.append(
-				Constants.NEWLINE + "Answer option 4: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
+				Constants.NEWLINE + "Answer option D: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'

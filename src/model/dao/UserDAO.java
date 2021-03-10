@@ -47,7 +47,7 @@ public class UserDAO {
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
 			csvWriter.append(username + Constants.COMMA);
 			csvWriter.append(passHash + Constants.COMMA);
-			csvWriter.append(user.getType().getIntVal() + Constants.NEWLINE);
+			csvWriter.append(user.getType().toString() + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (IOException | NoSuchAlgorithmException e) {
@@ -84,7 +84,7 @@ public class UserDAO {
 				if (!user.getUsername().equals(username)) {
 					csvWriter.write(user.getUsername() + Constants.COMMA);
 					csvWriter.write(user.getPassword() + Constants.COMMA);
-					csvWriter.write(user.getType().getIntVal() + Constants.NEWLINE);
+					csvWriter.write(user.getType().toString() + Constants.NEWLINE);
 				}
 			}
 			csvWriter.flush();
@@ -113,7 +113,7 @@ public class UserDAO {
 				String[] lineSplit = line.split(Constants.COMMA);
 				String username = lineSplit[0];
 				String passHash = lineSplit[1];
-				UserType userType = UserType.getFromInt(Integer.parseInt(lineSplit[2]));
+				UserType userType = UserType.getFromStr(lineSplit[2]);
 				User user = new User(username, passHash, userType);
 				users.add(user);
 			}

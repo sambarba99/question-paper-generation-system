@@ -15,40 +15,24 @@ import controller.SystemNotification;
  */
 public enum UserType {
 
-	ADMIN("ADMIN", 0),
-	TUTOR("TUTOR", 1);
-
-	private String strVal;
-
-	private int intVal;
-
-	UserType(String strVal, int intVal) {
-		this.strVal = strVal;
-		this.intVal = intVal;
-	}
-
-	public String getStrVal() {
-		return strVal;
-	}
-
-	public int getIntVal() {
-		return intVal;
-	}
+	ADMIN,
+	TUTOR;
 
 	/**
-	 * Retrieve UserType given an int value. Throw an IllegalArgumentException if the int value doesn't exist.
+	 * Retrieve UserType given a String value. Throw an IllegalArgumentException if the value doesn't exist.
 	 * 
-	 * @param intVal - the int value of the UserType
-	 * @return userType - the UserType with the specified int value
+	 * @param strVal - the String value of the UserType
+	 * @return userType - the UserType with the specified String value
 	 */
-	public static UserType getFromInt(int intVal) {
+	public static UserType getFromStr(String strVal) {
 		List<UserType> allUserTypes = new ArrayList<>(EnumSet.allOf(UserType.class));
-		UserType userType = allUserTypes.stream().filter(uType -> uType.getIntVal() == intVal).findFirst().orElse(null);
+		UserType userType = allUserTypes.stream().filter(uType -> uType.toString().equals(strVal)).findFirst()
+			.orElse(null);
 		if (userType != null) {
 			return userType;
 		}
 		SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Invalid User Type int value passed: " + intVal);
-		throw new IllegalArgumentException("Invalid User Type int value passed: " + intVal);
+			Constants.UNEXPECTED_ERROR + "Invalid User Type String value passed: " + strVal);
+		throw new IllegalArgumentException("Invalid User Type int value passed: " + strVal);
 	}
 }

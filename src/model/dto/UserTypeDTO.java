@@ -25,7 +25,7 @@ public class UserTypeDTO {
 	 */
 	public List<String> getUserTypeChoiceBoxItems() {
 		List<UserType> allUserTypes = new ArrayList<>(EnumSet.allOf(UserType.class));
-		List<String> choiceBoxItems = allUserTypes.stream().map(UserType::getStrVal).collect(Collectors.toList());
+		List<String> choiceBoxItems = allUserTypes.stream().map(UserType::toString).collect(Collectors.toList());
 		return choiceBoxItems;
 	}
 
@@ -37,8 +37,8 @@ public class UserTypeDTO {
 	 * @return enum of selected user type
 	 */
 	public UserType getSelectedUserType(ChoiceBox cbUserType) {
-		int userTypeIntSelected = cbUserType.getSelectionModel().getSelectedIndex();
-		return UserType.getFromInt(userTypeIntSelected);
+		String userTypeSelected = cbUserType.getSelectionModel().getSelectedItem().toString();
+		return UserType.getFromStr(userTypeSelected);
 	}
 
 	public synchronized static UserTypeDTO getInstance() {

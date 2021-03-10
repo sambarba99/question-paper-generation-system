@@ -19,7 +19,7 @@ public class Question {
 
 	private List<String> answerOptions;
 
-	private int correctAnswerOptionNum;
+	private String correctAnswerOption;
 
 	private DifficultyLevel difficultyLevel;
 
@@ -27,13 +27,13 @@ public class Question {
 
 	private int timeRequiredMins;
 
-	public Question(int id, int subjectId, String statement, List<String> answerOptions, int correctAnsNo,
+	public Question(int id, int subjectId, String statement, List<String> answerOptions, String correctAnswerOption,
 		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
 		this.answerOptions = answerOptions;
-		this.correctAnswerOptionNum = correctAnsNo;
+		this.correctAnswerOption = correctAnswerOption;
 		this.difficultyLevel = difficultyLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
@@ -71,12 +71,12 @@ public class Question {
 		this.answerOptions = answerOptions;
 	}
 
-	public int getCorrectAnswerOptionNum() {
-		return correctAnswerOptionNum;
+	public String getCorrectAnswerOption() {
+		return correctAnswerOption;
 	}
 
-	public void setCorrectAnswerOptionNum(int correctAnswerOptionNum) {
-		this.correctAnswerOptionNum = correctAnswerOptionNum;
+	public void setCorrectAnswerOption(String correctAnswerOption) {
+		this.correctAnswerOption = correctAnswerOption;
 	}
 
 	public DifficultyLevel getDifficultyLevel() {

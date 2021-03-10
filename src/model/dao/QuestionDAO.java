@@ -50,7 +50,7 @@ public class QuestionDAO {
 			csvWriter.append(data[4] + Constants.NEWLINE);
 			csvWriter.append(data[5] + Constants.NEWLINE);
 			csvWriter.append(data[6] + Constants.NEWLINE);
-			// Correct answer num, difficulty level, marks, time required (mins)
+			// Correct answer (A/B/C/D), difficulty level, marks, time required (mins)
 			csvWriter.append(data[7] + Constants.COMMA);
 			csvWriter.append(data[8] + Constants.COMMA);
 			csvWriter.append(data[9] + Constants.COMMA);
@@ -119,12 +119,12 @@ public class QuestionDAO {
 						int subjectId = Integer.parseInt(line1split[1]);
 						String statement = line1split[2];
 						List<String> answerOptions = Arrays.asList(line2, line3, line4, line5);
-						int correctAnsNo = Integer.parseInt(line6split[0]);
+						String correctAns = line6split[0];
 						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(line6split[1]));
 						int marks = Integer.parseInt(line6split[2]);
 						int timeRequireMins = Integer.parseInt(line6split[3]);
 
-						Question question = new Question(id, subjectId, statement, answerOptions, correctAnsNo,
+						Question question = new Question(id, subjectId, statement, answerOptions, correctAns,
 							difficultyLevel, marks, timeRequireMins);
 						questions.add(question);
 					} catch (Exception e) { // reached last line
@@ -167,7 +167,7 @@ public class QuestionDAO {
 		data[4] = question.getAnswerOptions().get(1);
 		data[5] = question.getAnswerOptions().get(2);
 		data[6] = question.getAnswerOptions().get(3);
-		data[7] = Integer.toString(question.getCorrectAnswerOptionNum());
+		data[7] = question.getCorrectAnswerOption();
 		data[8] = Integer.toString(question.getDifficultyLevel().getIntVal());
 		data[9] = Integer.toString(question.getMarks());
 		data[10] = Integer.toString(question.getTimeRequiredMins());
@@ -190,7 +190,7 @@ public class QuestionDAO {
 		csvWriter.write(data[4] + Constants.NEWLINE);
 		csvWriter.write(data[5] + Constants.NEWLINE);
 		csvWriter.write(data[6] + Constants.NEWLINE);
-		// Correct answer num, difficulty level, marks, time required (mins)
+		// Correct answer (A/B/C/D), difficulty level, marks, time required (mins)
 		csvWriter.write(data[7] + Constants.COMMA);
 		csvWriter.write(data[8] + Constants.COMMA);
 		csvWriter.write(data[9] + Constants.COMMA);

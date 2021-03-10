@@ -87,8 +87,8 @@ public class Login extends Application {
 						break;
 					default:
 						SystemNotification.display(SystemNotificationType.ERROR,
-							Constants.UNEXPECTED_ERROR + "Invalid User Type passed: " + userType.getStrVal());
-						throw new IllegalArgumentException("Invalid User Type passed: " + userType.getStrVal());
+							Constants.UNEXPECTED_ERROR + "Invalid User Type passed: " + userType.toString());
+						throw new IllegalArgumentException("Invalid User Type passed: " + userType.toString());
 				}
 			}
 		} catch (Exception e) {

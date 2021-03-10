@@ -23,7 +23,7 @@ public class UserDTO {
 	public List<String> getUserListViewItems() {
 		List<User> allUsers = UserService.getInstance().getAllUsers();
 		List<String> listViewItems = allUsers.stream()
-			.map(user -> (user.getUsername() + " (" + user.getType().getStrVal() + ")")).collect(Collectors.toList());
+			.map(user -> (user.getUsername() + " (" + user.getType().toString() + ")")).collect(Collectors.toList());
 		return listViewItems;
 	}
 

@@ -47,15 +47,13 @@ public class Constants {
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
 
-	public static final int ANSWERS_PER_QUESTION = 4;
-
 	/**
 	 * The caller references constants using Constants.USER_FILE_PATH etc. Thus, the caller should be prevented from
 	 * constructing objects of this class.
 	 */
 	public Constants() {
 		SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Constants class constructor shouldn't be called!");
+			Constants.UNEXPECTED_ERROR + "Constants class constructor shouldn't be called!");
 		throw new AssertionError();
 	}
 }

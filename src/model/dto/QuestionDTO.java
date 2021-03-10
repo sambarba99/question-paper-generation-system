@@ -62,7 +62,7 @@ public class QuestionDTO {
 		Question question = QuestionService.getInstance().getQuestionById(id);
 		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
 		List<String> answerOptions = question.getAnswerOptions();
-		int correctAnswerOption = question.getCorrectAnswerOptionNum();
+		String correctAnswerOption = question.getCorrectAnswerOption();
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
@@ -80,9 +80,10 @@ public class QuestionDTO {
 			}
 		}
 		txtAreaStr.append("\n\nStatement: " + question.getStatement());
-		for (int i = 0; i < Constants.ANSWERS_PER_QUESTION; i++) {
-			txtAreaStr.append("\nAnswer option " + (i + 1) + ": " + answerOptions.get(i));
-		}
+		txtAreaStr.append("\nAnswer option A: " + answerOptions.get(0));
+		txtAreaStr.append("\nAnswer option B: " + answerOptions.get(1));
+		txtAreaStr.append("\nAnswer option C: " + answerOptions.get(2));
+		txtAreaStr.append("\nAnswer option D: " + answerOptions.get(3));
 		txtAreaStr.append("\nCorrect answer option: " + correctAnswerOption);
 
 		return txtAreaStr.toString();
