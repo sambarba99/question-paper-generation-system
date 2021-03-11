@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -16,9 +15,11 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
  * Allows admin users to modify/delete existing users.
@@ -39,42 +40,41 @@ public class AdminControl {
 	public static void display(User currentUser) {
 		stage = new Stage();
 
-		Label lblViewModifyUsers = new Label("Modify users");
-		Button btnAddUser = new Button("Add user");
-		Button btnDelUser = new Button("Delete user");
-		Button btnViewAcademicMaterial = new Button("View Academic Material");
-		Button btnUpdatePassword = new Button("Update password");
+		Label lblActions = new Label("Actions");
+		Label lblUsers = new Label("System Users");
 
-		btnAddUser.setOnAction(action -> {
-			addUser();
-		});
-		btnDelUser.setOnAction(action -> {
-			deleteUser(currentUser);
-		});
-		btnViewAcademicMaterial.setOnAction(action -> {
-			AcademicMaterial.display(currentUser);
-		});
-		btnUpdatePassword.setOnAction(action -> {
-			if (UpdatePassword.updatePassword(currentUser)) {
-				SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
-			}
-		});
+		Button btnAddUser = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT, UserAction.ADD_NEW_USER,
+			action -> {
+				addUser();
+			});
+		Button btnDelUser = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT, UserAction.DELETE_USER,
+			action -> {
+				deleteUser(currentUser);
+			});
+		Button btnViewAcademicMaterial = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT,
+			UserAction.GO_ACADEMC_MATERIAL, action -> {
+				AcademicMaterialManagement.display(currentUser);
+			});
+		Button btnUpdatePassword = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT,
+			UserAction.UPDATE_PASSWORD, action -> {
+				if (UpdatePassword.updatePassword(currentUser)) {
+					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
+				}
+			});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
-		HBox hboxUserCtrlBtns = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnAddUser, btnDelUser);
-		VBox vboxUsersView = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblViewModifyUsers, listViewUsers,
-			hboxUserCtrlBtns);
-		VBox vboxMiscOptions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 5, btnViewAcademicMaterial,
-			btnUpdatePassword);
+		VBox vboxUsersView = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblUsers, listViewUsers);
+		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, btnAddUser, btnDelUser,
+			btnViewAcademicMaterial, btnUpdatePassword);
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().addAll(vboxUsersView, vboxMiscOptions);
+		pane.getChildren().addAll(vboxUsersView, vboxActions);
 
 		listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
 		listViewUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-		Scene scene = new Scene(pane, 500, 550);
+		Scene scene = new Scene(pane, 550, 500);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Admin Control");

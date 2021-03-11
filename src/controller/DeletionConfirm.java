@@ -10,7 +10,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import view.BoxMaker;
+import view.ButtonMaker;
+import view.Constants;
 import view.enums.BoxType;
+import view.enums.UserAction;
 
 /**
  * Requests confirmation from the user to delete academic material e.g. a subject, or to delete another user (admin
@@ -35,18 +38,16 @@ public class DeletionConfirm {
 		deleted = false;
 
 		Label lbl = new Label("Are you sure you wish to delete this " + deletingItem + "?");
-		Button btnYes = new Button("Yes");
-		Button btnNo = new Button("No");
 
-		btnYes.setOnAction(action -> {
-			deleted = true;
-			stage.close();
-		});
-		btnNo.setOnAction(action -> {
-			stage.close();
-		});
-		btnYes.setMinWidth(75);
-		btnNo.setMinWidth(75);
+		Button btnYes = ButtonMaker.getInstance().makeButton(70, Constants.BTN_HEIGHT, UserAction.DELETE_CONFIRM_YES,
+			action -> {
+				deleted = true;
+				stage.close();
+			});
+		Button btnNo = ButtonMaker.getInstance().makeButton(70, Constants.BTN_HEIGHT, UserAction.DELETE_CONFIRM_NO,
+			action -> {
+				stage.close();
+			});
 
 		VBox vboxMain = (VBox) BoxMaker.getInstance().makeBox(BoxType.VBOX, Pos.CENTER, 20, lbl, btnYes, btnNo);
 

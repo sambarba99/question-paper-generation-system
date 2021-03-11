@@ -27,10 +27,12 @@ import model.service.QuestionPaperService;
 import model.service.SubjectService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
  * Allows the user to generate a question paper with specified parameters such as subject and difficulty.
@@ -76,25 +78,23 @@ public class GenerateQuestionPaper {
 		Label lblSelectDifficulty = new Label("Select difficulty level:");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
-		Button btnGenerate = new Button("Generate");
 
-		btnGenerate.setOnAction(action -> {
-			QuestionPaper generatedPaper = null;
-			try {
-				generatedPaper = generatePaperWithParams();
-			} catch (IOException e) {
-				e.printStackTrace();
-				SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + e.getClass().getName());
-			}
-			if (generatedPaper != null) {
-				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
-				generated = true;
-				stage.close();
-				SystemNotification.display(SystemNotificationType.SUCCESS,
-					"Paper generated! Return to Academic Material to view/export.");
-			}
-		});
+		Button btnGenerate = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.GENERATE,
+			action -> {
+				QuestionPaper generatedPaper = null;
+				try {
+					generatedPaper = generatePaperWithParams();
+				} catch (IOException e) {
+					e.printStackTrace();
+					SystemNotification.display(SystemNotificationType.ERROR,
+						Constants.UNEXPECTED_ERROR + e.getClass().getName());
+				}
+				if (generatedPaper != null) {
+					QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
+					generated = true;
+					stage.close();
+				}
+			});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
 		VBox vbox1 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectSubject, cbSubject, lblEnterTitle,
@@ -171,24 +171,26 @@ public class GenerateQuestionPaper {
 	 * Set up choice boxes.
 	 */
 	private static void setup() {
-		txtTitle.setText("");
-		txtCourseTitle.setText("");
-		txtCourseCode.setText("");
-		txtMarks.setText("");
-		txtTimeRequired.setText("");
+		txtTitle.setText(Constants.EMPTY);
+		txtCourseTitle.setText(Constants.EMPTY);
+		txtCourseCode.setText(Constants.EMPTY);
+		txtMarks.setText(Constants.EMPTY);
+		txtTimeRequired.setText(Constants.EMPTY);
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
 		cbSubject.getItems().addAll(allSubjects.stream()
 			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
-		cbSubject.setPrefWidth(200);
+		cbSubject.setMinWidth(200);
+		cbSubject.setMaxWidth(200);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		cbDifficulty.getItems().clear();
 		cbDifficulty.getItems()
 			.addAll(allDifficulties.stream().map(DifficultyLevel::getStrVal).collect(Collectors.toList()));
 		cbDifficulty.getSelectionModel().select(0);
-		cbDifficulty.setPrefWidth(200);
+		cbDifficulty.setMinWidth(200);
+		cbDifficulty.setMaxWidth(200);
 	}
 }

@@ -11,6 +11,7 @@ import model.dao.UserDAO;
 import model.persisted.User;
 
 import view.Constants;
+import view.SecurityUtils;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
 
@@ -85,7 +86,7 @@ public class UserService {
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		for (User user : userDao.getAllUsers()) {
 			if (user.getUsername().equals(checkUser.getUsername())
-				&& user.getPassword().equals(userDao.sha512(checkUser.getPassword()))) {
+				&& user.getPassword().equals(SecurityUtils.getInstance().sha512(checkUser.getPassword()))) {
 				return user;
 			}
 		}
@@ -196,7 +197,7 @@ public class UserService {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter current password.");
 			return false;
 		}
-		if (!userDao.sha512(currentPass).equals(currentUser.getPassword())) {
+		if (!SecurityUtils.getInstance().sha512(currentPass).equals(currentUser.getPassword())) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Current password incorrect.");
 			return false;
 		}

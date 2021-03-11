@@ -75,11 +75,9 @@ public class GAUtils {
 				int numTimesToAdd;
 
 				for (int i = 0; i < size; i++) {
-					if (initialSelection) {
-						numTimesToAdd = (int) Math.abs(Math.floor(population[i].calculateFitness() * 100));
-					} else {
-						numTimesToAdd = (int) Math.abs(Math.floor(offspring[i].calculateFitness() * 100));
-					}
+					numTimesToAdd = initialSelection
+						? (int) Math.abs(Math.floor(population[i].calculateFitness() * 100))
+						: (int) Math.abs(Math.floor(offspring[i].calculateFitness() * 100));
 
 					// the fitter the individual, the more it gets added, so the higher the chance of getting picked
 					for (int n = 0; n < numTimesToAdd; n++) {

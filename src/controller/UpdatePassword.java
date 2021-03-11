@@ -18,9 +18,11 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
  * Allows the user to update their password.
@@ -49,14 +51,13 @@ public class UpdatePassword {
 		PasswordField passFieldNew = new PasswordField();
 		Label lblRepeatNewPass = new Label("Repeat new password:");
 		PasswordField passFieldRepeat = new PasswordField();
-		Button btnUpdate = new Button("Update");
-
-		btnUpdate.setOnAction(action -> {
-			String currentPass = passFieldCurrent.getText();
-			String newPass = passFieldNew.getText();
-			String repeatPass = passFieldRepeat.getText();
-			updatePassword(currentPass, newPass, repeatPass, currentUser);
-		});
+		Button btnUpdate = ButtonMaker.getInstance().makeButton(150, Constants.BTN_HEIGHT, UserAction.UPDATE_PASSWORD,
+			action -> {
+				String currentPass = passFieldCurrent.getText();
+				String newPass = passFieldNew.getText();
+				String repeatPass = passFieldRepeat.getText();
+				updatePassword(currentPass, newPass, repeatPass, currentUser);
+			});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
 		VBox vboxLbls = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterCurrentPass,

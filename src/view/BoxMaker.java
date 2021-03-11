@@ -21,7 +21,7 @@ public class BoxMaker {
 	private static BoxMaker instance;
 
 	/**
-	 * Make either a HBox or VBox with user-defined parameters
+	 * Make either a HBox or VBox with defined parameters
 	 * 
 	 * @param boxType   - the type of Pane, either HBox or VBox
 	 * @param alignment - the alignment of the box

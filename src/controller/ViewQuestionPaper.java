@@ -14,8 +14,11 @@ import model.dto.QuestionPaperDTO;
 import model.persisted.QuestionPaper;
 
 import view.BoxMaker;
+import view.ButtonMaker;
+import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
  * Allows the user to view a question paper.
@@ -31,17 +34,18 @@ public class ViewQuestionPaper {
 	 */
 	public static void display(QuestionPaper questionPaper) {
 		stage = new Stage();
-		TextArea txtAreaPaper = new TextArea();
-		Button btnExport = new Button("Export to .txt");
 
+		TextArea txtAreaPaper = new TextArea();
 		txtAreaPaper.setEditable(false);
 		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
-		txtAreaPaper.setPrefSize(400, 600);
+		txtAreaPaper.setMinSize(400, 600);
+		txtAreaPaper.setMaxSize(400, 600);
 
-		btnExport.setOnAction(action -> {
-			// use Constants.EXPORTED_PAPERS_FILE_PATH;
-			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
-		});
+		Button btnExport = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.EXPORT,
+			action -> {
+				// use Constants.EXPORTED_PAPERS_FILE_PATH;
+				SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
+			});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
 		HBox hboxBtns = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnExport);

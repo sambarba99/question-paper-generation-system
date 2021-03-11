@@ -15,9 +15,11 @@ import model.persisted.Subject;
 import model.service.SubjectService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
  * Allows user to add a new subject.
@@ -41,9 +43,7 @@ public class AddSubject {
 
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
-		Button btnAdd = new Button("Add subject");
-
-		btnAdd.setOnAction(action -> {
+		Button btnAdd = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD, action -> {
 			String subjectTitle = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
 			addSubject(subjectTitle);
 		});

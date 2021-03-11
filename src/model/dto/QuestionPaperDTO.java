@@ -67,7 +67,7 @@ public class QuestionPaperDTO {
 		String questionPaper = listViewQuestionPapers.getSelectionModel().getSelectedItem();
 		String[] questionPaperSplit = questionPaper.split(Constants.SPACE);
 		String questionPaperIdStr = questionPaperSplit[questionPaperSplit.length - 1];
-		questionPaperIdStr = questionPaperIdStr.replace(")", "");
+		questionPaperIdStr = questionPaperIdStr.replace(")", Constants.EMPTY);
 		return Integer.parseInt(questionPaperIdStr);
 	}
 

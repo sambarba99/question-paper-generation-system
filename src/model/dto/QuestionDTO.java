@@ -48,7 +48,7 @@ public class QuestionDTO {
 		}
 		String[] qSplit = question.split(Constants.SPACE);
 		String questionIdStr = qSplit[qSplit.length - 1];
-		questionIdStr = questionIdStr.replace(")", "");
+		questionIdStr = questionIdStr.replace(")", Constants.EMPTY);
 		return Integer.parseInt(questionIdStr);
 	}
 

@@ -21,22 +21,6 @@ import view.enums.DifficultyLevel;
  */
 public class QuestionPaperGenerator {
 
-	private static final SelectionType selectionType = SelectionType.ROULETTE_WHEEL;
-
-	private static final int NUM_GENES = 50;
-
-	private static final int POP_SIZE = 100;
-
-	private static final double MUTATION_RATE = 0.02;
-
-	private static final double CROSSOVER_RATE = 0.8;
-
-	private static final int CROSSOVER_POINTS = 1;
-
-	private static final int GENERATIONS = 100;
-
-	private static final int TOURNAMENT_SIZE = 4;
-
 	private static QuestionPaperGenerator instance;
 
 	public QuestionPaper generatePaper(int subjectId, String title, String courseTitle, String courseCode,
@@ -49,24 +33,24 @@ public class QuestionPaperGenerator {
 
 		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
 
-		Individual[] population = gaUtils.initialiseIndividualArray(POP_SIZE, NUM_GENES);
-		Individual[] offspring = gaUtils.initialiseIndividualArray(POP_SIZE, NUM_GENES);
+		Individual[] population = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, Constants.NUM_GENES);
+		Individual[] offspring = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, Constants.NUM_GENES);
 		gaUtils.randomisePopulationGenes(population, allQuestions);
 
-		for (int g = 1; g <= GENERATIONS; g++) {
+		for (int g = 1; g <= Constants.GENERATIONS; g++) {
 			if (g % 10 == 0) {
 				System.out.println("Generation: " + g);
 			}
 
 			// initial selection = true
-			gaUtils.selection(population, offspring, selectionType, TOURNAMENT_SIZE, true);
+			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, true);
 
-			gaUtils.crossover(population, offspring, CROSSOVER_RATE, CROSSOVER_POINTS);
+			gaUtils.crossover(population, offspring, Constants.CROSSOVER_RATE, Constants.CROSSOVER_POINTS);
 
-			gaUtils.mutation(offspring, MUTATION_RATE);
+			gaUtils.mutation(offspring, Constants.MUTATION_RATE);
 
 			// initial selection = false
-			gaUtils.selection(population, offspring, selectionType, TOURNAMENT_SIZE, false);
+			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, false);
 
 			List<Double> averageHiLo = gaUtils.calculateTableFitnesses(population);
 			csvWriter.append(g + ",");

@@ -46,7 +46,7 @@ public class SubjectDTO {
 		String subject = cbSubject.getSelectionModel().getSelectedItem().toString();
 		String[] sSplit = subject.split(Constants.SPACE);
 		String subjectIdStr = sSplit[sSplit.length - 1];
-		subjectIdStr = subjectIdStr.replace(")", "");
+		subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
 		return Integer.parseInt(subjectIdStr);
 	}
 
@@ -62,7 +62,7 @@ public class SubjectDTO {
 		for (String s : subjects) {
 			String[] subjectStrSplit = s.split(Constants.SPACE);
 			String subjectIdStr = subjectStrSplit[subjectStrSplit.length - 1];
-			subjectIdStr = subjectIdStr.replace(")", "");
+			subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
 			subjectIds.add(Integer.parseInt(subjectIdStr));
 		}
 		return subjectIds;

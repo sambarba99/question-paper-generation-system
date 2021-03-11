@@ -23,6 +23,8 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
+import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -32,9 +34,7 @@ import view.enums.UserAction;
  *
  * @author Sam Barba
  */
-public class AcademicMaterial {
-
-	private static final double BTN_WIDTH = 238;
+public class AcademicMaterialManagement {
 
 	private static Stage stage;
 
@@ -54,52 +54,45 @@ public class AcademicMaterial {
 	public static void display(User currentUser) {
 		stage = new Stage();
 
-		Label lblHeader = new Label("View & Modify Academic Material");
+		Label lblHeader = new Label("Academic Material Management");
 		Label lblSubjects = new Label("Subjects");
 		Label lblQuestionPapers = new Label("Question Papers");
 		Label lblActions = new Label("Actions");
-		Button btnAddSubject = new Button(UserAction.ADD_SUBJECT.getStrVal());
-		Button btnDelSubject = new Button(UserAction.DELETE_SUBJECT.getStrVal());
-		Button btnAllQuestions = new Button(UserAction.VIEW_MODIFY_ALL_QUESTIONS.getStrVal());
-		Button btnGeneratePaper = new Button(UserAction.GENERATE_QUESTION_PAPER.getStrVal());
-		Button btnViewPaper = new Button(UserAction.VIEW_QUESTION_PAPER.getStrVal());
-		Button btnDelPaper = new Button(UserAction.DELETE_QUESTION_PAPER.getStrVal());
-		Button btnToggleFilter = new Button(UserAction.TOGGLE_FILTER_PAPERS.getStrVal());
-		Button btnUpdatePassword = new Button(UserAction.UPDATE_PASSWORD.getStrVal());
+
+		Button btnAddSubject = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.ADD_NEW_SUBJECT, action -> {
+				performAction(UserAction.ADD_NEW_SUBJECT, currentUser);
+			});
+		Button btnDelSubject = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.DELETE_SUBJECT, action -> {
+				performAction(UserAction.DELETE_SUBJECT, currentUser);
+			});
+		Button btnAllQuestions = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.VIEW_MODIFY_ALL_QUESTIONS, action -> {
+				performAction(UserAction.VIEW_MODIFY_ALL_QUESTIONS, currentUser);
+			});
+		Button btnGeneratePaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.GENERATE_QUESTION_PAPER, action -> {
+				performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
+			});
+		Button btnViewPaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.VIEW_QUESTION_PAPER, action -> {
+				performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
+			});
+		Button btnDelPaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.DELETE_QUESTION_PAPER, action -> {
+				performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
+			});
+		Button btnToggleFilter = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.TOGGLE_FILTER_PAPERS, action -> {
+				performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
+			});
+		Button btnUpdatePassword = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
+			Constants.BTN_HEIGHT, UserAction.UPDATE_PASSWORD, action -> {
+				performAction(UserAction.UPDATE_PASSWORD, currentUser);
+			});
 
 		lblHeader.setStyle("-fx-font-size: 25px");
-		btnAddSubject.setOnAction(action -> {
-			performAction(UserAction.ADD_SUBJECT, currentUser);
-		});
-		btnDelSubject.setOnAction(action -> {
-			performAction(UserAction.DELETE_SUBJECT, currentUser);
-		});
-		btnAllQuestions.setOnAction(action -> {
-			performAction(UserAction.VIEW_MODIFY_ALL_QUESTIONS, currentUser);
-		});
-		btnGeneratePaper.setOnAction(action -> {
-			performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
-		});
-		btnViewPaper.setOnAction(action -> {
-			performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
-		});
-		btnDelPaper.setOnAction(action -> {
-			performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
-		});
-		btnToggleFilter.setOnAction(action -> {
-			performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
-		});
-		btnUpdatePassword.setOnAction(action -> {
-			performAction(UserAction.UPDATE_PASSWORD, currentUser);
-		});
-		btnAddSubject.setMinWidth(BTN_WIDTH);
-		btnDelSubject.setMinWidth(BTN_WIDTH);
-		btnAllQuestions.setMinWidth(BTN_WIDTH);
-		btnGeneratePaper.setMinWidth(BTN_WIDTH);
-		btnViewPaper.setMinWidth(BTN_WIDTH);
-		btnDelPaper.setMinWidth(BTN_WIDTH);
-		btnToggleFilter.setMinWidth(BTN_WIDTH);
-		btnUpdatePassword.setMinWidth(BTN_WIDTH);
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
 		VBox vboxSubjects = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblSubjects, listViewSubjects);
@@ -136,7 +129,7 @@ public class AcademicMaterial {
 	 */
 	private static void performAction(UserAction userAction, User currentUser) {
 		switch (userAction) {
-			case ADD_SUBJECT:
+			case ADD_NEW_SUBJECT:
 				if (AddSubject.addSubject()) {
 					listViewSubjects.getItems().clear();
 					listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
@@ -175,7 +168,7 @@ public class AcademicMaterial {
 				if (SubjectService.getInstance().getAllSubjects().isEmpty()) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Add at least 1 subject first.");
 				} else {
-					AllQuestions.display();
+					QuestionManagement.display();
 				}
 				break;
 			case GENERATE_QUESTION_PAPER:
@@ -183,6 +176,8 @@ public class AcademicMaterial {
 					SystemNotification.display(SystemNotificationType.ERROR, "Add some questions first.");
 				} else if (GenerateQuestionPaper.generatePaper()) {
 					refreshQuestionPapersListView();
+					SystemNotification.display(SystemNotificationType.SUCCESS,
+						"Paper generated! You can now view/export it.");
 				}
 				break;
 			case VIEW_QUESTION_PAPER:
@@ -209,7 +204,7 @@ public class AcademicMaterial {
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
 				}
 				break;
-			default: // NONE
+			default:
 				SystemNotification.display(SystemNotificationType.ERROR, "Unexpected error.");
 		}
 	}
@@ -234,9 +229,9 @@ public class AcademicMaterial {
 	 * Reset question papers ListView.
 	 */
 	private static void refreshQuestionPapersListView() {
-		paperSubjectFilterOn = false;
 		listViewQuestionPapers.getItems().clear();
 		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
 		lblPaperFilterStatus.setText("Paper subject filters: OFF");
+		paperSubjectFilterOn = false;
 	}
 }

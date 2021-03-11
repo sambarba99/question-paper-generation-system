@@ -18,9 +18,11 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 import view.enums.UserType;
 
 /**
@@ -49,14 +51,14 @@ public class AddUser {
 		PasswordField passField = new PasswordField();
 		Label lblSelectType = new Label("Select their user type:");
 		ChoiceBox cbUserType = new ChoiceBox();
-		Button btnAddUser = new Button("Add user");
 
 		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
 		cbUserType.getSelectionModel().selectFirst();
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
-		btnAddUser.setOnAction(action -> {
+
+		Button btnAddUser = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD, action -> {
 			UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
 			addUser(txtUsername.getText(), passField.getText(), userType);
 		});
@@ -74,7 +76,7 @@ public class AddUser {
 		Scene scene = new Scene(pane, 500, 300);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
-		stage.setTitle("Add User");
+		stage.setTitle("Add New User");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);

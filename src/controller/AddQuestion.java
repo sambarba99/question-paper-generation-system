@@ -11,17 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import model.dto.DifficultyLevelDTO;
-import model.dto.QuestionDTO;
 import model.dto.SubjectDTO;
 import model.persisted.Question;
 import model.persisted.Subject;
@@ -29,30 +27,30 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 
 /**
- * Allows the user to view all stored questions.
+ * Allows the user to view all stored questions, and manage questions.
  *
  * @author Sam Barba
  */
-public class AllQuestions {
+public class AddQuestion {
 
 	private static Stage stage;
 
-	private static ListView<String> listViewQuestions = new ListView<>();
-
-	private static TextArea txtAreaQuestion = new TextArea();
+	private static boolean added;
 
 	/*
 	 * Nodes for adding a new question
 	 */
 	private static ChoiceBox cbSubject = new ChoiceBox();
 
-	private static TextField txtStatement = new TextField();
+	private static TextArea txtAreaStatement = new TextArea();
 
 	private static TextField txtOpt1 = new TextField();
 
@@ -71,13 +69,12 @@ public class AllQuestions {
 	private static TextField txtTimeRequired = new TextField();
 
 	/**
-	 * Display all questions and capability to modify them.
+	 * Display nodes for adding a question.
 	 */
-	public static void display() {
+	public static boolean display() {
 		stage = new Stage();
+		added = false;
 
-		Label lblSelectQuestion = new Label("Select a question to view:");
-		Label lblAddQueston = new Label("Add a question?");
 		Label lblSelectSubject = new Label("Select the subject:");
 		Label lblEnterStatement = new Label("Enter question statement:");
 		Label lblEnterOpt1 = new Label("Enter answer option A:");
@@ -88,94 +85,62 @@ public class AllQuestions {
 		Label lblSelectDIfficulty = new Label("Select difficulty level:");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
-		Button btnAddQuestion = new Button("Add question");
-		Button btnDelQuestion = new Button("Delete question");
 
-		listViewQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
-			int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
-			if (questionId != 0) {
-				txtAreaQuestion.setText(QuestionDTO.getInstance().getTxtAreaQuestionStr(questionId));
-			}
-		});
-		btnAddQuestion.setOnAction(action -> {
-			addQuestion();
-		});
-		btnDelQuestion.setOnAction(action -> {
-			deleteQuestion();
-		});
+		Button btnAddQuestion = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD,
+			action -> {
+				if (validateAndAddQuestion()) {
+					resetAddQuestionFields();
+					stage.close();
+					added = true;
+				}
+			});
 
 		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vboxViewQuestion = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblSelectQuestion,
-			listViewQuestions, txtAreaQuestion);
-		VBox vboxQuestionValues = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 7, lblAddQueston,
-			lblSelectSubject, cbSubject, lblEnterStatement, txtStatement, lblEnterOpt1, txtOpt1, lblEnterOpt2, txtOpt2,
-			lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4, lblSelectCorrect, cbCorrectAns, lblSelectDIfficulty,
-			cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion);
+		VBox vbox1 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 10, lblSelectSubject, cbSubject,
+			lblEnterStatement, txtAreaStatement, lblEnterOpt1, txtOpt1, lblEnterOpt2, txtOpt2, lblEnterOpt3, txtOpt3,
+			lblEnterOpt4, txtOpt4);
+		VBox vbox2 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 10, lblSelectCorrect, cbCorrectAns,
+			lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired,
+			btnAddQuestion);
+		HBox hboxMain = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vbox1, vbox2);
 
 		setup();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().addAll(btnDelQuestion, vboxViewQuestion, vboxQuestionValues);
+		pane.getChildren().add(hboxMain);
 
-		Scene scene = new Scene(pane, 950, 750);
+		Scene scene = new Scene(pane, 700, 600);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
-		stage.setTitle("View All Questions");
+		stage.setTitle("Add New Question");
 		stage.setResizable(false);
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
+		return added;
 	}
 
 	/**
-	 * Verify the validity of the new question's attributes, and add the new question.
-	 */
-	private static void addQuestion() {
-		if (questionAdded()) {
-			listViewQuestions.getItems().clear();
-			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
-			resetAddQuestionFields();
-			txtAreaQuestion.setText("");
-			SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
-		}
-	}
-
-	/**
-	 * Delete selected question with confirmation.
-	 */
-	private static void deleteQuestion() {
-		if (listViewQuestions.getSelectionModel().getSelectedItems().isEmpty()) {
-			SystemNotification.display(SystemNotificationType.ERROR, "Please select a question.");
-		} else if (DeletionConfirm.confirmDelete("question")) {
-			int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
-			QuestionService.getInstance().deleteQuestionById(questionId);
-			listViewQuestions.getItems().clear();
-			listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
-			txtAreaQuestion.setText("");
-			SystemNotification.display(SystemNotificationType.SUCCESS, "Question deleted.");
-		}
-	}
-
-	/**
-	 * Add a question via QuestionService based on entered/selected attribute values.
+	 * Validate question attributes, and add via QuestionService.
 	 * 
 	 * @return whether or not question has been added successfully
 	 */
-	private static boolean questionAdded() {
-		String statement = txtStatement.getText();
+	private static boolean validateAndAddQuestion() {
+		String statement = txtAreaStatement.getText();
 		String opt1 = txtOpt1.getText().trim();
 		String opt2 = txtOpt2.getText().trim();
 		String opt3 = txtOpt3.getText().trim();
 		String opt4 = txtOpt4.getText().trim();
+
 		if (statement.length() == 0 || opt1.length() == 0 || opt2.length() == 0 || opt3.length() == 0
 			|| opt4.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Please enter the statement and all answer options.");
 			return false;
-		} else if (!statement.matches(Constants.QUESTION_REGEX) || !opt1.matches(Constants.QUESTION_REGEX)
-			|| !opt2.matches(Constants.QUESTION_REGEX) || !opt3.matches(Constants.QUESTION_REGEX)
-			|| !opt4.matches(Constants.QUESTION_REGEX)) {
+		} else if (!statement.matches(Constants.QUESTION_STATEMENT_REGEX)
+			|| !opt1.matches(Constants.QUESTION_STATEMENT_REGEX) || !opt2.matches(Constants.QUESTION_STATEMENT_REGEX)
+			|| !opt3.matches(Constants.QUESTION_STATEMENT_REGEX) || !opt4.matches(Constants.QUESTION_STATEMENT_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Statement and answers must not have repeating spaces.");
 			return false;
@@ -213,20 +178,19 @@ public class AllQuestions {
 	 * Set up window.
 	 */
 	private static void setup() {
-		listViewQuestions.getItems().clear();
-		listViewQuestions.getItems().addAll(QuestionDTO.getInstance().getQuestionListViewItems());
-		listViewQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-
-		txtAreaQuestion.setEditable(false);
-		txtAreaQuestion.setPrefHeight(200);
-		txtAreaQuestion.setText("");
-
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
 		cbSubject.getItems().addAll(allSubjects.stream()
 			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
-		cbSubject.setPrefWidth(200);
+		cbSubject.setMinWidth(200);
+		cbSubject.setMaxWidth(200);
+
+		txtAreaStatement.setMinSize(350, 160);
+		txtAreaStatement.setMaxSize(350, 160);
+		txtAreaStatement.textProperty().addListener((obs, oldText, newText) -> {
+			txtAreaStatement.setText(newText.replace("\n", ""));
+		});
 
 		cbCorrectAns.getItems().clear();
 		cbCorrectAns.getItems().addAll("A", "B", "C", "D");
@@ -237,7 +201,8 @@ public class AllQuestions {
 		cbDifficulty.getItems()
 			.addAll(allDifficulties.stream().map(DifficultyLevel::getStrVal).collect(Collectors.toList()));
 		cbDifficulty.getSelectionModel().select(0);
-		cbDifficulty.setPrefWidth(200);
+		cbDifficulty.setMinWidth(200);
+		cbDifficulty.setMaxWidth(200);
 	}
 
 	/**
@@ -245,14 +210,14 @@ public class AllQuestions {
 	 */
 	private static void resetAddQuestionFields() {
 		cbSubject.getSelectionModel().select(0);
-		txtStatement.setText("");
-		txtOpt1.setText("");
-		txtOpt2.setText("");
-		txtOpt3.setText("");
-		txtOpt4.setText("");
+		txtAreaStatement.setText(Constants.EMPTY);
+		txtOpt1.setText(Constants.EMPTY);
+		txtOpt2.setText(Constants.EMPTY);
+		txtOpt3.setText(Constants.EMPTY);
+		txtOpt4.setText(Constants.EMPTY);
 		cbCorrectAns.getSelectionModel().select(0);
 		cbDifficulty.getSelectionModel().select(0);
-		txtMarks.setText("");
-		txtTimeRequired.setText("");
+		txtMarks.setText(Constants.EMPTY);
+		txtTimeRequired.setText(Constants.EMPTY);
 	}
 }

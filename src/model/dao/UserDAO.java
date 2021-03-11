@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.Scanner;
 import model.persisted.User;
 
 import view.Constants;
+import view.SecurityUtils;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
 
@@ -42,7 +41,7 @@ public class UserDAO {
 			}
 
 			String username = user.getUsername();
-			String passHash = sha512(user.getPassword());
+			String passHash = SecurityUtils.getInstance().sha512(user.getPassword());
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
 			csvWriter.append(username + Constants.COMMA);
@@ -124,33 +123,6 @@ public class UserDAO {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return users;
-	}
-
-	/**
-	 * Encrypt a string with SHA-512.
-	 * 
-	 * @param text - the string to encrypt
-	 * @return the encrypted text
-	 */
-	public String sha512(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md = MessageDigest.getInstance("SHA-512");
-		md.update(text.getBytes("iso-8859-1"), 0, text.length());
-		byte[] sha512hash = md.digest();
-		return convertToHex(sha512hash);
-	}
-
-	/**
-	 * Convert an array of bytes to hexadecimal.
-	 * 
-	 * @param data - the byte array to convert
-	 * @return the string hexadecimal result
-	 */
-	private String convertToHex(byte[] data) {
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < data.length; i++) {
-			result.append(Integer.toString((data[i] & 255) + 256, 16).substring(1));
-		}
-		return result.toString();
 	}
 
 	public synchronized static UserDAO getInstance() {

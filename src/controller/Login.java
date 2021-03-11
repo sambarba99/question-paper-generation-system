@@ -16,9 +16,11 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.BoxMaker;
+import view.ButtonMaker;
 import view.Constants;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.enums.UserAction;
 import view.enums.UserType;
 
 /**
@@ -39,12 +41,12 @@ public class Login extends Application {
 		TextField txtUsername = new TextField();
 		Label lblEnterPass = new Label("Enter password:");
 		PasswordField passField = new PasswordField();
-		Button btnLogin = new Button("Login");
 
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
-		btnLogin.setOnAction(action -> {
+
+		Button btnLogin = ButtonMaker.getInstance().makeButton(86, Constants.BTN_HEIGHT, UserAction.LOG_IN, action -> {
 			login(txtUsername.getText(), passField.getText(), primaryStage);
 		});
 
@@ -83,7 +85,7 @@ public class Login extends Application {
 						AdminControl.display(currentUser);
 						break;
 					case TUTOR:
-						AcademicMaterial.display(currentUser);
+						AcademicMaterialManagement.display(currentUser);
 						break;
 					default:
 						SystemNotification.display(SystemNotificationType.ERROR,
