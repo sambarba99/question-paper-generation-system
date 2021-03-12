@@ -14,15 +14,15 @@ import controller.SystemNotification;
 public class Constants {
 
 	/*
-	 * Paths were files are stored.
+	 * Paths were files are stored
 	 */
 	public static final String GENETIC_ALGORITHM_RESULTS_PATH = "C:\\Users\\Sam Barba\\Desktop\\results.csv";
 
 	public static final String USERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\users.csv";
 
-	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\question_papers.csv";
-
 	public static final String QUESTIONS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\questions.csv";
+
+	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\question_papers.csv";
 
 	public static final String SUBJECTS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\subjects.csv";
 
@@ -31,7 +31,6 @@ public class Constants {
 	/*
 	 * Character constants
 	 */
-
 	public static final String EMPTY = "";
 
 	public static final String COMMA = ",";
@@ -61,7 +60,7 @@ public class Constants {
 	public static final String PASS_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
 	/*
-	 * Constants for the Genetic Algorithm.
+	 * Constants for the Genetic Algorithm
 	 */
 	public static final SelectionType SELECTION_TYPE = SelectionType.ROULETTE_WHEEL;
 
@@ -82,7 +81,6 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
-
 	public static final double BTN_HEIGHT = 37;
 
 	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;

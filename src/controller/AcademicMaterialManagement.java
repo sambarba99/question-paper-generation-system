@@ -22,9 +22,9 @@ import model.service.QuestionPaperService;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -59,51 +59,53 @@ public class AcademicMaterialManagement {
 		Label lblQuestionPapers = new Label("Question Papers");
 		Label lblActions = new Label("Actions");
 
-		Button btnAddSubject = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.ADD_NEW_SUBJECT, action -> {
+		Button btnAddSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.ADD_NEW_SUBJECT).withActionEvent(action -> {
 				performAction(UserAction.ADD_NEW_SUBJECT, currentUser);
-			});
-		Button btnDelSubject = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.DELETE_SUBJECT, action -> {
+			}).build();
+		Button btnDelSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.DELETE_SUBJECT).withActionEvent(action -> {
 				performAction(UserAction.DELETE_SUBJECT, currentUser);
-			});
-		Button btnAllQuestions = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.VIEW_MODIFY_ALL_QUESTIONS, action -> {
-				performAction(UserAction.VIEW_MODIFY_ALL_QUESTIONS, currentUser);
-			});
-		Button btnGeneratePaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.GENERATE_QUESTION_PAPER, action -> {
+			}).build();
+		Button btnQuestionManagement = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.OPEN_QUESTION_MANAGEMENT).withActionEvent(action -> {
+				performAction(UserAction.OPEN_QUESTION_MANAGEMENT, currentUser);
+			}).build();
+		Button btnGeneratePaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.GENERATE_QUESTION_PAPER).withActionEvent(action -> {
 				performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
-			});
-		Button btnViewPaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.VIEW_QUESTION_PAPER, action -> {
+			}).build();
+		Button btnViewPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.VIEW_QUESTION_PAPER).withActionEvent(action -> {
 				performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
-			});
-		Button btnDelPaper = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.DELETE_QUESTION_PAPER, action -> {
+			}).build();
+		Button btnDelPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.DELETE_QUESTION_PAPER).withActionEvent(action -> {
 				performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
-			});
-		Button btnToggleFilter = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.TOGGLE_FILTER_PAPERS, action -> {
+			}).build();
+		Button btnToggleFilter = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.TOGGLE_FILTER_PAPERS).withActionEvent(action -> {
 				performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
-			});
-		Button btnUpdatePassword = ButtonMaker.getInstance().makeButton(Constants.ACADEMIC_MATERIAL_BTN_WIDTH,
-			Constants.BTN_HEIGHT, UserAction.UPDATE_PASSWORD, action -> {
+			}).build();
+		Button btnUpdatePassword = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
+			.withUserAction(UserAction.UPDATE_PASSWORD).withActionEvent(action -> {
 				performAction(UserAction.UPDATE_PASSWORD, currentUser);
-			});
+			}).build();
 
 		lblHeader.setStyle("-fx-font-size: 25px");
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vboxSubjects = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblSubjects, listViewSubjects);
-		VBox vboxQuestionPapers = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblQuestionPapers,
-			listViewQuestionPapers);
-		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, btnAddSubject,
-			btnDelSubject, btnAllQuestions, btnGeneratePaper, btnViewPaper, btnDelPaper, btnToggleFilter,
-			btnUpdatePassword, lblPaperFilterStatus);
-		HBox hboxViews = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vboxSubjects, vboxQuestionPapers,
-			vboxActions);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, lblHeader, hboxViews);
+		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
+			.withSpacing(10).withNodes(lblSubjects, listViewSubjects).build();
+		VBox vboxQuestionPapers = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
+			.withSpacing(10).withNodes(lblQuestionPapers, listViewQuestionPapers).build();
+		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10).withNodes(lblActions, btnAddSubject, btnDelSubject, btnQuestionManagement,
+				btnGeneratePaper, btnViewPaper, btnDelPaper, btnToggleFilter, btnUpdatePassword, lblPaperFilterStatus)
+			.build();
+		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(lblHeader, hboxViews).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -164,7 +166,7 @@ public class AcademicMaterialManagement {
 					refreshQuestionPapersListView();
 				}
 				break;
-			case VIEW_MODIFY_ALL_QUESTIONS:
+			case OPEN_QUESTION_MANAGEMENT:
 				if (SubjectService.getInstance().getAllSubjects().isEmpty()) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Add at least 1 subject first.");
 				} else {

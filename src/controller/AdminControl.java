@@ -14,9 +14,9 @@ import model.dto.UserDTO;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -43,29 +43,30 @@ public class AdminControl {
 		Label lblActions = new Label("Actions");
 		Label lblUsers = new Label("System Users");
 
-		Button btnAddUser = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT, UserAction.ADD_NEW_USER,
-			action -> {
+		Button btnAddUser = new ButtonBuilder().withWidth(200).withUserAction(UserAction.ADD_NEW_USER)
+			.withActionEvent(action -> {
 				addUser();
-			});
-		Button btnDelUser = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT, UserAction.DELETE_USER,
-			action -> {
+			}).build();
+		Button btnDelUser = new ButtonBuilder().withWidth(200).withUserAction(UserAction.DELETE_USER)
+			.withActionEvent(action -> {
 				deleteUser(currentUser);
-			});
-		Button btnViewAcademicMaterial = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT,
-			UserAction.GO_ACADEMC_MATERIAL, action -> {
+			}).build();
+		Button btnViewAcademicMaterial = new ButtonBuilder().withWidth(200)
+			.withUserAction(UserAction.OPEN_ACADEMC_MATERIAL).withActionEvent(action -> {
 				AcademicMaterialManagement.display(currentUser);
-			});
-		Button btnUpdatePassword = ButtonMaker.getInstance().makeButton(200, Constants.BTN_HEIGHT,
-			UserAction.UPDATE_PASSWORD, action -> {
+			}).build();
+		Button btnUpdatePassword = new ButtonBuilder().withWidth(200).withUserAction(UserAction.UPDATE_PASSWORD)
+			.withActionEvent(action -> {
 				if (UpdatePassword.updatePassword(currentUser)) {
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
 				}
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vboxUsersView = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 10, lblUsers, listViewUsers);
-		VBox vboxActions = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblActions, btnAddUser, btnDelUser,
-			btnViewAcademicMaterial, btnUpdatePassword);
+		VBox vboxUsersView = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
+			.withSpacing(10).withNodes(lblUsers, listViewUsers).build();
+		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10).withNodes(lblActions, btnAddUser, btnDelUser, btnViewAcademicMaterial, btnUpdatePassword)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

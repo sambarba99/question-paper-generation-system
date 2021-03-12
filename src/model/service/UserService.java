@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Scanner;
 
+import model.builders.UserBuilder;
 import model.dao.UserDAO;
 import model.persisted.User;
 
@@ -129,7 +130,8 @@ public class UserService {
 
 		if (username.length() != 0 && pass.length() != 0) {
 			if (usersFileExists()) {
-				User user = new User(username, pass, null);
+				// no need to pass the UserType here, as it is retrieved with checkUserExists(user).
+				User user = new UserBuilder().withUsername(username).withPassword(pass).build();
 				User validatedUser = checkUserExists(user);
 				if (validatedUser == null) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
@@ -138,14 +140,16 @@ public class UserService {
 				}
 			} else {
 				/*
-				 * If we are here, the users file doesn't exist, so this user is the first user - so make them an admin.
+				 * If we are here, the users file doesn't exist, so this user is the first one - so make them an admin.
 				 */
-				User user = new User(username, pass, UserType.ADMIN);
+				User user = new UserBuilder().withUsername(username).withPassword(pass).withType(UserType.ADMIN)
+					.build();
+
 				if (validateFirstTimeLogin(username, pass)) {
 					userDao.addUser(user);
 					/*
-					 * instead of returning only 'user', we must return user with now hashed password, as addUser(user)
-					 * hashes the password
+					 * instead of returning only 'user', we must return user with now hashed password, as
+					 * userDao.addUser(user) hashes the password
 					 */
 					return checkUserExists(user);
 				}

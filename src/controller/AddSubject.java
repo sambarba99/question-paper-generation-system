@@ -10,13 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import model.builders.SubjectBuilder;
 import model.dto.SubjectDTO;
 import model.persisted.Subject;
 import model.service.SubjectService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -43,12 +44,13 @@ public class AddSubject {
 
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
-		Button btnAdd = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD, action -> {
+		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(action -> {
 			String subjectTitle = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
 			addSubject(subjectTitle);
-		});
+		}).build();
 
-		HBox hboxTitle = (HBox) BoxMaker.getInstance().makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterTitle, txtTitle);
+		HBox hboxTitle = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
+			.withNodes(lblEnterTitle, txtTitle).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -76,7 +78,7 @@ public class AddSubject {
 		} else {
 			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
 				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
-				Subject subject = new Subject(subjectId, subjectTitle);
+				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build();
 				SubjectService.getInstance().addSubject(subject);
 				added = true;
 				stage.close();

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import model.builders.QuestionPaperBuilder;
 import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.service.QuestionPaperService;
@@ -77,8 +78,9 @@ public class QuestionPaperGenerator {
 
 		List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
 
-		return new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds, difficultyLevel, marks,
-			timeRequiredMins);
+		return new QuestionPaperBuilder().withId(id).withSubjectId(subjectId).withTitle(title)
+			.withCourseTitle(courseTitle).withCourseCode(courseCode).withQuestionIds(questionIds)
+			.withDifficultyLevel(difficultyLevel).withMarks(marks).withTimeRequiredMins(timeRequiredMins).build();
 	}
 
 	public synchronized static QuestionPaperGenerator getInstance() {

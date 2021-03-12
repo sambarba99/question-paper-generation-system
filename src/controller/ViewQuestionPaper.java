@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -13,9 +12,8 @@ import javafx.stage.Stage;
 import model.dto.QuestionPaperDTO;
 import model.persisted.QuestionPaper;
 
-import view.BoxMaker;
-import view.ButtonMaker;
-import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -41,15 +39,14 @@ public class ViewQuestionPaper {
 		txtAreaPaper.setMinSize(400, 600);
 		txtAreaPaper.setMaxSize(400, 600);
 
-		Button btnExport = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.EXPORT,
-			action -> {
+		Button btnExport = new ButtonBuilder().withWidth(100).withUserAction(UserAction.EXPORT)
+			.withActionEvent(action -> {
 				// use Constants.EXPORTED_PAPERS_FILE_PATH;
 				SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		HBox hboxBtns = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, btnExport);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, txtAreaPaper, hboxBtns);
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(txtAreaPaper, btnExport).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

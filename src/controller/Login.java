@@ -15,9 +15,9 @@ import javafx.stage.Stage;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -46,14 +46,17 @@ public class Login extends Application {
 			txtUsername.setText(newText.toLowerCase());
 		});
 
-		Button btnLogin = ButtonMaker.getInstance().makeButton(86, Constants.BTN_HEIGHT, UserAction.LOG_IN, action -> {
-			login(txtUsername.getText(), passField.getText(), primaryStage);
-		});
+		Button btnLogin = new ButtonBuilder().withWidth(76).withUserAction(UserAction.LOG_IN)
+			.withActionEvent(action -> {
+				login(txtUsername.getText(), passField.getText(), primaryStage);
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		HBox hboxUsername = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterUsername, txtUsername);
-		HBox hboxPass = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, lblEnterPass, passField);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hboxUsername, hboxPass, btnLogin);
+		HBox hboxUsername = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
+			.withNodes(lblEnterUsername, txtUsername).build();
+		HBox hboxPass = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
+			.withNodes(lblEnterPass, passField).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(hboxUsername, hboxPass, btnLogin).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

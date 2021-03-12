@@ -13,13 +13,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import model.builders.UserBuilder;
 import model.dto.UserTypeDTO;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -58,16 +59,18 @@ public class AddUser {
 			txtUsername.setText(newText.toLowerCase());
 		});
 
-		Button btnAddUser = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD, action -> {
-			UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
-			addUser(txtUsername.getText(), passField.getText(), userType);
-		});
+		Button btnAddUser = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD)
+			.withActionEvent(action -> {
+				UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
+				addUser(txtUsername.getText(), passField.getText(), userType);
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vboxLbls = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterUsername, lblEnterPass,
-			lblSelectType);
-		VBox vboxCreds = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, txtUsername, passField, cbUserType);
-		HBox hboxUserCreds = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 10, vboxLbls, vboxCreds);
+		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_RIGHT)
+			.withSpacing(30).withNodes(lblEnterUsername, lblEnterPass, lblSelectType).build();
+		VBox vboxCreds = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_LEFT)
+			.withSpacing(20).withNodes(txtUsername, passField, cbUserType).build();
+		HBox hboxUserCreds = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER)
+			.withSpacing(10).withNodes(vboxLbls, vboxCreds).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -94,7 +97,7 @@ public class AddUser {
 	private static void addUser(String username, String password, UserType userType) {
 		try {
 			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
-				User user = new User(username, password, userType);
+				User user = new UserBuilder().withUsername(username).withPassword(password).withType(userType).build();
 				UserService.getInstance().addUser(user);
 				added = true;
 				stage.close();

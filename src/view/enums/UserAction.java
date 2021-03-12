@@ -20,11 +20,11 @@ public enum UserAction {
 	EXPORT("Export to .txt"),
 	GENERATE("Generate"),
 	GENERATE_QUESTION_PAPER("Generate question paper"),
-	GO_ACADEMC_MATERIAL("Go to Academic Material"),
 	LOG_IN("Log In"),
+	OPEN_ACADEMC_MATERIAL("Open Academic Material"),
+	OPEN_QUESTION_MANAGEMENT("Open Question Management"),
 	TOGGLE_FILTER_PAPERS("Filter papers by subject(s)"),
 	UPDATE_PASSWORD("Update password"),
-	VIEW_MODIFY_ALL_QUESTIONS("View/modify all questions"),
 	VIEW_QUESTION_PAPER("View/export question paper");
 
 	private String strVal;

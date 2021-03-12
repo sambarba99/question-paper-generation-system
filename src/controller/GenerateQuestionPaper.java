@@ -26,9 +26,9 @@ import model.questionpapergeneration.QuestionPaperGenerator;
 import model.service.QuestionPaperService;
 import model.service.SubjectService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
@@ -79,8 +79,8 @@ public class GenerateQuestionPaper {
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
-		Button btnGenerate = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.GENERATE,
-			action -> {
+		Button btnGenerate = new ButtonBuilder().withWidth(100).withUserAction(UserAction.GENERATE)
+			.withActionEvent(action -> {
 				QuestionPaper generatedPaper = null;
 				try {
 					generatedPaper = generatePaperWithParams();
@@ -94,15 +94,19 @@ public class GenerateQuestionPaper {
 					generated = true;
 					stage.close();
 				}
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vbox1 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectSubject, cbSubject, lblEnterTitle,
-			txtTitle, lblEnterCourseTitle, txtCourseTitle, lblEnterCourseCode, txtCourseCode);
-		VBox vbox2 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 5, lblSelectDifficulty, cbDifficulty,
-			lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired);
-		HBox hbox = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.TOP_CENTER, 20, vbox1, vbox2);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnGenerate);
+		VBox vbox1 = (VBox) new PaneBuilder()
+			.withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(5).withNodes(lblSelectSubject, cbSubject,
+				lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle, lblEnterCourseCode, txtCourseCode)
+			.build();
+		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(5)
+			.withNodes(lblSelectDifficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired)
+			.build();
+		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.TOP_CENTER).withSpacing(20)
+			.withNodes(vbox1, vbox2).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(hbox, btnGenerate).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

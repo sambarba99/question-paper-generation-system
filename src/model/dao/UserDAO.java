@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import model.builders.UserBuilder;
 import model.persisted.User;
 
 import view.Constants;
@@ -113,7 +114,7 @@ public class UserDAO {
 				String username = lineSplit[0];
 				String passHash = lineSplit[1];
 				UserType userType = UserType.getFromStr(lineSplit[2]);
-				User user = new User(username, passHash, userType);
+				User user = new UserBuilder().withUsername(username).withPassword(passHash).withType(userType).build();
 				users.add(user);
 			}
 			input.close();

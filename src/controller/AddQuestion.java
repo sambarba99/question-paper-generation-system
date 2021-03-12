@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import model.builders.QuestionBuilder;
 import model.dto.DifficultyLevelDTO;
 import model.dto.SubjectDTO;
 import model.persisted.Question;
@@ -26,9 +27,9 @@ import model.persisted.Subject;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
@@ -86,23 +87,25 @@ public class AddQuestion {
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
-		Button btnAddQuestion = ButtonMaker.getInstance().makeButton(100, Constants.BTN_HEIGHT, UserAction.ADD,
-			action -> {
+		Button btnAddQuestion = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD)
+			.withActionEvent(action -> {
 				if (validateAndAddQuestion()) {
 					resetAddQuestionFields();
 					stage.close();
 					added = true;
 				}
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vbox1 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 10, lblSelectSubject, cbSubject,
-			lblEnterStatement, txtAreaStatement, lblEnterOpt1, txtOpt1, lblEnterOpt2, txtOpt2, lblEnterOpt3, txtOpt3,
-			lblEnterOpt4, txtOpt4);
-		VBox vbox2 = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_LEFT, 10, lblSelectCorrect, cbCorrectAns,
-			lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired,
-			btnAddQuestion);
-		HBox hboxMain = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 20, vbox1, vbox2);
+		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(10)
+			.withNodes(lblSelectSubject, cbSubject, lblEnterStatement, txtAreaStatement, lblEnterOpt1, txtOpt1,
+				lblEnterOpt2, txtOpt2, lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4)
+			.build();
+		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(10)
+			.withNodes(lblSelectCorrect, cbCorrectAns, lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks,
+				lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
+			.build();
+		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(vbox1, vbox2).build();
 
 		setup();
 
@@ -167,10 +170,11 @@ public class AddQuestion {
 		String correctAnsOption = cbCorrectAns.getSelectionModel().getSelectedItem().toString();
 		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
-		Question question = new Question(id, subjectId, statement, Arrays.asList(opt1, opt2, opt3, opt4),
-			correctAnsOption, difficultyLevel, marks, timeReq);
-		QuestionService.getInstance().addQuestion(question);
+		Question question = new QuestionBuilder().withId(id).withSubjectId(subjectId).withStatement(statement)
+			.withAnswerOptions(Arrays.asList(opt1, opt2, opt3, opt4)).withCorrectAnswerOptions(correctAnsOption)
+			.withDifficultyLevel(difficultyLevel).withMarks(marks).withTimeRequiredMins(timeReq).build();
 
+		QuestionService.getInstance().addQuestion(question);
 		return true;
 	}
 

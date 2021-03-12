@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import model.builders.QuestionPaperBuilder;
 import model.persisted.QuestionPaper;
 
 import view.Constants;
@@ -126,8 +127,11 @@ public class QuestionPaperDAO {
 						int marks = Integer.parseInt(line4split[1]);
 						int timeRequiredMins = Integer.parseInt(line4split[2]);
 
-						QuestionPaper questionPaper = new QuestionPaper(id, subjectId, title, courseTitle, courseCode,
-							questionIds, difficultyLevel, marks, timeRequiredMins);
+						QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id).withSubjectId(subjectId)
+							.withTitle(title).withCourseTitle(courseTitle).withCourseCode(courseCode)
+							.withQuestionIds(questionIds).withDifficultyLevel(difficultyLevel).withMarks(marks)
+							.withTimeRequiredMins(timeRequiredMins).build();
+
 						questionPapers.add(questionPaper);
 					} catch (Exception e) { // reached last line
 						input.close();

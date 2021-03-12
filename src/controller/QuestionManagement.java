@@ -16,9 +16,9 @@ import javafx.stage.Stage;
 import model.dto.QuestionDTO;
 import model.service.QuestionService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -51,23 +51,23 @@ public class QuestionManagement {
 			}
 		});
 
-		Button btnAddQuestion = ButtonMaker.getInstance().makeButton(150, Constants.BTN_HEIGHT,
-			UserAction.ADD_NEW_QUESTION, action -> {
+		Button btnAddQuestion = new ButtonBuilder().withWidth(150).withUserAction(UserAction.ADD_NEW_QUESTION)
+			.withActionEvent(action -> {
 				// if added a new question, refresh questions ListView
 				if (AddQuestion.display()) {
 					setup();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
 				}
-			});
-		Button btnDelQuestion = ButtonMaker.getInstance().makeButton(150, Constants.BTN_HEIGHT,
-			UserAction.DELETE_QUESTION, action -> {
+			}).build();
+		Button btnDelQuestion = new ButtonBuilder().withWidth(150).withUserAction(UserAction.DELETE_QUESTION)
+			.withActionEvent(action -> {
 				deleteQuestion();
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		HBox hboxOptions = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 7, btnAddQuestion, btnDelQuestion);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.TOP_CENTER, 10, lblSelectQuestion, listViewQuestions,
-			txtAreaQuestion, hboxOptions);
+		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER)
+			.withSpacing(7).withNodes(btnAddQuestion, btnDelQuestion).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10).withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions).build();
 
 		setup();
 

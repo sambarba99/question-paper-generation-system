@@ -17,9 +17,9 @@ import javafx.stage.Stage;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.BoxMaker;
-import view.ButtonMaker;
 import view.Constants;
+import view.builders.PaneBuilder;
+import view.builders.ButtonBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -51,21 +51,22 @@ public class UpdatePassword {
 		PasswordField passFieldNew = new PasswordField();
 		Label lblRepeatNewPass = new Label("Repeat new password:");
 		PasswordField passFieldRepeat = new PasswordField();
-		Button btnUpdate = ButtonMaker.getInstance().makeButton(150, Constants.BTN_HEIGHT, UserAction.UPDATE_PASSWORD,
-			action -> {
+		Button btnUpdate = new ButtonBuilder().withWidth(150).withUserAction(UserAction.UPDATE_PASSWORD)
+			.withActionEvent(action -> {
 				String currentPass = passFieldCurrent.getText();
 				String newPass = passFieldNew.getText();
 				String repeatPass = passFieldRepeat.getText();
 				updatePassword(currentPass, newPass, repeatPass, currentUser);
-			});
+			}).build();
 
-		BoxMaker boxMaker = BoxMaker.getInstance();
-		VBox vboxLbls = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_RIGHT, 30, lblEnterCurrentPass,
-			lblEnterNewPass, lblRepeatNewPass);
-		VBox vboxPassFields = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER_LEFT, 20, passFieldCurrent, passFieldNew,
-			passFieldRepeat);
-		HBox hbox = (HBox) boxMaker.makeBox(BoxType.HBOX, Pos.CENTER, 5, vboxLbls, vboxPassFields);
-		VBox vboxMain = (VBox) boxMaker.makeBox(BoxType.VBOX, Pos.CENTER, 20, hbox, btnUpdate);
+		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_RIGHT)
+			.withSpacing(30).withNodes(lblEnterCurrentPass, lblEnterNewPass, lblRepeatNewPass).build();
+		VBox vboxPassFields = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_LEFT)
+			.withSpacing(20).withNodes(passFieldCurrent, passFieldNew, passFieldRepeat).build();
+		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
+			.withNodes(vboxLbls, vboxPassFields).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
+			.withNodes(hbox, btnUpdate).build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

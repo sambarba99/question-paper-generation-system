@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import model.builders.SubjectBuilder;
 import model.persisted.Subject;
 
 import view.Constants;
@@ -94,7 +95,7 @@ public class SubjectDAO {
 					int id = Integer.parseInt(lineSplit[0]);
 					String title = lineSplit[1];
 
-					Subject subject = new Subject(id, title);
+					Subject subject = new SubjectBuilder().withId(id).withTitle(title).build();
 					subjects.add(subject);
 				}
 				input.close();

@@ -1,15 +1,15 @@
 package view.enums;
 
 /**
- * Represents the level of system notification.
+ * Represents the type of system notification.
  *
  * @author Sam Barba
  */
 public enum SystemNotificationType {
 
-	ERROR("Error Notification"),
+	ERROR("Error"),
 	NEUTRAL("Notification"),
-	SUCCESS("Success Notification");
+	SUCCESS("Success!");
 
 	private String strVal;
 

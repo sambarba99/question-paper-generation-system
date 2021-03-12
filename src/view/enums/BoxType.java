@@ -1,7 +1,7 @@
 package view.enums;
 
 /**
- * Represents the type of box used in src/utils/BoxMaker.
+ * Represents the type of box used in src/view/builders/BoxPaneBuilder.
  *
  * @author Sam Barba
  */
