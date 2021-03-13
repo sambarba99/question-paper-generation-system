@@ -5,7 +5,7 @@ import javafx.scene.control.ChoiceBox;
 import view.enums.DifficultyLevel;
 
 /**
- * This class is a singleton which contains methods relating to difficulty level choice boxes.
+ * This class is a singleton which contains methods relating to Difficulty Level choice boxes.
  *
  * @author Sam Barba
  */
@@ -18,7 +18,7 @@ public class DifficultyLevelDTO {
 	 * difficulty level's int value - 1.
 	 * 
 	 * @param cbDifficulty - the ChoiceBox of difficulty levels
-	 * @return enum of selected user action
+	 * @return enum corresponding to selected difficulty level
 	 */
 	public DifficultyLevel getSelectedDifficulty(ChoiceBox cbDifficulty) {
 		int difficultyLevelSelected = cbDifficulty.getSelectionModel().getSelectedIndex() + 1;

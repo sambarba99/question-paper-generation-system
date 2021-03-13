@@ -17,8 +17,8 @@ import model.dto.QuestionDTO;
 import model.service.QuestionService;
 
 import view.Constants;
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -64,10 +64,10 @@ public class QuestionManagement {
 				deleteQuestion();
 			}).build();
 
-		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER)
-			.withSpacing(7).withNodes(btnAddQuestion, btnDelQuestion).build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
-			.withSpacing(10).withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions).build();
+		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(7)
+			.withNodes(btnAddQuestion, btnDelQuestion).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER).withSpacing(10)
+			.withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions).build();
 
 		setup();
 
@@ -90,7 +90,7 @@ public class QuestionManagement {
 	 */
 	private static void deleteQuestion() {
 		if (listViewQuestions.getSelectionModel().getSelectedItems().isEmpty()) {
-			SystemNotification.display(SystemNotificationType.ERROR, "Please select a question.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 question.");
 		} else if (DeletionConfirm.confirmDelete("question")) {
 			int questionId = QuestionDTO.getInstance().getQuestionId(listViewQuestions);
 			QuestionService.getInstance().deleteQuestionById(questionId);

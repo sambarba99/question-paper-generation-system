@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import model.builders.QuestionBuilder;
+import model.dto.AnswerOptionDTO;
 import model.dto.DifficultyLevelDTO;
 import model.dto.SubjectDTO;
 import model.persisted.Question;
@@ -30,6 +31,7 @@ import model.service.SubjectService;
 import view.Constants;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
+import view.enums.AnswerOption;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
@@ -167,11 +169,11 @@ public class AddQuestion {
 		}
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
 		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
-		String correctAnsOption = cbCorrectAns.getSelectionModel().getSelectedItem().toString();
+		AnswerOption correctAnsOption = AnswerOptionDTO.getInstance().getSelectedAnswerOption(cbCorrectAns);
 		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
 		Question question = new QuestionBuilder().withId(id).withSubjectId(subjectId).withStatement(statement)
-			.withAnswerOptions(Arrays.asList(opt1, opt2, opt3, opt4)).withCorrectAnswerOptions(correctAnsOption)
+			.withAnswerOptions(Arrays.asList(opt1, opt2, opt3, opt4)).withCorrectAnswerOption(correctAnsOption)
 			.withDifficultyLevel(difficultyLevel).withMarks(marks).withTimeRequiredMins(timeReq).build();
 
 		QuestionService.getInstance().addQuestion(question);
@@ -196,8 +198,10 @@ public class AddQuestion {
 			txtAreaStatement.setText(newText.replace("\n", ""));
 		});
 
+		List<AnswerOption> allAnswerOptions = new ArrayList<>(EnumSet.allOf(AnswerOption.class));
 		cbCorrectAns.getItems().clear();
-		cbCorrectAns.getItems().addAll("A", "B", "C", "D");
+		cbCorrectAns.getItems()
+			.addAll(allAnswerOptions.stream().map(AnswerOption::toString).collect(Collectors.toList()));
 		cbCorrectAns.getSelectionModel().select(0);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));

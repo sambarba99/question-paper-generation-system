@@ -13,6 +13,7 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.Constants;
+import view.enums.AnswerOption;
 
 /**
  * This class is a singleton which contains methods related to ListViews used to modify and view questions.
@@ -62,7 +63,7 @@ public class QuestionDTO {
 		Question question = QuestionService.getInstance().getQuestionById(id);
 		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
 		List<String> answerOptions = question.getAnswerOptions();
-		String correctAnswerOption = question.getCorrectAnswerOption();
+		String correctAnswerOption = question.getCorrectAnswerOption().toString();
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
@@ -79,12 +80,11 @@ public class QuestionDTO {
 				txtAreaStr.append("\n - " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
 			}
 		}
-		txtAreaStr.append("\n\nStatement: " + question.getStatement());
-		txtAreaStr.append("\nAnswer option A: " + answerOptions.get(0));
-		txtAreaStr.append("\nAnswer option B: " + answerOptions.get(1));
-		txtAreaStr.append("\nAnswer option C: " + answerOptions.get(2));
-		txtAreaStr.append("\nAnswer option D: " + answerOptions.get(3));
-		txtAreaStr.append("\nCorrect answer option: " + correctAnswerOption);
+		txtAreaStr.append("\n\n" + question.getStatement());
+		for (int i = 0; i < AnswerOption.values().length; i++) {
+			txtAreaStr.append("\n" + AnswerOption.values()[i].getDisplayStr() + " " + answerOptions.get(i));
+		}
+		txtAreaStr.append("\nCorrect answer: " + correctAnswerOption);
 
 		return txtAreaStr.toString();
 	}

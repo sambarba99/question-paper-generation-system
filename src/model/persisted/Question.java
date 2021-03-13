@@ -2,6 +2,7 @@ package model.persisted;
 
 import java.util.List;
 
+import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 
 /**
@@ -19,7 +20,7 @@ public class Question {
 
 	private List<String> answerOptions;
 
-	private String correctAnswerOption;
+	private AnswerOption correctAnswerOption;
 
 	private DifficultyLevel difficultyLevel;
 
@@ -27,8 +28,8 @@ public class Question {
 
 	private int timeRequiredMins;
 
-	public Question(int id, int subjectId, String statement, List<String> answerOptions, String correctAnswerOption,
-		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+	public Question(int id, int subjectId, String statement, List<String> answerOptions,
+		AnswerOption correctAnswerOption, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
@@ -71,11 +72,11 @@ public class Question {
 		this.answerOptions = answerOptions;
 	}
 
-	public String getCorrectAnswerOption() {
+	public AnswerOption getCorrectAnswerOption() {
 		return correctAnswerOption;
 	}
 
-	public void setCorrectAnswerOption(String correctAnswerOption) {
+	public void setCorrectAnswerOption(AnswerOption correctAnswerOption) {
 		this.correctAnswerOption = correctAnswerOption;
 	}
 

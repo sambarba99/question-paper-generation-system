@@ -13,6 +13,7 @@ import model.builders.QuestionBuilder;
 import model.persisted.Question;
 
 import view.Constants;
+import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 
@@ -112,7 +113,7 @@ public class QuestionDAO {
 						String line3 = input.nextLine(); // answer option 2
 						String line4 = input.nextLine(); // answer option 3
 						String line5 = input.nextLine(); // answer option 4
-						String line6 = input.nextLine(); // correct answer num, difficulty level, marks, time required
+						String line6 = input.nextLine(); // correct option (A/B/C/D), difficulty, marks, time required
 						String[] line1split = line1.split(Constants.COMMA);
 						String[] line6split = line6.split(Constants.COMMA);
 
@@ -120,14 +121,14 @@ public class QuestionDAO {
 						int subjectId = Integer.parseInt(line1split[1]);
 						String statement = line1split[2];
 						List<String> answerOptions = Arrays.asList(line2, line3, line4, line5);
-						String correctAns = line6split[0];
+						AnswerOption correctAns = AnswerOption.getFromStr(line6split[0]);
 						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(line6split[1]));
 						int marks = Integer.parseInt(line6split[2]);
 						int timeRequireMins = Integer.parseInt(line6split[3]);
 
 						Question question = new QuestionBuilder().withId(id).withSubjectId(subjectId)
 							.withStatement(statement).withAnswerOptions(answerOptions)
-							.withCorrectAnswerOptions(correctAns).withDifficultyLevel(difficultyLevel).withMarks(marks)
+							.withCorrectAnswerOption(correctAns).withDifficultyLevel(difficultyLevel).withMarks(marks)
 							.withTimeRequiredMins(timeRequireMins).build();
 
 						questions.add(question);
@@ -171,7 +172,7 @@ public class QuestionDAO {
 		data[4] = question.getAnswerOptions().get(1);
 		data[5] = question.getAnswerOptions().get(2);
 		data[6] = question.getAnswerOptions().get(3);
-		data[7] = question.getCorrectAnswerOption();
+		data[7] = question.getCorrectAnswerOption().toString();
 		data[8] = Integer.toString(question.getDifficultyLevel().getIntVal());
 		data[9] = Integer.toString(question.getMarks());
 		data[10] = Integer.toString(question.getTimeRequiredMins());

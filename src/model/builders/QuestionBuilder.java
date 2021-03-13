@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.persisted.Question;
 
+import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 
 /**
@@ -21,7 +22,7 @@ public class QuestionBuilder {
 
 	private List<String> answerOptions;
 
-	private String correctAnswerOption;
+	private AnswerOption correctAnswerOption;
 
 	private DifficultyLevel difficultyLevel;
 
@@ -52,7 +53,7 @@ public class QuestionBuilder {
 		return this;
 	}
 
-	public QuestionBuilder withCorrectAnswerOptions(String correctAnswerOption) {
+	public QuestionBuilder withCorrectAnswerOption(AnswerOption correctAnswerOption) {
 		this.correctAnswerOption = correctAnswerOption;
 		return this;
 	}

@@ -1,5 +1,5 @@
 .root {
-	-fx-background-color: #1e1e1e;
+	-fx-background-color: linear-gradient(#1e1e1e, #404040);
 }
 
 .flow-pane {
@@ -29,16 +29,16 @@
 }
 
 .list-cell:odd {
-	-fx-background-color: #ffffff;
+	-fx-background-color: #cdcdcd;
 }
 
 .list-cell:filled:selected {
-	-fx-background-color: linear-gradient(#9090f0, #10c0f0);
+	-fx-background-color: linear-gradient(#00f060, #10c0f0);
  	-fx-text-fill: #1e1e1e;
 }
 
 .list-cell:filled:hover {
-	-fx-background-color: linear-gradient(#00f060, #10c0f0);
+	-fx-background-color: linear-gradient(#9090f0, #10c0f0);
  	-fx-text-fill: #1e1e1e;
 }
 
@@ -53,9 +53,11 @@
 
 .button:hover {
 	-fx-background-color: linear-gradient(#00f060, #10c0f0);
+	-fx-scale-x: 1.02;
+	-fx-scale-y: 1.02;
 }
 
 .button:pressed {
-	-fx-scale-x: 0.95;
-	-fx-scale-y: 0.95;
+	-fx-scale-x: 0.98;
+	-fx-scale-y: 0.98;
 }

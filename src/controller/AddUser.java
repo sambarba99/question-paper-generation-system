@@ -58,6 +58,8 @@ public class AddUser {
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
+		cbUserType.setMinWidth(100);
+		cbUserType.setMaxWidth(100);
 
 		Button btnAddUser = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD)
 			.withActionEvent(action -> {

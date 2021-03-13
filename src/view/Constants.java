@@ -40,22 +40,22 @@ public class Constants {
 	public static final String NEWLINE = "\n";
 
 	/**
-	 * Question statement and answer options must not have repeating spaces
+	 * Question statement and answer options must not have repeating spaces.
 	 */
 	public static final String QUESTION_STATEMENT_REGEX = "^([^\\s]\\s?)+$";
 
 	/**
-	 * Subject and question paper titles must be only alphanumeric characters, and no repeating spaces
+	 * Subject and question paper titles must be only alphanumeric characters, and no repeating spaces.
 	 */
 	public static final String TITLE_REGEX = "^(\\w\\s?)+$";
 
 	/**
-	 * must start with letter(s) and optionally have number at end
+	 * Username must start with letter(s) and optionally have a number at the end, in case the same username exists.
 	 */
 	public static final String USERNAME_REGEX = "^[a-zA-Z]+\\d*$";
 
 	/**
-	 * must contain at least 1 of: 0-9, a-z, A-Z, and be at least 8 long
+	 * Password must contain at least 1 of: 0-9, a-z, A-Z, and be at least 8 long.
 	 */
 	public static final String PASS_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
