@@ -111,7 +111,8 @@ public class GAUtils {
 					}
 
 					Individual tournamentFittest = tournamentIndividuals.stream()
-						.max(Comparator.comparing(Individual::calculateFitness)).get();
+						.max(Comparator.comparing(Individual::calculateFitness))
+						.get();
 
 					if (initialSelection) {
 						offspring[i].copyGenes(tournamentFittest.getGenes());

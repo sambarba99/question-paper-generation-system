@@ -81,8 +81,6 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
-	public static final double BTN_HEIGHT = 37;
-
 	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";

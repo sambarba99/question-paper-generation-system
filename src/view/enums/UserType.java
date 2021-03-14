@@ -26,7 +26,9 @@ public enum UserType {
 	 */
 	public static UserType getFromStr(String strVal) {
 		List<UserType> allUserTypes = new ArrayList<>(EnumSet.allOf(UserType.class));
-		UserType userType = allUserTypes.stream().filter(uType -> uType.toString().equals(strVal)).findFirst()
+		UserType userType = allUserTypes.stream()
+			.filter(uType -> uType.toString().equals(strVal))
+			.findFirst()
 			.orElse(null);
 		if (userType != null) {
 			return userType;

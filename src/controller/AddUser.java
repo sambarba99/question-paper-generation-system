@@ -53,26 +53,37 @@ public class AddUser {
 		Label lblSelectType = new Label("Select their user type:");
 		ChoiceBox cbUserType = new ChoiceBox();
 
-		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
-		cbUserType.getSelectionModel().selectFirst();
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
+		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
+		cbUserType.getSelectionModel().selectFirst();
 		cbUserType.setMinWidth(100);
 		cbUserType.setMaxWidth(100);
 
-		Button btnAddUser = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD)
-			.withActionEvent(action -> {
+		Button btnAddUser = new ButtonBuilder().withWidth(100)
+			.withUserAction(UserAction.ADD)
+			.withClickAction(action -> {
 				UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
 				addUser(txtUsername.getText(), passField.getText(), userType);
-			}).build();
+			})
+			.build();
 
-		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_RIGHT)
-			.withSpacing(30).withNodes(lblEnterUsername, lblEnterPass, lblSelectType).build();
-		VBox vboxCreds = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER_LEFT)
-			.withSpacing(20).withNodes(txtUsername, passField, cbUserType).build();
-		HBox hboxUserCreds = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER)
-			.withSpacing(10).withNodes(vboxLbls, vboxCreds).build();
+		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER_RIGHT)
+			.withSpacing(30)
+			.withNodes(lblEnterUsername, lblEnterPass, lblSelectType)
+			.build();
+		VBox vboxCreds = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER_LEFT)
+			.withSpacing(20)
+			.withNodes(txtUsername, passField, cbUserType)
+			.build();
+		HBox hboxUserCreds = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(10)
+			.withNodes(vboxLbls, vboxCreds)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

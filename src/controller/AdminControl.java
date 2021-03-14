@@ -15,8 +15,8 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.Constants;
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -43,29 +43,42 @@ public class AdminControl {
 		Label lblActions = new Label("Actions");
 		Label lblUsers = new Label("System Users");
 
-		Button btnAddUser = new ButtonBuilder().withWidth(200).withUserAction(UserAction.ADD_NEW_USER)
-			.withActionEvent(action -> {
+		Button btnAddUser = new ButtonBuilder().withWidth(200)
+			.withUserAction(UserAction.ADD_NEW_USER)
+			.withClickAction(action -> {
 				addUser();
-			}).build();
-		Button btnDelUser = new ButtonBuilder().withWidth(200).withUserAction(UserAction.DELETE_USER)
-			.withActionEvent(action -> {
+			})
+			.build();
+		Button btnDelUser = new ButtonBuilder().withWidth(200)
+			.withUserAction(UserAction.DELETE_USER)
+			.withClickAction(action -> {
 				deleteUser(currentUser);
-			}).build();
+			})
+			.build();
 		Button btnViewAcademicMaterial = new ButtonBuilder().withWidth(200)
-			.withUserAction(UserAction.OPEN_ACADEMC_MATERIAL).withActionEvent(action -> {
+			.withUserAction(UserAction.OPEN_ACADEMC_MATERIAL)
+			.withClickAction(action -> {
 				AcademicMaterialManagement.display(currentUser);
-			}).build();
-		Button btnUpdatePassword = new ButtonBuilder().withWidth(200).withUserAction(UserAction.UPDATE_PASSWORD)
-			.withActionEvent(action -> {
+			})
+			.build();
+		Button btnUpdatePassword = new ButtonBuilder().withWidth(200)
+			.withUserAction(UserAction.UPDATE_PASSWORD)
+			.withClickAction(action -> {
 				if (UpdatePassword.updatePassword(currentUser)) {
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
 				}
-			}).build();
+			})
+			.build();
 
-		VBox vboxUsersView = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
-			.withSpacing(10).withNodes(lblUsers, listViewUsers).build();
-		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
-			.withSpacing(10).withNodes(lblActions, btnAddUser, btnDelUser, btnViewAcademicMaterial, btnUpdatePassword)
+		VBox vboxUsersView = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(10)
+			.withNodes(lblUsers, listViewUsers)
+			.build();
+		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10)
+			.withNodes(lblActions, btnAddUser, btnDelUser, btnViewAcademicMaterial, btnUpdatePassword)
 			.build();
 
 		FlowPane pane = new FlowPane();

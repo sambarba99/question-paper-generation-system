@@ -78,9 +78,16 @@ public class QuestionPaperGenerator {
 
 		List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
 
-		return new QuestionPaperBuilder().withId(id).withSubjectId(subjectId).withTitle(title)
-			.withCourseTitle(courseTitle).withCourseCode(courseCode).withQuestionIds(questionIds)
-			.withDifficultyLevel(difficultyLevel).withMarks(marks).withTimeRequiredMins(timeRequiredMins).build();
+		return new QuestionPaperBuilder().withId(id)
+			.withSubjectId(subjectId)
+			.withTitle(title)
+			.withCourseTitle(courseTitle)
+			.withCourseCode(courseCode)
+			.withQuestionIds(questionIds)
+			.withDifficultyLevel(difficultyLevel)
+			.withMarks(marks)
+			.withTimeRequiredMins(timeRequiredMins)
+			.build();
 	}
 
 	public synchronized static QuestionPaperGenerator getInstance() {

@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 
-import view.Constants;
 import view.enums.UserAction;
 
 /**
@@ -18,7 +17,7 @@ public class ButtonBuilder {
 
 	private UserAction userAction;
 
-	private EventHandler<ActionEvent> actionEvent;
+	private EventHandler<ActionEvent> clickAction;
 
 	public ButtonBuilder() {
 	}
@@ -33,8 +32,8 @@ public class ButtonBuilder {
 		return this;
 	}
 
-	public ButtonBuilder withActionEvent(EventHandler<ActionEvent> actionEvent) {
-		this.actionEvent = actionEvent;
+	public ButtonBuilder withClickAction(EventHandler<ActionEvent> clickAction) {
+		this.clickAction = clickAction;
 		return this;
 	}
 
@@ -42,9 +41,7 @@ public class ButtonBuilder {
 		Button b = new Button(userAction.getStrVal());
 		b.setMinWidth(width);
 		b.setMaxWidth(width);
-		b.setMinHeight(Constants.BTN_HEIGHT);
-		b.setMaxHeight(Constants.BTN_HEIGHT);
-		b.setOnAction(actionEvent);
+		b.setOnAction(clickAction);
 		return b;
 	}
 }

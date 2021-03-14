@@ -49,6 +49,8 @@
 .button {
  	-fx-background-color: linear-gradient(#10c0f0, #9090f0);
  	-fx-font-weight: bold;
+ 	-fx-min-height: 37px;
+ 	-fx-max-height: 37px;
 }
 
 .button:hover {

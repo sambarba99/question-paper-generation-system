@@ -127,10 +127,16 @@ public class QuestionPaperDAO {
 						int marks = Integer.parseInt(line4split[1]);
 						int timeRequiredMins = Integer.parseInt(line4split[2]);
 
-						QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id).withSubjectId(subjectId)
-							.withTitle(title).withCourseTitle(courseTitle).withCourseCode(courseCode)
-							.withQuestionIds(questionIds).withDifficultyLevel(difficultyLevel).withMarks(marks)
-							.withTimeRequiredMins(timeRequiredMins).build();
+						QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id)
+							.withSubjectId(subjectId)
+							.withTitle(title)
+							.withCourseTitle(courseTitle)
+							.withCourseCode(courseCode)
+							.withQuestionIds(questionIds)
+							.withDifficultyLevel(difficultyLevel)
+							.withMarks(marks)
+							.withTimeRequiredMins(timeRequiredMins)
+							.build();
 
 						questionPapers.add(questionPaper);
 					} catch (Exception e) { // reached last line
@@ -155,7 +161,9 @@ public class QuestionPaperDAO {
 	 * @return the question paper with the specified ID
 	 */
 	public QuestionPaper getQuestionPaperById(int id) {
-		return getAllQuestionPapers().stream().filter(questionPaper -> questionPaper.getId() == id).findFirst()
+		return getAllQuestionPapers().stream()
+			.filter(questionPaper -> questionPaper.getId() == id)
+			.findFirst()
 			.orElse(null);
 	}
 
@@ -167,7 +175,8 @@ public class QuestionPaperDAO {
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
 		return getAllQuestionPapers().stream()
-			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId)).collect(Collectors.toList());
+			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId))
+			.collect(Collectors.toList());
 	}
 
 	/**

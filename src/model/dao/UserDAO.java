@@ -113,6 +113,7 @@ public class UserDAO {
 				String username = lineSplit[0];
 				String passHash = lineSplit[1];
 				UserType userType = UserType.getFromStr(lineSplit[2]);
+
 				User user = new UserBuilder().withUsername(username).withPassword(passHash).withType(userType).build();
 				users.add(user);
 			}

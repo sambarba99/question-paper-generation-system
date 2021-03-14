@@ -46,17 +46,28 @@ public class Login extends Application {
 			txtUsername.setText(newText.toLowerCase());
 		});
 
-		Button btnLogin = new ButtonBuilder().withWidth(76).withUserAction(UserAction.LOG_IN)
-			.withActionEvent(action -> {
+		Button btnLogin = new ButtonBuilder().withWidth(76)
+			.withUserAction(UserAction.LOG_IN)
+			.withClickAction(action -> {
 				login(txtUsername.getText(), passField.getText(), primaryStage);
-			}).build();
+			})
+			.build();
 
-		HBox hboxUsername = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
-			.withNodes(lblEnterUsername, txtUsername).build();
-		HBox hboxPass = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
-			.withNodes(lblEnterPass, passField).build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(hboxUsername, hboxPass, btnLogin).build();
+		HBox hboxUsername = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(5)
+			.withNodes(lblEnterUsername, txtUsername)
+			.build();
+		HBox hboxPass = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(5)
+			.withNodes(lblEnterPass, passField)
+			.build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(hboxUsername, hboxPass, btnLogin)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

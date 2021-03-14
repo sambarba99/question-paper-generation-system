@@ -29,7 +29,8 @@ public class SubjectDTO {
 	public List<String> getSubjectListViewItems() {
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		List<String> listViewItems = allSubjects.stream()
-			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList());
+			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
+			.collect(Collectors.toList());
 		return listViewItems;
 	}
 

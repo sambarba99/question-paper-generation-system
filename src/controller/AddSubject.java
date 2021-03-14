@@ -44,13 +44,15 @@ public class AddSubject {
 
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
-		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(action -> {
-			String subjectTitle = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
-			addSubject(subjectTitle);
+		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withClickAction(action -> {
+			addSubject(txtTitle.getText());
 		}).build();
 
-		HBox hboxTitle = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(5)
-			.withNodes(lblEnterTitle, txtTitle).build();
+		HBox hboxTitle = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(5)
+			.withNodes(lblEnterTitle, txtTitle)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -76,9 +78,11 @@ public class AddSubject {
 		if (subjectTitle.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
 		} else {
-			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
+			String formattedTitle = SubjectDTO.getInstance().formatTitle(subjectTitle);
+
+			if (formattedTitle.matches(Constants.TITLE_REGEX)) {
 				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
-				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build();
+				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(formattedTitle).build();
 				SubjectService.getInstance().addSubject(subject);
 				added = true;
 				stage.close();

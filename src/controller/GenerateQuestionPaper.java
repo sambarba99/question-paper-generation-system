@@ -27,8 +27,8 @@ import model.service.QuestionPaperService;
 import model.service.SubjectService;
 
 import view.Constants;
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
@@ -79,8 +79,9 @@ public class GenerateQuestionPaper {
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
-		Button btnGenerate = new ButtonBuilder().withWidth(100).withUserAction(UserAction.GENERATE)
-			.withActionEvent(action -> {
+		Button btnGenerate = new ButtonBuilder().withWidth(100)
+			.withUserAction(UserAction.GENERATE)
+			.withClickAction(action -> {
 				QuestionPaper generatedPaper = null;
 				try {
 					generatedPaper = generatePaperWithParams();
@@ -94,19 +95,30 @@ public class GenerateQuestionPaper {
 					generated = true;
 					stage.close();
 				}
-			}).build();
-
-		VBox vbox1 = (VBox) new PaneBuilder()
-			.withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(5).withNodes(lblSelectSubject, cbSubject,
-				lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle, lblEnterCourseCode, txtCourseCode)
+			})
 			.build();
-		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(5)
+
+		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_LEFT)
+			.withSpacing(5)
+			.withNodes(lblSelectSubject, cbSubject, lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle,
+				lblEnterCourseCode, txtCourseCode)
+			.build();
+		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_LEFT)
+			.withSpacing(5)
 			.withNodes(lblSelectDifficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired)
 			.build();
-		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.TOP_CENTER).withSpacing(20)
-			.withNodes(vbox1, vbox2).build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(hbox, btnGenerate).build();
+		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.TOP_CENTER)
+			.withSpacing(20)
+			.withNodes(vbox1, vbox2)
+			.build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(hbox, btnGenerate)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
@@ -165,8 +177,8 @@ public class GenerateQuestionPaper {
 		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
 		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
-		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance().generatePaper(subjectId, title, courseTitle,
-			courseCode, difficultyLevel, marks, timeReq);
+		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance()
+			.generatePaper(subjectId, title, courseTitle, courseCode, difficultyLevel, marks, timeReq);
 
 		return generatedPaper;
 	}
@@ -183,8 +195,10 @@ public class GenerateQuestionPaper {
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
-		cbSubject.getItems().addAll(allSubjects.stream()
-			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
+		cbSubject.getItems()
+			.addAll(allSubjects.stream()
+				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
+				.collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
 		cbSubject.setMinWidth(200);
 		cbSubject.setMaxWidth(200);

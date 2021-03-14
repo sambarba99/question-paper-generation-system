@@ -23,8 +23,8 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.Constants;
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -60,56 +60,81 @@ public class AcademicMaterialManagement {
 		Label lblActions = new Label("Actions");
 
 		Button btnAddSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.ADD_NEW_SUBJECT).withActionEvent(action -> {
+			.withUserAction(UserAction.ADD_NEW_SUBJECT)
+			.withClickAction(action -> {
 				performAction(UserAction.ADD_NEW_SUBJECT, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnDelSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.DELETE_SUBJECT).withActionEvent(action -> {
+			.withUserAction(UserAction.DELETE_SUBJECT)
+			.withClickAction(action -> {
 				performAction(UserAction.DELETE_SUBJECT, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnQuestionManagement = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.OPEN_QUESTION_MANAGEMENT).withActionEvent(action -> {
+			.withUserAction(UserAction.OPEN_QUESTION_MANAGEMENT)
+			.withClickAction(action -> {
 				performAction(UserAction.OPEN_QUESTION_MANAGEMENT, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnGeneratePaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.GENERATE_QUESTION_PAPER).withActionEvent(action -> {
+			.withUserAction(UserAction.GENERATE_QUESTION_PAPER)
+			.withClickAction(action -> {
 				performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnViewPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.VIEW_QUESTION_PAPER).withActionEvent(action -> {
+			.withUserAction(UserAction.VIEW_QUESTION_PAPER)
+			.withClickAction(action -> {
 				performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnDelPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.DELETE_QUESTION_PAPER).withActionEvent(action -> {
+			.withUserAction(UserAction.DELETE_QUESTION_PAPER)
+			.withClickAction(action -> {
 				performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnToggleFilter = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.TOGGLE_FILTER_PAPERS).withActionEvent(action -> {
+			.withUserAction(UserAction.TOGGLE_FILTER_PAPERS)
+			.withClickAction(action -> {
 				performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
-			}).build();
+			})
+			.build();
 		Button btnUpdatePassword = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
-			.withUserAction(UserAction.UPDATE_PASSWORD).withActionEvent(action -> {
+			.withUserAction(UserAction.UPDATE_PASSWORD)
+			.withClickAction(action -> {
 				performAction(UserAction.UPDATE_PASSWORD, currentUser);
-			}).build();
+			})
+			.build();
 
 		lblHeader.setStyle("-fx-font-size: 25px");
 
-		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
-			.withSpacing(10).withNodes(lblSubjects, listViewSubjects).build();
-		VBox vboxQuestionPapers = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER)
-			.withSpacing(10).withNodes(lblQuestionPapers, listViewQuestionPapers).build();
-		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER)
-			.withSpacing(10).withNodes(lblActions, btnAddSubject, btnDelSubject, btnQuestionManagement,
-				btnGeneratePaper, btnViewPaper, btnDelPaper, btnToggleFilter, btnUpdatePassword, lblPaperFilterStatus)
+		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(10)
+			.withNodes(lblSubjects, listViewSubjects)
 			.build();
-		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions).build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(lblHeader, hboxViews).build();
+		VBox vboxQuestionPapers = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(10)
+			.withNodes(lblQuestionPapers, listViewQuestionPapers)
+			.build();
+		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10)
+			.withNodes(lblActions, btnAddSubject, btnDelSubject, btnQuestionManagement, btnGeneratePaper, btnViewPaper,
+				btnDelPaper, btnToggleFilter, btnUpdatePassword, lblPaperFilterStatus)
+			.build();
+		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
+		pane.getChildren().addAll(lblHeader, hboxViews);
 
 		setup();
 
@@ -155,11 +180,12 @@ public class AcademicMaterialManagement {
 						SystemNotification.display(SystemNotificationType.ERROR,
 							"Please select subjects to filter by.");
 					} else {
-						paperSubjectFilterOn = true;
 						List<Integer> subjectIds = SubjectDTO.getInstance().getSelectedSubjectsIds(listViewSubjects);
 						listViewQuestionPapers.getItems().clear();
-						listViewQuestionPapers.getItems().addAll(
-							QuestionPaperDTO.getInstance().getQuestionPaperListViewItemsBySubjectIds(subjectIds));
+						listViewQuestionPapers.getItems()
+							.addAll(
+								QuestionPaperDTO.getInstance().getQuestionPaperListViewItemsBySubjectIds(subjectIds));
+						paperSubjectFilterOn = true;
 						lblPaperFilterStatus.setText("Paper subject filters: ON");
 					}
 				} else {
@@ -233,7 +259,7 @@ public class AcademicMaterialManagement {
 	private static void refreshQuestionPapersListView() {
 		listViewQuestionPapers.getItems().clear();
 		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
-		lblPaperFilterStatus.setText("Paper subject filters: OFF");
 		paperSubjectFilterOn = false;
+		lblPaperFilterStatus.setText("Paper subject filters: OFF");
 	}
 }

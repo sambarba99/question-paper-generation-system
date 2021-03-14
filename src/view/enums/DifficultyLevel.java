@@ -45,12 +45,14 @@ public enum DifficultyLevel {
 	public static DifficultyLevel getFromInt(int intVal) {
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		DifficultyLevel difficultyLevel = allDifficulties.stream()
-				.filter(difficultyLvl -> difficultyLvl.getIntVal() == intVal).findFirst().orElse(null);
+			.filter(difficultyLvl -> difficultyLvl.getIntVal() == intVal)
+			.findFirst()
+			.orElse(null);
 		if (difficultyLevel != null) {
 			return difficultyLevel;
 		}
 		SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level passed: " + intVal);
+			Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level passed: " + intVal);
 		throw new IllegalArgumentException("Invalid Difficulty Level passed: " + intVal);
 	}
 }

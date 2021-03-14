@@ -126,10 +126,15 @@ public class QuestionDAO {
 						int marks = Integer.parseInt(line6split[2]);
 						int timeRequireMins = Integer.parseInt(line6split[3]);
 
-						Question question = new QuestionBuilder().withId(id).withSubjectId(subjectId)
-							.withStatement(statement).withAnswerOptions(answerOptions)
-							.withCorrectAnswerOption(correctAns).withDifficultyLevel(difficultyLevel).withMarks(marks)
-							.withTimeRequiredMins(timeRequireMins).build();
+						Question question = new QuestionBuilder().withId(id)
+							.withSubjectId(subjectId)
+							.withStatement(statement)
+							.withAnswerOptions(answerOptions)
+							.withCorrectAnswerOption(correctAns)
+							.withDifficultyLevel(difficultyLevel)
+							.withMarks(marks)
+							.withTimeRequiredMins(timeRequireMins)
+							.build();
 
 						questions.add(question);
 					} catch (Exception e) { // reached last line

@@ -51,23 +51,33 @@ public class QuestionManagement {
 			}
 		});
 
-		Button btnAddQuestion = new ButtonBuilder().withWidth(150).withUserAction(UserAction.ADD_NEW_QUESTION)
-			.withActionEvent(action -> {
+		Button btnAddQuestion = new ButtonBuilder().withWidth(150)
+			.withUserAction(UserAction.ADD_NEW_QUESTION)
+			.withClickAction(action -> {
 				// if added a new question, refresh questions ListView
 				if (AddQuestion.display()) {
 					setup();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
 				}
-			}).build();
-		Button btnDelQuestion = new ButtonBuilder().withWidth(150).withUserAction(UserAction.DELETE_QUESTION)
-			.withActionEvent(action -> {
+			})
+			.build();
+		Button btnDelQuestion = new ButtonBuilder().withWidth(150)
+			.withUserAction(UserAction.DELETE_QUESTION)
+			.withClickAction(action -> {
 				deleteQuestion();
-			}).build();
+			})
+			.build();
 
-		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(7)
-			.withNodes(btnAddQuestion, btnDelQuestion).build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_CENTER).withSpacing(10)
-			.withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions).build();
+		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(7)
+			.withNodes(btnAddQuestion, btnDelQuestion)
+			.build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_CENTER)
+			.withSpacing(10)
+			.withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions)
+			.build();
 
 		setup();
 

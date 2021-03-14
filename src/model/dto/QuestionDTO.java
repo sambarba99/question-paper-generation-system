@@ -32,7 +32,8 @@ public class QuestionDTO {
 	public List<String> getQuestionListViewItems() {
 		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
 		List<String> listViewItems = allQuestions.stream()
-			.map(question -> (question.getStatement() + " (ID " + question.getId() + ")")).collect(Collectors.toList());
+			.map(question -> (question.getStatement() + " (ID " + question.getId() + ")"))
+			.collect(Collectors.toList());
 		return listViewItems;
 	}
 

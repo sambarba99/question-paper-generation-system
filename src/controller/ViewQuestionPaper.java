@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 import model.dto.QuestionPaperDTO;
 import model.persisted.QuestionPaper;
 
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -39,14 +39,19 @@ public class ViewQuestionPaper {
 		txtAreaPaper.setMinSize(400, 600);
 		txtAreaPaper.setMaxSize(400, 600);
 
-		Button btnExport = new ButtonBuilder().withWidth(100).withUserAction(UserAction.EXPORT)
-			.withActionEvent(action -> {
+		Button btnExport = new ButtonBuilder().withWidth(100)
+			.withUserAction(UserAction.EXPORT)
+			.withClickAction(action -> {
 				// use Constants.EXPORTED_PAPERS_FILE_PATH;
 				SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
-			}).build();
+			})
+			.build();
 
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(txtAreaPaper, btnExport).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(txtAreaPaper, btnExport)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

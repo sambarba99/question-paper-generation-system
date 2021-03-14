@@ -89,25 +89,34 @@ public class AddQuestion {
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
-		Button btnAddQuestion = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD)
-			.withActionEvent(action -> {
+		Button btnAddQuestion = new ButtonBuilder().withWidth(100)
+			.withUserAction(UserAction.ADD)
+			.withClickAction(action -> {
 				if (validateAndAddQuestion()) {
 					resetAddQuestionFields();
-					stage.close();
 					added = true;
+					stage.close();
 				}
-			}).build();
+			})
+			.build();
 
-		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(10)
+		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_LEFT)
+			.withSpacing(10)
 			.withNodes(lblSelectSubject, cbSubject, lblEnterStatement, txtAreaStatement, lblEnterOpt1, txtOpt1,
 				lblEnterOpt2, txtOpt2, lblEnterOpt3, txtOpt3, lblEnterOpt4, txtOpt4)
 			.build();
-		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.TOP_LEFT).withSpacing(10)
+		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.TOP_LEFT)
+			.withSpacing(10)
 			.withNodes(lblSelectCorrect, cbCorrectAns, lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks,
 				lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
 			.build();
-		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(vbox1, vbox2).build();
+		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(vbox1, vbox2)
+			.build();
 
 		setup();
 
@@ -172,9 +181,15 @@ public class AddQuestion {
 		AnswerOption correctAnsOption = AnswerOptionDTO.getInstance().getSelectedAnswerOption(cbCorrectAns);
 		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
 
-		Question question = new QuestionBuilder().withId(id).withSubjectId(subjectId).withStatement(statement)
-			.withAnswerOptions(Arrays.asList(opt1, opt2, opt3, opt4)).withCorrectAnswerOption(correctAnsOption)
-			.withDifficultyLevel(difficultyLevel).withMarks(marks).withTimeRequiredMins(timeReq).build();
+		Question question = new QuestionBuilder().withId(id)
+			.withSubjectId(subjectId)
+			.withStatement(statement)
+			.withAnswerOptions(Arrays.asList(opt1, opt2, opt3, opt4))
+			.withCorrectAnswerOption(correctAnsOption)
+			.withDifficultyLevel(difficultyLevel)
+			.withMarks(marks)
+			.withTimeRequiredMins(timeReq)
+			.build();
 
 		QuestionService.getInstance().addQuestion(question);
 		return true;
@@ -186,8 +201,10 @@ public class AddQuestion {
 	private static void setup() {
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		cbSubject.getItems().clear();
-		cbSubject.getItems().addAll(allSubjects.stream()
-			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")")).collect(Collectors.toList()));
+		cbSubject.getItems()
+			.addAll(allSubjects.stream()
+				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
+				.collect(Collectors.toList()));
 		cbSubject.getSelectionModel().select(0);
 		cbSubject.setMinWidth(200);
 		cbSubject.setMaxWidth(200);

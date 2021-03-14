@@ -9,8 +9,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.UserAction;
 
@@ -38,18 +38,25 @@ public class DeletionConfirm {
 
 		Label lbl = new Label("Are you sure you wish to delete this " + deletingItem + "?");
 
-		Button btnYes = new ButtonBuilder().withWidth(70).withUserAction(UserAction.DELETE_CONFIRM_YES)
-			.withActionEvent(action -> {
+		Button btnYes = new ButtonBuilder().withWidth(70)
+			.withUserAction(UserAction.DELETE_CONFIRM_YES)
+			.withClickAction(action -> {
 				deleted = true;
 				stage.close();
-			}).build();
-		Button btnNo = new ButtonBuilder().withWidth(70).withUserAction(UserAction.DELETE_CONFIRM_NO)
-			.withActionEvent(action -> {
+			})
+			.build();
+		Button btnNo = new ButtonBuilder().withWidth(70)
+			.withUserAction(UserAction.DELETE_CONFIRM_NO)
+			.withClickAction(action -> {
 				stage.close();
-			}).build();
+			})
+			.build();
 
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX).withAlignment(Pos.CENTER).withSpacing(20)
-			.withNodes(lbl, btnYes, btnNo).build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(lbl, btnYes, btnNo)
+			.build();
 
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");

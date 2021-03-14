@@ -73,7 +73,10 @@ public class UserService {
 	 * @return user with specified username
 	 */
 	public User getUserByUsername(String username) {
-		return userDao.getAllUsers().stream().filter(user -> user.getUsername().equals(username)).findFirst()
+		return userDao.getAllUsers()
+			.stream()
+			.filter(user -> user.getUsername().equals(username))
+			.findFirst()
 			.orElse(null);
 	}
 
@@ -142,7 +145,9 @@ public class UserService {
 				/*
 				 * If we are here, the users file doesn't exist, so this user is the first one - so make them an admin.
 				 */
-				User user = new UserBuilder().withUsername(username).withPassword(pass).withType(UserType.ADMIN)
+				User user = new UserBuilder().withUsername(username)
+					.withPassword(pass)
+					.withType(UserType.ADMIN)
 					.build();
 
 				if (validateFirstTimeLogin(username, pass)) {

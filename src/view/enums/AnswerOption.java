@@ -31,7 +31,7 @@ public enum AnswerOption {
 	}
 
 	/**
-	 * Retrieve AnswerOption given an String value (A,B,C,D). Throw an IllegalArgumentException if the value doesn't
+	 * Retrieve AnswerOption given a String value (A,B,C,D). Throw an IllegalArgumentException if the value doesn't
 	 * exist.
 	 * 
 	 * @param strVal - the String value of the AnswerOption
@@ -39,7 +39,9 @@ public enum AnswerOption {
 	 */
 	public static AnswerOption getFromStr(String strVal) {
 		List<AnswerOption> allOptions = new ArrayList<>(EnumSet.allOf(AnswerOption.class));
-		AnswerOption answerOption = allOptions.stream().filter(option -> option.toString().equals(strVal)).findFirst()
+		AnswerOption answerOption = allOptions.stream()
+			.filter(option -> option.toString().equals(strVal))
+			.findFirst()
 			.orElse(null);
 		if (answerOption != null) {
 			return answerOption;
