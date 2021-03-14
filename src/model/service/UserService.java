@@ -146,12 +146,9 @@ public class UserService {
 					.build();
 
 				if (validateFirstTimeLogin(username, pass)) {
+					user.encryptPassword(); // apply SHA-512 before adding
 					userDao.addUser(user);
-					/*
-					 * instead of returning only 'user', we must return user with now hashed password, as
-					 * userDao.addUser(user) hashes the password
-					 */
-					return checkUserExists(user);
+					return user;
 				}
 			}
 		} else {

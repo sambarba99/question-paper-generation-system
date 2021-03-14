@@ -18,8 +18,8 @@ import model.persisted.User;
 import model.service.UserService;
 
 import view.Constants;
-import view.builders.PaneBuilder;
 import view.builders.ButtonBuilder;
+import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
@@ -96,8 +96,6 @@ public class UpdatePassword {
 			UserService userService = UserService.getInstance();
 			if (userService.validateResetPassword(currentUser, currentPass, newPass, repeatPass)) {
 				userService.updatePassword(currentUser, newPass);
-				String newPassHash = userService.getUserByUsername(currentUser.getUsername()).getPassword();
-				currentUser.setPassword(newPassHash);
 				updated = true;
 				stage.close();
 			}

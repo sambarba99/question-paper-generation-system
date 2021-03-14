@@ -1,6 +1,14 @@
 package model.persisted;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+
+import view.Constants;
+import view.SecurityUtils;
+import view.enums.SystemNotificationType;
 import view.enums.UserType;
+
+import controller.SystemNotification;
 
 /**
  * Represents a user.
@@ -43,5 +51,15 @@ public class User {
 
 	public void setType(UserType type) {
 		this.type = type;
+	}
+
+	public void encryptPassword() {
+		try {
+			setPassword(SecurityUtils.getInstance().sha512(password));
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
+		}
 	}
 }

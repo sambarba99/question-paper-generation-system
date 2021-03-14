@@ -100,6 +100,7 @@ public class AddUser {
 		try {
 			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
 				User user = new UserBuilder().withUsername(username).withPassword(password).withType(userType).build();
+				user.encryptPassword(); // apply SHA-512 before adding
 				UserService.getInstance().addUser(user);
 				added = true;
 				stage.close();

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,7 +12,6 @@ import model.builders.UserBuilder;
 import model.persisted.User;
 
 import view.Constants;
-import view.SecurityUtils;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
 
@@ -42,15 +40,15 @@ public class UserDAO {
 			}
 
 			String username = user.getUsername();
-			String passHash = SecurityUtils.getInstance().sha512(user.getPassword());
+			String password = user.getPassword();
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
 			csvWriter.append(username + Constants.COMMA);
-			csvWriter.append(passHash + Constants.COMMA);
+			csvWriter.append(password + Constants.COMMA);
 			csvWriter.append(user.getType().toString() + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
-		} catch (IOException | NoSuchAlgorithmException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
@@ -66,6 +64,7 @@ public class UserDAO {
 	public void updatePassword(User user, String pass) {
 		user.setPassword(pass);
 		deleteUserByUsername(user.getUsername());
+		user.encryptPassword();
 		addUser(user);
 	}
 
