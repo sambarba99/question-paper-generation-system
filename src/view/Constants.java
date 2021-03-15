@@ -39,6 +39,8 @@ public class Constants {
 
 	public static final String NEWLINE = "\n";
 
+	public static final String QUOT_MARK = "\"";
+
 	/**
 	 * Question statement and answer options must not have repeating spaces.
 	 */

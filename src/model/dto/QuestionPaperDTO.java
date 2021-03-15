@@ -72,22 +72,6 @@ public class QuestionPaperDTO {
 	}
 
 	/**
-	 * Capitalise each word in paper title and trim whitespace.
-	 * 
-	 * @param title - the title to format
-	 * @return formatted title
-	 */
-	public String formatTitle(String title) {
-		String[] words = title.trim().split(Constants.SPACE);
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < words.length; i++) {
-			result.append(Character.toString(words[i].charAt(0)).toUpperCase());
-			result.append(words[i].substring(1).toLowerCase() + Constants.SPACE);
-		}
-		return result.toString().trim(); // remove last space
-	}
-
-	/**
 	 * Get a formatted question paper string for question paper TextArea object.
 	 * 
 	 * @param questionPaper - the paper to format

@@ -211,9 +211,12 @@ public class AddQuestion {
 
 		txtAreaStatement.setMinSize(350, 160);
 		txtAreaStatement.setMaxSize(350, 160);
-		txtAreaStatement.textProperty().addListener((obs, oldText, newText) -> {
-			txtAreaStatement.setText(newText.replace("\n", ""));
-		});
+		txtAreaStatement.textProperty()
+			.addListener((obs, oldText, newText) -> {
+				// remove characters that could potentially harm CSV read/write functionality
+				txtAreaStatement
+					.setText(newText.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'"));
+			});
 
 		List<AnswerOption> allAnswerOptions = new ArrayList<>(EnumSet.allOf(AnswerOption.class));
 		cbCorrectAns.getItems().clear();

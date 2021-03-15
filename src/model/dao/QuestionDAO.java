@@ -40,23 +40,9 @@ public class QuestionDAO {
 				csvFile.getParentFile().mkdirs();
 				csvFile.createNewFile();
 			}
-			String[] data = getQuestionStrData(question);
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			// ID, subject ID, statement
-			csvWriter.append(data[0] + Constants.COMMA);
-			csvWriter.append(data[1] + Constants.COMMA);
-			csvWriter.append(data[2] + Constants.NEWLINE);
-			// 4 answer options
-			csvWriter.append(data[3] + Constants.NEWLINE);
-			csvWriter.append(data[4] + Constants.NEWLINE);
-			csvWriter.append(data[5] + Constants.NEWLINE);
-			csvWriter.append(data[6] + Constants.NEWLINE);
-			// Correct answer (A/B/C/D), difficulty level, marks, time required (mins)
-			csvWriter.append(data[7] + Constants.COMMA);
-			csvWriter.append(data[8] + Constants.COMMA);
-			csvWriter.append(data[9] + Constants.COMMA);
-			csvWriter.append(data[10] + Constants.NEWLINE);
+			addQuestionDataToFile(question, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
@@ -75,12 +61,11 @@ public class QuestionDAO {
 		try {
 			List<Question> allQuestions = getAllQuestions();
 			File csvFile = new File(Constants.QUESTIONS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false);
+			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
 
 			for (Question question : allQuestions) {
 				if (question.getId() != id) {
-					String[] data = getQuestionStrData(question);
-					writeQuestionDataToFile(data, csvWriter);
+					addQuestionDataToFile(question, csvWriter, false);
 				}
 			}
 			csvWriter.flush();
@@ -108,23 +93,18 @@ public class QuestionDAO {
 
 				while (input.hasNextLine()) {
 					try {
-						String line1 = input.nextLine(); // ID, subject ID, statement
-						String line2 = input.nextLine(); // answer option 1
-						String line3 = input.nextLine(); // answer option 2
-						String line4 = input.nextLine(); // answer option 3
-						String line5 = input.nextLine(); // answer option 4
-						String line6 = input.nextLine(); // correct option (A/B/C/D), difficulty, marks, time required
-						String[] line1split = line1.split(Constants.COMMA);
-						String[] line6split = line6.split(Constants.COMMA);
+						String line = input.nextLine();
+						String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
-						int id = Integer.parseInt(line1split[0]);
-						int subjectId = Integer.parseInt(line1split[1]);
-						String statement = line1split[2];
-						List<String> answerOptions = Arrays.asList(line2, line3, line4, line5);
-						AnswerOption correctAns = AnswerOption.getFromStr(line6split[0]);
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(line6split[1]));
-						int marks = Integer.parseInt(line6split[2]);
-						int timeRequireMins = Integer.parseInt(line6split[3]);
+						int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
+						int subjectId = Integer.parseInt(lineArr[1]);
+						String statement = lineArr[2];
+						List<String> answerOptions = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
+						AnswerOption correctAns = AnswerOption.getFromStr(lineArr[7]);
+						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(lineArr[8]));
+						int marks = Integer.parseInt(lineArr[9]);
+						int timeRequireMins = Integer
+							.parseInt(lineArr[10].replace(Constants.QUOT_MARK, Constants.EMPTY));
 
 						Question question = new QuestionBuilder().withId(id)
 							.withSubjectId(subjectId)
@@ -163,48 +143,35 @@ public class QuestionDAO {
 	}
 
 	/**
-	 * Get string value of each attribute of a question.
-	 * 
-	 * @param question - the question of which to get String values
-	 * @return array of attributes converted to String
-	 */
-	private String[] getQuestionStrData(Question question) {
-		String[] data = new String[11];
-		data[0] = Integer.toString(question.getId());
-		data[1] = Integer.toString(question.getSubjectId());
-		data[2] = question.getStatement();
-		data[3] = question.getAnswerOptions().get(0);
-		data[4] = question.getAnswerOptions().get(1);
-		data[5] = question.getAnswerOptions().get(2);
-		data[6] = question.getAnswerOptions().get(3);
-		data[7] = question.getCorrectAnswerOption().toString();
-		data[8] = Integer.toString(question.getDifficultyLevel().getIntVal());
-		data[9] = Integer.toString(question.getMarks());
-		data[10] = Integer.toString(question.getTimeRequiredMins());
-		return data;
-	}
-
-	/**
-	 * Write question data to the questions CSV file.
+	 * Add question data to the questions CSV file.
 	 * 
 	 * @param data      - the string values of the question data
 	 * @param csvWriter - the file writer
+	 * @param append    - whether to append or write to the file
 	 */
-	private void writeQuestionDataToFile(String[] data, FileWriter csvWriter) throws IOException {
-		// ID, subject ID, statement
-		csvWriter.write(data[0] + Constants.COMMA);
-		csvWriter.write(data[1] + Constants.COMMA);
-		csvWriter.write(data[2] + Constants.NEWLINE);
-		// 4 answer options
-		csvWriter.write(data[3] + Constants.NEWLINE);
-		csvWriter.write(data[4] + Constants.NEWLINE);
-		csvWriter.write(data[5] + Constants.NEWLINE);
-		csvWriter.write(data[6] + Constants.NEWLINE);
-		// Correct answer (A/B/C/D), difficulty level, marks, time required (mins)
-		csvWriter.write(data[7] + Constants.COMMA);
-		csvWriter.write(data[8] + Constants.COMMA);
-		csvWriter.write(data[9] + Constants.COMMA);
-		csvWriter.write(data[10] + Constants.NEWLINE);
+	private void addQuestionDataToFile(Question question, FileWriter csvWriter, boolean append) throws IOException {
+		/*
+		 * 1 line contains: ID, subject ID, statement, options A-D, correct answer (A/B/C/D), difficulty level, marks,
+		 * time required (mins)
+		 */
+		String line = Constants.QUOT_MARK + Integer.toString(question.getId()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Integer.toString(question.getSubjectId()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getStatement() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswerOptions().get(0) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswerOptions().get(1) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswerOptions().get(2) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswerOptions().get(3) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getCorrectAnswerOption().toString() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Integer.toString(question.getDifficultyLevel().getIntVal()) + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins())
+			+ Constants.QUOT_MARK + Constants.NEWLINE;
+
+		if (append) {
+			csvWriter.append(line);
+		} else { // write
+			csvWriter.write(line);
+		}
 	}
 
 	public synchronized static QuestionDAO getInstance() {

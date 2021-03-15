@@ -43,9 +43,9 @@ public class UserDAO {
 			String password = user.getPassword();
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(username + Constants.COMMA);
-			csvWriter.append(password + Constants.COMMA);
-			csvWriter.append(user.getType().toString() + Constants.NEWLINE);
+			csvWriter.append(Constants.QUOT_MARK + username + Constants.QUOT_MARK + Constants.COMMA
+				+ Constants.QUOT_MARK + password + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+				+ user.getType().toString() + Constants.QUOT_MARK + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (IOException e) {
@@ -81,9 +81,9 @@ public class UserDAO {
 
 			for (User user : allUsers) {
 				if (!user.getUsername().equals(username)) {
-					csvWriter.write(user.getUsername() + Constants.COMMA);
-					csvWriter.write(user.getPassword() + Constants.COMMA);
-					csvWriter.write(user.getType().toString() + Constants.NEWLINE);
+					csvWriter.write(Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
+						+ Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA
+						+ Constants.QUOT_MARK + user.getType().toString() + Constants.QUOT_MARK + Constants.NEWLINE);
 				}
 			}
 			csvWriter.flush();
@@ -109,10 +109,11 @@ public class UserDAO {
 
 			while (input.hasNextLine()) {
 				String line = input.nextLine();
-				String[] lineSplit = line.split(Constants.COMMA);
-				String username = lineSplit[0];
-				String passHash = lineSplit[1];
-				UserType userType = UserType.getFromStr(lineSplit[2]);
+				String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+
+				String username = lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY);
+				String passHash = lineArr[1];
+				UserType userType = UserType.getFromStr(lineArr[2].replace(Constants.QUOT_MARK, Constants.EMPTY));
 
 				User user = new UserBuilder().withUsername(username).withPassword(passHash).withType(userType).build();
 				users.add(user);

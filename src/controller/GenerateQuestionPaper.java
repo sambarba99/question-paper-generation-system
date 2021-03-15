@@ -143,7 +143,7 @@ public class GenerateQuestionPaper {
 	 * @return whether or not paper has been generated successfully
 	 */
 	private static QuestionPaper generatePaperWithParams() throws IOException {
-		String title = txtTitle.getText().trim();
+		String title = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
 		String courseTitle = txtCourseTitle.getText().trim();
 		String courseCode = txtCourseCode.getText().trim();
 		if (title.length() == 0 || courseTitle.length() == 0 || courseCode.length() == 0) {

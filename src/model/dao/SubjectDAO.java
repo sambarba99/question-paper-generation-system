@@ -39,8 +39,8 @@ public class SubjectDAO {
 			}
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(Integer.toString(subject.getId()) + Constants.COMMA);
-			csvWriter.append(subject.getTitle() + Constants.NEWLINE);
+			csvWriter.append(Constants.QUOT_MARK + Integer.toString(subject.getId()) + Constants.QUOT_MARK
+				+ Constants.COMMA + Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
@@ -63,8 +63,9 @@ public class SubjectDAO {
 
 			for (Subject subject : allSubjects) {
 				if (subject.getId() != id) {
-					csvWriter.write(Integer.toString(subject.getId()) + Constants.COMMA);
-					csvWriter.write(subject.getTitle() + Constants.NEWLINE);
+					csvWriter.write(
+						Constants.QUOT_MARK + Integer.toString(subject.getId()) + Constants.QUOT_MARK + Constants.COMMA
+							+ Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.NEWLINE);
 				}
 			}
 			csvWriter.flush();
@@ -91,9 +92,10 @@ public class SubjectDAO {
 
 				while (input.hasNextLine()) {
 					String line = input.nextLine();
-					String[] lineSplit = line.split(Constants.COMMA);
-					int id = Integer.parseInt(lineSplit[0]);
-					String title = lineSplit[1];
+					String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+
+					int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					String title = lineArr[1].replace(Constants.QUOT_MARK, Constants.EMPTY);
 
 					Subject subject = new SubjectBuilder().withId(id).withTitle(title).build();
 					subjects.add(subject);

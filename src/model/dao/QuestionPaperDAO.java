@@ -39,22 +39,9 @@ public class QuestionPaperDAO {
 				csvFile.getParentFile().mkdirs();
 				csvFile.createNewFile();
 			}
-			String[] data = getQuestionPaperStrData(questionPaper);
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			// ID, subject ID, title
-			csvWriter.append(data[0] + Constants.COMMA);
-			csvWriter.append(data[1] + Constants.COMMA);
-			csvWriter.append(data[2] + Constants.NEWLINE);
-			// course title
-			csvWriter.append(data[3] + Constants.NEWLINE);
-			// course code, question IDs
-			csvWriter.append(data[4] + Constants.COMMA);
-			csvWriter.append(data[5] + Constants.NEWLINE);
-			// difficulty level, marks, time required
-			csvWriter.append(data[6] + Constants.COMMA);
-			csvWriter.append(data[7] + Constants.COMMA);
-			csvWriter.append(data[8] + Constants.NEWLINE);
+			addQuestionPaperDataToFile(questionPaper, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (Exception e) {
@@ -73,12 +60,11 @@ public class QuestionPaperDAO {
 		try {
 			List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
 			File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // writing, not appending
+			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
 
 			for (QuestionPaper questionPaper : allQuestionPapers) {
 				if (questionPaper.getId() != id) {
-					String[] data = getQuestionPaperStrData(questionPaper);
-					writeQuestionPaperDataToFile(data, csvWriter);
+					addQuestionPaperDataToFile(questionPaper, csvWriter, false);
 				}
 			}
 			csvWriter.flush();
@@ -106,26 +92,23 @@ public class QuestionPaperDAO {
 
 				while (input.hasNextLine()) {
 					try {
-						String line1 = input.nextLine(); // ID, subject ID, title
-						String line2 = input.nextLine(); // course title
-						String line3 = input.nextLine(); // course code, question IDs
-						String line4 = input.nextLine(); // difficulty level, marks, time required (mins)
-						String[] line1split = line1.split(Constants.COMMA);
-						String[] line3split = line3.split(Constants.COMMA);
-						String[] line4split = line4.split(Constants.COMMA);
+						String line = input.nextLine();
+						String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
-						int id = Integer.parseInt(line1split[0]);
-						int subjectId = Integer.parseInt(line1split[1]);
-						String title = line1split[2];
-						String courseTitle = line2;
-						String courseCode = line3split[0];
+						int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
+						int subjectId = Integer.parseInt(lineArr[1]);
+						String title = lineArr[2];
+						String courseTitle = lineArr[3];
+						String courseCode = lineArr[4];
+						String[] questionIdsStr = lineArr[5].split(Constants.COMMA);
 						List<Integer> questionIds = new ArrayList<>();
-						for (int i = 1; i < line3split.length; i++) { // start at 1, because 0 is course code
-							questionIds.add(Integer.parseInt(line3split[i]));
+						for (int i = 0; i < questionIdsStr.length; i++) {
+							questionIds.add(Integer.parseInt(questionIdsStr[i]));
 						}
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(line4split[0]));
-						int marks = Integer.parseInt(line4split[1]);
-						int timeRequiredMins = Integer.parseInt(line4split[2]);
+						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(lineArr[6]));
+						int marks = Integer.parseInt(lineArr[7]);
+						int timeRequiredMins = Integer
+							.parseInt(lineArr[8].replace(Constants.QUOT_MARK, Constants.EMPTY));
 
 						QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id)
 							.withSubjectId(subjectId)
@@ -168,10 +151,10 @@ public class QuestionPaperDAO {
 	}
 
 	/**
-	 * Retrieve all papers containing specified question ID
+	 * Retrieve all papers containing a certain question.
 	 * 
 	 * @param questionId - ID of the question to search for
-	 * @return list of papers containing question ID
+	 * @return list of papers containing question with specified ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
 		return getAllQuestionPapers().stream()
@@ -180,51 +163,42 @@ public class QuestionPaperDAO {
 	}
 
 	/**
-	 * Get string value of each attribute of a question paper.
-	 * 
-	 * @param questionPaper - the question paper of which to get String values
-	 * @return array of attributes converted to String
-	 */
-	private String[] getQuestionPaperStrData(QuestionPaper questionPaper) {
-		String[] data = new String[9];
-		data[0] = Integer.toString(questionPaper.getId());
-		data[1] = Integer.toString(questionPaper.getSubjectId());
-		data[2] = questionPaper.getTitle();
-		data[3] = questionPaper.getCourseTitle();
-		data[4] = questionPaper.getCourseCode();
-		StringBuilder questionIdsStrBld = new StringBuilder();
-		for (Integer i : questionPaper.getQuestionIds()) {
-			questionIdsStrBld.append(Integer.toString(i));
-			questionIdsStrBld.append(Constants.COMMA);
-		}
-		String questionIds = questionIdsStrBld.toString();
-		data[5] = questionIds.substring(0, questionIds.length() - 1); // remove last comma
-		data[6] = Integer.toString(questionPaper.getDifficultyLevel().getIntVal());
-		data[7] = Integer.toString(questionPaper.getMarks());
-		data[8] = Integer.toString(questionPaper.getTimeRequiredMins());
-		return data;
-	}
-
-	/**
-	 * Write question paper data to the question papers CSV file.
+	 * Add question paper data to the question papers CSV file.
 	 * 
 	 * @param data      - the string values of the question paper data
 	 * @param csvWriter - the file writer
+	 * @param append    - whether to append or write to the file
 	 */
-	private void writeQuestionPaperDataToFile(String[] data, FileWriter csvWriter) throws IOException {
-		// ID, subject ID, title
-		csvWriter.write(data[0] + Constants.COMMA);
-		csvWriter.write(data[1] + Constants.COMMA);
-		csvWriter.write(data[2] + Constants.NEWLINE);
-		// course title
-		csvWriter.write(data[3] + Constants.NEWLINE);
-		// course code, question IDs
-		csvWriter.write(data[4] + Constants.COMMA);
-		csvWriter.write(data[5] + Constants.NEWLINE);
-		// difficulty level, marks, time required
-		csvWriter.write(data[6] + Constants.COMMA);
-		csvWriter.write(data[7] + Constants.COMMA);
-		csvWriter.write(data[8] + Constants.NEWLINE);
+	private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter csvWriter, boolean append)
+		throws IOException {
+		StringBuilder questionIdsBld = new StringBuilder();
+		for (Integer id : questionPaper.getQuestionIds()) {
+			questionIdsBld.append(id);
+			questionIdsBld.append(Constants.COMMA);
+		}
+		String questionIds = questionIdsBld.toString();
+		questionIds = questionIds.substring(0, questionIds.length() - 1); // remove last comma
+
+		/*
+		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, difficulty level, marks,
+		 * time required (mins)
+		 */
+		String line = Constants.QUOT_MARK + Integer.toString(questionPaper.getId()) + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getSubjectId())
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getTitle()
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseTitle()
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseCode()
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getDifficultyLevel().getIntVal())
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks())
+			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.NEWLINE;
+
+		if (append) {
+			csvWriter.append(line);
+		} else { // write
+			csvWriter.write(line);
+		}
 	}
 
 	public synchronized static QuestionPaperDAO getInstance() {

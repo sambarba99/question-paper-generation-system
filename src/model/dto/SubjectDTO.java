@@ -76,6 +76,8 @@ public class SubjectDTO {
 	 * @return formatted title
 	 */
 	public String formatTitle(String title) {
+		// remove characters that could potentially harm CSV read/write functionality
+		title = title.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'");
 		String[] words = title.trim().split(Constants.SPACE);
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < words.length; i++) {
