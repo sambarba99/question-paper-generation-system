@@ -68,7 +68,7 @@ public class QuestionManagement {
 			})
 			.build();
 
-		HBox hboxOptions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+		HBox hboxActions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(7)
 			.withNodes(btnAddQuestion, btnDelQuestion)
@@ -76,7 +76,7 @@ public class QuestionManagement {
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
-			.withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxOptions)
+			.withNodes(lblSelectQuestion, listViewQuestions, txtAreaQuestion, hboxActions)
 			.build();
 
 		setup();

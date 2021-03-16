@@ -42,7 +42,7 @@ public class Constants {
 	public static final String QUOT_MARK = "\"";
 
 	/**
-	 * Question statement and answer options must not have repeating spaces.
+	 * Question statement and answers must not have repeating spaces.
 	 */
 	public static final String QUESTION_STATEMENT_REGEX = "^([^\\s]\\s?)+$";
 

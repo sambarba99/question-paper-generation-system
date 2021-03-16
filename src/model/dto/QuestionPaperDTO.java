@@ -93,12 +93,11 @@ public class QuestionPaperDTO {
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		for (int i = 0; i < questionIds.size(); i++) {
 			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i));
-			txtAreaStr.append(Constants.NEWLINE + "Question " + (i + 1) + ": " + question.getStatement());
-			txtAreaStr.append(Constants.NEWLINE + "Answer option A: " + question.getAnswerOptions().get(0));
-			txtAreaStr.append(Constants.NEWLINE + "Answer option B: " + question.getAnswerOptions().get(1));
-			txtAreaStr.append(Constants.NEWLINE + "Answer option C: " + question.getAnswerOptions().get(2));
-			txtAreaStr.append(
-				Constants.NEWLINE + "Answer option D: " + question.getAnswerOptions().get(3) + Constants.NEWLINE);
+			txtAreaStr.append(Constants.NEWLINE + (i + 1) + ". " + question.getStatement());
+			txtAreaStr.append(Constants.NEWLINE + "(A) " + question.getAnswers().get(0).getValue());
+			txtAreaStr.append(Constants.NEWLINE + "(B) " + question.getAnswers().get(1).getValue());
+			txtAreaStr.append(Constants.NEWLINE + "(C) " + question.getAnswers().get(2).getValue());
+			txtAreaStr.append(Constants.NEWLINE + "(D) " + question.getAnswers().get(3).getValue() + Constants.NEWLINE);
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'

@@ -9,11 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import model.builders.AnswerBuilder;
 import model.builders.QuestionBuilder;
+import model.persisted.Answer;
 import model.persisted.Question;
 
 import view.Constants;
-import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 
@@ -25,6 +26,8 @@ import controller.SystemNotification;
  * @author Sam Barba
  */
 public class QuestionDAO {
+
+	private static final int ASCII_A = 65;
 
 	private static QuestionDAO instance;
 
@@ -99,8 +102,9 @@ public class QuestionDAO {
 						int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
 						int subjectId = Integer.parseInt(lineArr[1]);
 						String statement = lineArr[2];
-						List<String> answerOptions = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
-						AnswerOption correctAns = AnswerOption.getFromStr(lineArr[7]);
+						List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
+						String correctAnswerLetter = lineArr[7];
+						List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
 						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(lineArr[8]));
 						int marks = Integer.parseInt(lineArr[9]);
 						int timeRequireMins = Integer
@@ -109,8 +113,7 @@ public class QuestionDAO {
 						Question question = new QuestionBuilder().withId(id)
 							.withSubjectId(subjectId)
 							.withStatement(statement)
-							.withAnswerOptions(answerOptions)
-							.withCorrectAnswerOption(correctAns)
+							.withAnswers(answers)
 							.withDifficultyLevel(difficultyLevel)
 							.withMarks(marks)
 							.withTimeRequiredMins(timeRequireMins)
@@ -150,18 +153,19 @@ public class QuestionDAO {
 	 * @param append    - whether to append or write to the file
 	 */
 	private void addQuestionDataToFile(Question question, FileWriter csvWriter, boolean append) throws IOException {
+		Answer correctAnswer = question.getAnswers().stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		/*
-		 * 1 line contains: ID, subject ID, statement, options A-D, correct answer (A/B/C/D), difficulty level, marks,
-		 * time required (mins)
+		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), difficulty level
+		 * int value, marks, time required (mins)
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(question.getId()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getSubjectId()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + question.getStatement() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getAnswerOptions().get(0) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getAnswerOptions().get(1) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getAnswerOptions().get(2) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getAnswerOptions().get(3) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getCorrectAnswerOption().toString() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswers().get(0).getValue() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswers().get(1).getValue() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswers().get(2).getValue() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + question.getAnswers().get(3).getValue() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + correctAnswer.getLetter() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getDifficultyLevel().getIntVal()) + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins())
@@ -172,6 +176,33 @@ public class QuestionDAO {
 		} else { // write
 			csvWriter.write(line);
 		}
+	}
+
+	/**
+	 * Make answers for a question, given a list of possible answers and the letter of the correct one.
+	 * 
+	 * @param answersStr          - the list of possible answers
+	 * @param correctAnswerLetter - the letter of the correct answer
+	 * @return - list of Answer objects to be used in Question building
+	 */
+	private List<Answer> makeAnswers(List<String> answersStr, String correctAnswerLetter) {
+		/*
+		 * Since correct answer is A-D, we subtract these 2 ASCII values to get its position in the list of answers.
+		 * E.g. If C is correct, then position in list = 67 - 65 = 2.
+		 */
+		int correctAnswerPos = (int) correctAnswerLetter.charAt(0) - ASCII_A;
+
+		List<Answer> answers = new ArrayList<>();
+
+		for (int i = 0; i < answersStr.size(); i++) {
+			Answer answer = new AnswerBuilder().withValue(answersStr.get(i))
+				.withLetter(Character.toString((char) (ASCII_A + i)))
+				.withIsCorrect(i == correctAnswerPos)
+				.build();
+
+			answers.add(answer);
+		}
+		return answers;
 	}
 
 	public synchronized static QuestionDAO getInstance() {

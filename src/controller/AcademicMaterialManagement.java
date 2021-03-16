@@ -47,7 +47,7 @@ public class AcademicMaterialManagement {
 	private static ListView<String> listViewQuestionPapers = new ListView<>();
 
 	/**
-	 * Display academic material and related options.
+	 * Display academic material and related user actions.
 	 * 
 	 * @param currentUser - the user currently in session
 	 */

@@ -2,7 +2,6 @@ package model.persisted;
 
 import java.util.List;
 
-import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 
 /**
@@ -18,9 +17,7 @@ public class Question {
 
 	private String statement;
 
-	private List<String> answerOptions;
-
-	private AnswerOption correctAnswerOption;
+	private List<Answer> answers;
 
 	private DifficultyLevel difficultyLevel;
 
@@ -28,13 +25,12 @@ public class Question {
 
 	private int timeRequiredMins;
 
-	public Question(int id, int subjectId, String statement, List<String> answerOptions,
-		AnswerOption correctAnswerOption, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+	public Question(int id, int subjectId, String statement, List<Answer> answers, DifficultyLevel difficultyLevel,
+		int marks, int timeRequiredMins) {
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
-		this.answerOptions = answerOptions;
-		this.correctAnswerOption = correctAnswerOption;
+		this.answers = answers;
 		this.difficultyLevel = difficultyLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
@@ -64,20 +60,12 @@ public class Question {
 		this.statement = statement;
 	}
 
-	public List<String> getAnswerOptions() {
-		return answerOptions;
+	public List<Answer> getAnswers() {
+		return answers;
 	}
 
-	public void setAnswerOptions(List<String> answerOptions) {
-		this.answerOptions = answerOptions;
-	}
-
-	public AnswerOption getCorrectAnswerOption() {
-		return correctAnswerOption;
-	}
-
-	public void setCorrectAnswerOption(AnswerOption correctAnswerOption) {
-		this.correctAnswerOption = correctAnswerOption;
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
 	}
 
 	public DifficultyLevel getDifficultyLevel() {

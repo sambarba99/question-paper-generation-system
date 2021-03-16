@@ -2,9 +2,9 @@ package model.builders;
 
 import java.util.List;
 
+import model.persisted.Answer;
 import model.persisted.Question;
 
-import view.enums.AnswerOption;
 import view.enums.DifficultyLevel;
 
 /**
@@ -20,9 +20,7 @@ public class QuestionBuilder {
 
 	private String statement;
 
-	private List<String> answerOptions;
-
-	private AnswerOption correctAnswerOption;
+	private List<Answer> answers;
 
 	private DifficultyLevel difficultyLevel;
 
@@ -48,13 +46,8 @@ public class QuestionBuilder {
 		return this;
 	}
 
-	public QuestionBuilder withAnswerOptions(List<String> answerOptions) {
-		this.answerOptions = answerOptions;
-		return this;
-	}
-
-	public QuestionBuilder withCorrectAnswerOption(AnswerOption correctAnswerOption) {
-		this.correctAnswerOption = correctAnswerOption;
+	public QuestionBuilder withAnswers(List<Answer> answers) {
+		this.answers = answers;
 		return this;
 	}
 
@@ -74,7 +67,6 @@ public class QuestionBuilder {
 	}
 
 	public Question build() {
-		return new Question(id, subjectId, statement, answerOptions, correctAnswerOption, difficultyLevel, marks,
-			timeRequiredMins);
+		return new Question(id, subjectId, statement, answers, difficultyLevel, marks, timeRequiredMins);
 	}
 }

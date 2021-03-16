@@ -33,7 +33,7 @@ public class AdminControl {
 	private static ListView<String> listViewUsers = new ListView<>();
 
 	/**
-	 * Display the system high-level options to the admin user.
+	 * Display the system high-level user actions to the admin user.
 	 * 
 	 * @param currentUser - the user currently in session
 	 */

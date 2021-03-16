@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javafx.scene.control.ListView;
 
+import model.persisted.Answer;
 import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
@@ -13,7 +14,6 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.Constants;
-import view.enums.AnswerOption;
 
 /**
  * This class is a singleton which contains methods related to ListViews used to modify and view questions.
@@ -63,8 +63,8 @@ public class QuestionDTO {
 	public String getTxtAreaQuestionStr(int id) {
 		Question question = QuestionService.getInstance().getQuestionById(id);
 		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
-		List<String> answerOptions = question.getAnswerOptions();
-		String correctAnswerOption = question.getCorrectAnswerOption().toString();
+		List<Answer> answers = question.getAnswers();
+		Answer correctAnswer = answers.stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
@@ -82,10 +82,10 @@ public class QuestionDTO {
 			}
 		}
 		txtAreaStr.append("\n\n" + question.getStatement());
-		for (int i = 0; i < AnswerOption.values().length; i++) {
-			txtAreaStr.append("\n" + AnswerOption.values()[i].getDisplayStr() + " " + answerOptions.get(i));
+		for (Answer answer : answers) {
+			txtAreaStr.append("\n(" + answer.getLetter() + ") " + answer.getValue());
 		}
-		txtAreaStr.append("\nCorrect answer: " + correctAnswerOption);
+		txtAreaStr.append("\nCorrect answer: " + correctAnswer.getLetter());
 
 		return txtAreaStr.toString();
 	}
