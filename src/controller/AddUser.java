@@ -18,13 +18,14 @@ import model.dto.UserTypeDTO;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.enums.UserType;
+import view.utils.Constants;
 
 /**
  * Allows admin users to add new tutor or admin users.

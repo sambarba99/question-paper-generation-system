@@ -13,7 +13,7 @@ import model.service.QuestionPaperService;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.utils.Constants;
 
 /**
  * This class is a singleton which contains methods related to ListViews used to modify and view questions.
@@ -70,22 +70,24 @@ public class QuestionDTO {
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
-		txtAreaStr.append("\nDifficulty level: " + question.getDifficultyLevel().getStrVal());
-		txtAreaStr.append("\nMarks: " + question.getMarks());
-		txtAreaStr.append("\nTime required (mins): " + question.getTimeRequiredMins());
+		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + question.getDifficultyLevel().getIntVal() + " ("
+			+ question.getDifficultyLevel().getStrVal() + ")");
+		txtAreaStr.append(Constants.NEWLINE + "Marks: " + question.getMarks());
+		txtAreaStr.append(Constants.NEWLINE + "Time required (mins): " + question.getTimeRequiredMins());
 		if (papersContainingQuestion.isEmpty()) {
-			txtAreaStr.append("\nThere are no papers which contain this question.");
+			txtAreaStr.append(Constants.NEWLINE + "There are no papers which contain this question.");
 		} else {
-			txtAreaStr.append("\nQuestion papers containing this question:");
+			txtAreaStr.append(Constants.NEWLINE + "Question papers containing this question:");
 			for (QuestionPaper questionPaper : papersContainingQuestion) {
-				txtAreaStr.append("\n - " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
+				txtAreaStr.append(
+					Constants.NEWLINE + "- " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
 			}
 		}
-		txtAreaStr.append("\n\n" + question.getStatement());
+		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement());
 		for (Answer answer : answers) {
-			txtAreaStr.append("\n(" + answer.getLetter() + ") " + answer.getValue());
+			txtAreaStr.append(Constants.NEWLINE + "(" + answer.getLetter() + ") " + answer.getValue());
 		}
-		txtAreaStr.append("\nCorrect answer: " + correctAnswer.getLetter());
+		txtAreaStr.append(Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
 
 		return txtAreaStr.toString();
 	}

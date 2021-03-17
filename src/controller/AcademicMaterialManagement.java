@@ -22,12 +22,13 @@ import model.service.QuestionPaperService;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 
 /**
  * Allows the user to view and modify academic material.

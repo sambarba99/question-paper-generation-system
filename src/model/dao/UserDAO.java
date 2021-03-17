@@ -11,11 +11,10 @@ import java.util.Scanner;
 import model.builders.UserBuilder;
 import model.persisted.User;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class is a singleton, the use of which is any database operation regarding users.

@@ -11,12 +11,11 @@ import model.builders.UserBuilder;
 import model.dao.UserDAO;
 import model.persisted.User;
 
-import view.Constants;
-import view.SecurityUtils;
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
+import view.utils.SecurityUtils;
 
 /**
  * This class is a singleton, the use of which is to perform any functionality regarding users.

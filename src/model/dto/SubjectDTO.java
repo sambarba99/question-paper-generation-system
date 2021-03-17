@@ -10,7 +10,7 @@ import javafx.scene.control.ListView;
 import model.persisted.Subject;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.utils.Constants;
 
 /**
  * This class is a singleton containing methods related to ListViews used to modify subjects.

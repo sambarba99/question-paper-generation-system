@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import view.Constants;
-
-import controller.SystemNotification;
+import view.SystemNotification;
+import view.utils.Constants;
 
 /**
  * Represents the type of user which determines their privilege.

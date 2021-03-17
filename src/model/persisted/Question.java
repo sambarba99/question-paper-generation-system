@@ -3,6 +3,7 @@ package model.persisted;
 import java.util.List;
 
 import view.enums.DifficultyLevel;
+import view.utils.Constants;
 
 /**
  * Represents a question.
@@ -90,5 +91,21 @@ public class Question {
 
 	public void setTimeRequiredMins(int timeRequiredMins) {
 		this.timeRequiredMins = timeRequiredMins;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder answersBld = new StringBuilder();
+		for (Answer answer : answers) {
+			answersBld.append("'" + answer.getValue() + "'");
+			if (answer.isCorrect()) {
+				answersBld.append(" <- CORRECT");
+			}
+			answersBld.append(Constants.NEWLINE);
+		}
+
+		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
+			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "difficultyLevel="
+			+ difficultyLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins;
 	}
 }

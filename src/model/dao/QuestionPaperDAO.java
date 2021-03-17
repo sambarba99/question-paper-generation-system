@@ -12,11 +12,10 @@ import java.util.stream.Collectors;
 import model.builders.QuestionPaperBuilder;
 import model.persisted.QuestionPaper;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class is a singleton, the use of which is any database operation regarding question papers.
@@ -105,7 +104,7 @@ public class QuestionPaperDAO {
 						for (int i = 0; i < questionIdsStr.length; i++) {
 							questionIds.add(Integer.parseInt(questionIdsStr[i]));
 						}
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(lineArr[6]));
+						DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[6]);
 						int marks = Integer.parseInt(lineArr[7]);
 						int timeRequiredMins = Integer
 							.parseInt(lineArr[8].replace(Constants.QUOT_MARK, Constants.EMPTY));
@@ -189,7 +188,7 @@ public class QuestionPaperDAO {
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseTitle()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseCode()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getDifficultyLevel().getIntVal())
+			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getDifficultyLevel().getStrVal()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks())
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.NEWLINE;

@@ -3,12 +3,11 @@ package model.persisted;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
-import view.Constants;
-import view.SecurityUtils;
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
 import view.enums.UserType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
+import view.utils.SecurityUtils;
 
 /**
  * Represents a user.

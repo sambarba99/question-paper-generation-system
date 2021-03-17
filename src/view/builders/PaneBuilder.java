@@ -6,11 +6,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class utilises the builder pattern, and is used to generate HBox or VBox panes used in UI pages.

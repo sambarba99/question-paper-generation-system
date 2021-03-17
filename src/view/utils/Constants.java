@@ -1,10 +1,9 @@
-package view;
+package view.utils;
 
 import model.questionpapergeneration.SelectionType;
 
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
 
 /**
  * This class contains constants to be used system-wide.

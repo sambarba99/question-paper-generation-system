@@ -12,8 +12,8 @@ import model.persisted.QuestionPaper;
 import model.service.QuestionPaperService;
 import model.service.QuestionService;
 
-import view.Constants;
 import view.enums.DifficultyLevel;
+import view.utils.Constants;
 
 /**
  * Generates a question paper with specified parameters using a GA.
@@ -28,7 +28,7 @@ public class QuestionPaperGenerator {
 		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) throws IOException {
 
 		FileWriter csvWriter = new FileWriter(Constants.GENETIC_ALGORITHM_RESULTS_PATH);
-		csvWriter.append("Generation,Population mean fitness,Highest,Lowest\n");
+		csvWriter.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
 
 		GAUtils gaUtils = GAUtils.getInstance();
 
@@ -39,10 +39,6 @@ public class QuestionPaperGenerator {
 		gaUtils.randomisePopulationGenes(population, allQuestions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
-			if (g % 10 == 0) {
-				System.out.println("Generation: " + g);
-			}
-
 			// initial selection = true
 			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, true);
 
@@ -54,10 +50,10 @@ public class QuestionPaperGenerator {
 			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, false);
 
 			List<Double> averageHiLo = gaUtils.calculateTableFitnesses(population);
-			csvWriter.append(g + ",");
-			csvWriter.append(Double.toString(averageHiLo.get(0)) + ",");
-			csvWriter.append(Double.toString(averageHiLo.get(1)) + ",");
-			csvWriter.append(Double.toString(averageHiLo.get(2)) + "\n");
+			csvWriter.append(g + Constants.COMMA);
+			csvWriter.append(Double.toString(averageHiLo.get(0)) + Constants.COMMA);
+			csvWriter.append(Double.toString(averageHiLo.get(1)) + Constants.COMMA);
+			csvWriter.append(Double.toString(averageHiLo.get(2)) + Constants.NEWLINE);
 		}
 		csvWriter.flush();
 		csvWriter.close();

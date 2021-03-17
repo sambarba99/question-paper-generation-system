@@ -16,12 +16,13 @@ import javafx.stage.Stage;
 import model.dto.QuestionDTO;
 import model.service.QuestionService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 
 /**
  * Allows the user to view all stored questions, and manage them.

@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -18,7 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import model.dto.DifficultyLevelDTO;
 import model.dto.SubjectDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
@@ -26,13 +26,14 @@ import model.questionpapergeneration.QuestionPaperGenerator;
 import model.service.QuestionPaperService;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 
 /**
  * Allows the user to generate a question paper with specified parameters such as subject and difficulty.
@@ -45,9 +46,6 @@ public class GenerateQuestionPaper {
 
 	private static boolean generated;
 
-	/*
-	 * Nodes for specifying question paper parameters
-	 */
 	private static ChoiceBox cbSubject = new ChoiceBox();
 
 	private static TextField txtTitle = new TextField();
@@ -56,7 +54,9 @@ public class GenerateQuestionPaper {
 
 	private static TextField txtCourseCode = new TextField();
 
-	private static ChoiceBox cbDifficulty = new ChoiceBox();
+	private static Slider sliderDifficultyLvl = new Slider();
+
+	private static Label lblSelectedDifficultyLvl = new Label("Difficulty level: KNOWLEDGE");
 
 	private static TextField txtMarks = new TextField();
 
@@ -75,7 +75,7 @@ public class GenerateQuestionPaper {
 		Label lblEnterTitle = new Label("Enter the title:");
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
-		Label lblSelectDifficulty = new Label("Select difficulty level:");
+		Label lblSelectDifficulty = new Label("Select average question difficulty:");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
@@ -107,7 +107,8 @@ public class GenerateQuestionPaper {
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(5)
-			.withNodes(lblSelectDifficulty, cbDifficulty, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired)
+			.withNodes(lblSelectDifficulty, sliderDifficultyLvl, lblSelectedDifficultyLvl, lblEnterMarks, txtMarks,
+				lblEnterTimeReq, txtTimeRequired)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -175,7 +176,7 @@ public class GenerateQuestionPaper {
 		}
 
 		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
-		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
+		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
 
 		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance()
 			.generatePaper(subjectId, title, courseTitle, courseCode, difficultyLevel, marks, timeReq);
@@ -204,11 +205,20 @@ public class GenerateQuestionPaper {
 		cbSubject.setMaxWidth(200);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		cbDifficulty.getItems().clear();
-		cbDifficulty.getItems()
-			.addAll(allDifficulties.stream().map(DifficultyLevel::getStrVal).collect(Collectors.toList()));
-		cbDifficulty.getSelectionModel().select(0);
-		cbDifficulty.setMinWidth(200);
-		cbDifficulty.setMaxWidth(200);
+		sliderDifficultyLvl.setMin(1);
+		sliderDifficultyLvl.setMax(allDifficulties.size());
+		sliderDifficultyLvl.setMinWidth(200);
+		sliderDifficultyLvl.setMaxWidth(200);
+		sliderDifficultyLvl.setMajorTickUnit(1);
+		sliderDifficultyLvl.setShowTickLabels(true);
+		sliderDifficultyLvl.setShowTickMarks(true);
+		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
+			int intVal = newValue.intValue();
+			sliderDifficultyLvl.setValue(intVal); // snap to exact value
+			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficulties.get(intVal - 1).getStrVal());
+		});
+
+		lblSelectedDifficultyLvl.setMinWidth(240);
+		lblSelectedDifficultyLvl.setMaxWidth(240);
 	}
 }

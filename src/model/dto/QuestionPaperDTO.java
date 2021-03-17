@@ -13,7 +13,7 @@ import model.service.QuestionPaperService;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.utils.Constants;
 
 /**
  * This class is a singleton which contains methods related to ListViews used to modify and display question papers.
@@ -85,7 +85,8 @@ public class QuestionPaperDTO {
 		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
-		txtAreaStr.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().getStrVal());
+		txtAreaStr
+			.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().getIntVal() + "/6");
 		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		txtAreaStr.append(
 			Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);

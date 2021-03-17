@@ -14,11 +14,10 @@ import model.builders.QuestionBuilder;
 import model.persisted.Answer;
 import model.persisted.Question;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class is a singleton, the use of which is any database operation regarding paper questions.
@@ -105,7 +104,7 @@ public class QuestionDAO {
 						List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
 						String correctAnswerLetter = lineArr[7];
 						List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(Integer.parseInt(lineArr[8]));
+						DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[8]);
 						int marks = Integer.parseInt(lineArr[9]);
 						int timeRequireMins = Integer
 							.parseInt(lineArr[10].replace(Constants.QUOT_MARK, Constants.EMPTY));
@@ -155,8 +154,8 @@ public class QuestionDAO {
 	private void addQuestionDataToFile(Question question, FileWriter csvWriter, boolean append) throws IOException {
 		Answer correctAnswer = question.getAnswers().stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		/*
-		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), difficulty level
-		 * int value, marks, time required (mins)
+		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), difficulty level,
+		 * marks, time required (mins)
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(question.getId()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getSubjectId()) + Constants.QUOT_MARK + Constants.COMMA
@@ -166,10 +165,10 @@ public class QuestionDAO {
 			+ Constants.QUOT_MARK + question.getAnswers().get(2).getValue() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + question.getAnswers().get(3).getValue() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + correctAnswer.getLetter() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + Integer.toString(question.getDifficultyLevel().getIntVal()) + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins())
-			+ Constants.QUOT_MARK + Constants.NEWLINE;
+			+ Constants.QUOT_MARK + question.getDifficultyLevel().getStrVal() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins()) + Constants.QUOT_MARK
+			+ Constants.NEWLINE;
 
 		if (append) {
 			csvWriter.append(line);

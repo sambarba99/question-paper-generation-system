@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -21,7 +22,6 @@ import javafx.stage.Stage;
 
 import model.builders.AnswerBuilder;
 import model.builders.QuestionBuilder;
-import model.dto.DifficultyLevelDTO;
 import model.dto.SubjectDTO;
 import model.persisted.Answer;
 import model.persisted.Question;
@@ -29,13 +29,14 @@ import model.persisted.Subject;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 
 /**
  * Allows the user to view all stored questions, and manage questions.
@@ -50,9 +51,6 @@ public class AddQuestion {
 
 	private static boolean added;
 
-	/*
-	 * Nodes for adding a new question
-	 */
 	private static ChoiceBox cbSubject = new ChoiceBox();
 
 	private static TextArea txtAreaStatement = new TextArea();
@@ -67,7 +65,9 @@ public class AddQuestion {
 
 	private static ChoiceBox cbCorrectAnsLetter = new ChoiceBox();
 
-	private static ChoiceBox cbDifficulty = new ChoiceBox();
+	private static Slider sliderDifficultyLvl = new Slider();
+
+	private static Label lblSelectedDifficultyLvl = new Label("Difficulty level: KNOWLEDGE");
 
 	private static TextField txtMarks = new TextField();
 
@@ -87,7 +87,7 @@ public class AddQuestion {
 		Label lblEnterAnsC = new Label("Enter answer C:");
 		Label lblEnterAnsD = new Label("Enter answer D:");
 		Label lblSelectCorrect = new Label("Select correct answer:");
-		Label lblSelectDIfficulty = new Label("Select difficulty level:");
+		Label lblSelectDifficultyLvl = new Label("Select difficulty level\n(based on Bloom's taxonomy):");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
@@ -111,8 +111,8 @@ public class AddQuestion {
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectCorrect, cbCorrectAnsLetter, lblSelectDIfficulty, cbDifficulty, lblEnterMarks, txtMarks,
-				lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
+			.withNodes(lblSelectCorrect, cbCorrectAnsLetter, lblSelectDifficultyLvl, sliderDifficultyLvl,
+				lblSelectedDifficultyLvl, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
 			.build();
 		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -126,7 +126,7 @@ public class AddQuestion {
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().add(hboxMain);
 
-		Scene scene = new Scene(pane, 700, 600);
+		Scene scene = new Scene(pane, 750, 600);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Add New Question");
@@ -180,8 +180,16 @@ public class AddQuestion {
 		}
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
 		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
+
+		// capitalise statement and answers
+		statement = Character.toString(statement.charAt(0)).toUpperCase() + statement.substring(1);
+		ansA = Character.toString(ansA.charAt(0)).toUpperCase() + ansA.substring(1);
+		ansB = Character.toString(ansB.charAt(0)).toUpperCase() + ansB.substring(1);
+		ansC = Character.toString(ansC.charAt(0)).toUpperCase() + ansC.substring(1);
+		ansD = Character.toString(ansD.charAt(0)).toUpperCase() + ansD.substring(1);
+
 		int correctAnswerPos = cbCorrectAnsLetter.getSelectionModel().getSelectedIndex();
-		DifficultyLevel difficultyLevel = DifficultyLevelDTO.getInstance().getSelectedDifficulty(cbDifficulty);
+		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
 
 		Question question = new QuestionBuilder().withId(id)
 			.withSubjectId(subjectId)
@@ -224,12 +232,21 @@ public class AddQuestion {
 		cbCorrectAnsLetter.getSelectionModel().select(0);
 
 		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		cbDifficulty.getItems().clear();
-		cbDifficulty.getItems()
-			.addAll(allDifficulties.stream().map(DifficultyLevel::getStrVal).collect(Collectors.toList()));
-		cbDifficulty.getSelectionModel().select(0);
-		cbDifficulty.setMinWidth(200);
-		cbDifficulty.setMaxWidth(200);
+		sliderDifficultyLvl.setMin(1);
+		sliderDifficultyLvl.setMax(allDifficulties.size());
+		sliderDifficultyLvl.setMinWidth(200);
+		sliderDifficultyLvl.setMaxWidth(200);
+		sliderDifficultyLvl.setMajorTickUnit(1);
+		sliderDifficultyLvl.setShowTickLabels(true);
+		sliderDifficultyLvl.setShowTickMarks(true);
+		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
+			int intVal = newValue.intValue();
+			sliderDifficultyLvl.setValue(intVal); // snap to exact value
+			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficulties.get(intVal - 1).getStrVal());
+		});
+
+		lblSelectedDifficultyLvl.setMinWidth(240);
+		lblSelectedDifficultyLvl.setMaxWidth(240);
 	}
 
 	/**
@@ -243,7 +260,7 @@ public class AddQuestion {
 		txtAnsC.setText(Constants.EMPTY);
 		txtAnsD.setText(Constants.EMPTY);
 		cbCorrectAnsLetter.getSelectionModel().select(0);
-		cbDifficulty.getSelectionModel().select(0);
+		sliderDifficultyLvl.setValue(1);
 		txtMarks.setText(Constants.EMPTY);
 		txtTimeRequired.setText(Constants.EMPTY);
 	}

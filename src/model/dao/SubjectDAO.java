@@ -11,10 +11,9 @@ import java.util.Scanner;
 import model.builders.SubjectBuilder;
 import model.persisted.Subject;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class is a singleton, the use of which is any database operation regarding subjects.

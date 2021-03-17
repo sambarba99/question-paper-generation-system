@@ -30,8 +30,7 @@ public class UserTypeDTO {
 	}
 
 	/**
-	 * Get enum value of selected user type in a ChoiceBox. The index of the selected item corresponds to the user
-	 * type's int value.
+	 * Get enum value of selected user type in a ChoiceBox.
 	 * 
 	 * @param cbUserType - the ChoiceBox of user types
 	 * @return enum of selected user type

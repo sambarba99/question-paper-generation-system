@@ -15,12 +15,13 @@ import model.dto.SubjectDTO;
 import model.persisted.Subject;
 import model.service.SubjectService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 
 /**
  * Allows user to add a new subject.

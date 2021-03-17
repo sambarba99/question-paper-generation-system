@@ -13,15 +13,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import model.persisted.User;
+import model.rawquestiontransformation.RawQuestionTransformer;
 import model.service.UserService;
 
-import view.Constants;
+import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.enums.UserType;
+import view.utils.Constants;
 
 /**
  * Allows the user to access the system with correct username and password.
@@ -32,7 +34,11 @@ public class Login extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+		/*
+		 * If this is first-time system access, we need to create first user, and questions and subjects CSV files
+		 */
 		if (!UserService.getInstance().usersFileExists()) {
+			RawQuestionTransformer.getInstance().transformAndSaveRawQuestions();
 			SystemNotification.display(SystemNotificationType.NEUTRAL,
 				"You are the first user (an admin). Set a secure password.");
 		}

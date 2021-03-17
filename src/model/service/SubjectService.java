@@ -6,10 +6,9 @@ import java.util.List;
 import model.dao.SubjectDAO;
 import model.persisted.Subject;
 
-import view.Constants;
+import view.SystemNotification;
 import view.enums.SystemNotificationType;
-
-import controller.SystemNotification;
+import view.utils.Constants;
 
 /**
  * This class is a singleton, the use of which is to perform any functionality regarding subjects.

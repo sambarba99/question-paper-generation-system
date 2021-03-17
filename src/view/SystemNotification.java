@@ -1,4 +1,4 @@
-package controller;
+package view;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import view.enums.SystemNotificationType;
 
 /**
- * Displays an error, success, or neutral notification.
+ * Displays an error, neutral, or success notification.
  *
  * @author Sam Barba
  */

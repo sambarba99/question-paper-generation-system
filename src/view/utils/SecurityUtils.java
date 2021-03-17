@@ -1,4 +1,4 @@
-package view;
+package view.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -15,7 +15,7 @@ public class SecurityUtils {
 	private static SecurityUtils instance;
 
 	/**
-	 * Encrypt a string with SHA-512.
+	 * Encrypt a string using SHA-512.
 	 * 
 	 * @param text - the string to encrypt
 	 * @return the encrypted text
