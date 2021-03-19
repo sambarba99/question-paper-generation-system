@@ -34,17 +34,13 @@ public class UpdatePassword {
 
 	private static Stage stage;
 
-	private static boolean updated;
-
 	/**
 	 * Update the user's password.
 	 * 
 	 * @param currentUser - the user calling this method
-	 * @return whether or not the password has been updated
 	 */
-	public static boolean updatePassword(User currentUser) {
+	public static void updatePassword(User currentUser) {
 		stage = new Stage();
-		updated = false;
 
 		Label lblEnterCurrentPass = new Label("Enter current password:");
 		PasswordField passFieldCurrent = new PasswordField();
@@ -96,7 +92,6 @@ public class UpdatePassword {
 		// so multiple instances of this window can't be opened
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
-		return updated;
 	}
 
 	/**
@@ -112,7 +107,7 @@ public class UpdatePassword {
 			UserService userService = UserService.getInstance();
 			if (userService.validateResetPassword(currentUser, currentPass, newPass, repeatPass)) {
 				userService.updatePassword(currentUser, newPass);
-				updated = true;
+				SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
 				stage.close();
 			}
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {

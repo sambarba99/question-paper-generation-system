@@ -3,6 +3,7 @@ package model.dto;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.ChoiceBox;
@@ -16,6 +17,8 @@ import view.enums.UserType;
  */
 public class UserTypeDTO {
 
+	public static final Logger LOGGER = Logger.getLogger(UserTypeDTO.class.getName());
+
 	private static UserTypeDTO instance;
 
 	/**
@@ -24,6 +27,7 @@ public class UserTypeDTO {
 	 * @return list of all user types
 	 */
 	public List<String> getUserTypeChoiceBoxItems() {
+		LOGGER.info("Retrieving user types for ChoiceBox");
 		List<UserType> allUserTypes = new ArrayList<>(EnumSet.allOf(UserType.class));
 		List<String> choiceBoxItems = allUserTypes.stream().map(UserType::toString).collect(Collectors.toList());
 		return choiceBoxItems;
@@ -36,6 +40,7 @@ public class UserTypeDTO {
 	 * @return enum of selected user type
 	 */
 	public UserType getSelectedUserType(ChoiceBox cbUserType) {
+		LOGGER.info("Retrieving selected user type from ChoiceBox");
 		String userTypeSelected = cbUserType.getSelectionModel().getSelectedItem().toString();
 		return UserType.getFromStr(userTypeSelected);
 	}

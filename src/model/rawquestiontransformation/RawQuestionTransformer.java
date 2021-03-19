@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import model.builders.AnswerBuilder;
 import model.builders.QuestionBuilder;
@@ -50,6 +51,8 @@ import view.utils.Constants;
  */
 public class RawQuestionTransformer {
 
+	public static final Logger LOGGER = Logger.getLogger(RawQuestionTransformer.class.getName());
+
 	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "HistoryEurope", "HistoryUS",
 		"HistoryWorld", "Marketing", "Psychology" };
 
@@ -86,6 +89,8 @@ public class RawQuestionTransformer {
 	 * CSV file.
 	 */
 	public void transformAndSaveRawQuestions() {
+		LOGGER.info("Transforming and saving raw questions...");
+
 		for (int i = 0; i < INPUT_SUBJECTS.length; i++) {
 			SubjectService.getInstance()
 				.addSubject(new SubjectBuilder().withId(subjectId).withTitle(INPUT_SUBJECTS[i]).build());
@@ -105,6 +110,8 @@ public class RawQuestionTransformer {
 
 			subjectId++;
 		}
+
+		LOGGER.info("Questions saved!");
 	}
 
 	/**
@@ -114,6 +121,8 @@ public class RawQuestionTransformer {
 	 * @return list of raw questions and answers
 	 */
 	private static List<String> getRawLinesFromFile(String filePath) throws FileNotFoundException {
+		LOGGER.info("Getting raw question lines from " + filePath);
+
 		File inputFile = new File(filePath);
 		Scanner input = new Scanner(inputFile);
 
@@ -141,10 +150,13 @@ public class RawQuestionTransformer {
 	 * @return list of Questions
 	 */
 	private static List<Question> makeQuestionsFromRawLines(List<String> rawLines) {
+		LOGGER.info("Making questions from raw lines");
+
 		Map<String, List<String>> questionsAndAnswers = new HashMap<>();
 
 		String questionStr = "";
 
+		// determine which lines are questions and which are answers
 		for (String line : rawLines) {
 			char firstChar = line.charAt(0);
 
@@ -158,6 +170,7 @@ public class RawQuestionTransformer {
 			}
 		}
 
+		// now create Question objects using the map
 		List<Question> questions = new ArrayList<>();
 		for (Entry<String, List<String>> entry : questionsAndAnswers.entrySet()) {
 			List<String> answersStr = entry.getValue();
@@ -170,6 +183,7 @@ public class RawQuestionTransformer {
 				answersStr.remove(randIndex);
 			}
 
+			// create answers for the current question key in map
 			List<Answer> answers = new ArrayList<>();
 			for (int i = 0; i < ANSWERS_PER_QUESTION; i++) {
 				String answerStr = answersStr.get(i);
@@ -202,7 +216,7 @@ public class RawQuestionTransformer {
 
 			/*
 			 * Determine difficulty level, time required, and marks, by mapping question statement length to specified
-			 * range e.g. between 1 and 20 for marks
+			 * range e.g. between 1 and 10 for marks
 			 */
 			String questionStatement = entry.getKey();
 			int len = questionStatement.length();

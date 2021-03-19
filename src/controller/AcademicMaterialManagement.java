@@ -225,13 +225,11 @@ public class AcademicMaterialManagement {
 					int paperId = QuestionPaperDTO.getInstance().getQuestionPaperId(listViewQuestionPapers);
 					QuestionPaperService.getInstance().deleteQuestionPaperById(paperId);
 					refreshQuestionPapersListView();
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Paper deleted.");
+					SystemNotification.display(SystemNotificationType.SUCCESS, "Question paper deleted.");
 				}
 				break;
 			case UPDATE_PASSWORD:
-				if (UpdatePassword.updatePassword(currentUser)) {
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
-				}
+				UpdatePassword.updatePassword(currentUser);
 				break;
 			default:
 				SystemNotification.display(SystemNotificationType.ERROR, "Unexpected error.");

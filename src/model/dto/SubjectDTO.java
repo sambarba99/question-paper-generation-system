@@ -2,6 +2,7 @@ package model.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.ChoiceBox;
@@ -19,6 +20,8 @@ import view.utils.Constants;
  */
 public class SubjectDTO {
 
+	public static final Logger LOGGER = Logger.getLogger(SubjectDTO.class.getName());
+
 	private static SubjectDTO instance;
 
 	/**
@@ -27,6 +30,7 @@ public class SubjectDTO {
 	 * @return list of all subjects
 	 */
 	public List<String> getSubjectListViewItems() {
+		LOGGER.info("Retrieving list of subjects for ListView");
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		List<String> listViewItems = allSubjects.stream()
 			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
@@ -40,6 +44,7 @@ public class SubjectDTO {
 	 * @return subject ID
 	 */
 	public int getSubjectId(ChoiceBox cbSubject) {
+		LOGGER.info("Retrieving selected subject from ChoiceBox");
 		/*
 		 * Here and in getSelectedSubjectIds() we are getting element at position (length - 1) because there can be
 		 * multiple spaces in the subject, e.g. "Mathematical Analysis (ID 4)". We then remove the closing bracket.
@@ -58,6 +63,8 @@ public class SubjectDTO {
 	 * @return list of subject IDs
 	 */
 	public List<Integer> getSelectedSubjectsIds(ListView<String> listViewSubjects) {
+		LOGGER.info("Retrieving selected subject IDs from ListView");
+
 		List<String> subjects = listViewSubjects.getSelectionModel().getSelectedItems();
 		List<Integer> subjectIds = new ArrayList<>();
 		for (String s : subjects) {

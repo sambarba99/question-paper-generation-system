@@ -1,6 +1,7 @@
 package model.dto;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.ListView;
@@ -22,6 +23,8 @@ import view.utils.Constants;
  */
 public class QuestionDTO {
 
+	public static final Logger LOGGER = Logger.getLogger(QuestionDTO.class.getName());
+
 	private static QuestionDTO instance;
 
 	/**
@@ -30,6 +33,7 @@ public class QuestionDTO {
 	 * @return list of all questions
 	 */
 	public List<String> getQuestionListViewItems() {
+		LOGGER.info("Retrieving questions for ListView");
 		List<Question> allQuestions = QuestionService.getInstance().getAllQuestions();
 		List<String> listViewItems = allQuestions.stream()
 			.map(question -> (question.getStatement() + " (ID " + question.getId() + ")"))
@@ -44,6 +48,7 @@ public class QuestionDTO {
 	 * @return question ID
 	 */
 	public int getQuestionId(ListView<String> listViewQuestions) {
+		LOGGER.info("Retrieving selected question ID from ListView");
 		String question = listViewQuestions.getSelectionModel().getSelectedItem();
 		if (question == null) {
 			return 0;
@@ -61,6 +66,8 @@ public class QuestionDTO {
 	 * @return question string
 	 */
 	public String getTxtAreaQuestionStr(int id) {
+		LOGGER.info("Formatting question data for TextArea");
+
 		Question question = QuestionService.getInstance().getQuestionById(id);
 		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
 		List<Answer> answers = question.getAnswers();

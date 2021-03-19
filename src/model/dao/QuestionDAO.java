@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import model.builders.AnswerBuilder;
 import model.builders.QuestionBuilder;
@@ -25,6 +26,8 @@ import view.utils.Constants;
  * @author Sam Barba
  */
 public class QuestionDAO {
+
+	public static final Logger LOGGER = Logger.getLogger(QuestionDAO.class.getName());
 
 	private static final int ASCII_A = 65;
 
@@ -47,6 +50,7 @@ public class QuestionDAO {
 			addQuestionDataToFile(question, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Question with ID " + question.getId() + " added");
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -72,6 +76,7 @@ public class QuestionDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Question with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -94,37 +99,32 @@ public class QuestionDAO {
 				Scanner input = new Scanner(csvFile);
 
 				while (input.hasNextLine()) {
-					try {
-						String line = input.nextLine();
-						String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+					String line = input.nextLine();
+					String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
-						int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
-						int subjectId = Integer.parseInt(lineArr[1]);
-						String statement = lineArr[2];
-						List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
-						String correctAnswerLetter = lineArr[7];
-						List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[8]);
-						int marks = Integer.parseInt(lineArr[9]);
-						int timeRequireMins = Integer
-							.parseInt(lineArr[10].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					int subjectId = Integer.parseInt(lineArr[1]);
+					String statement = lineArr[2];
+					List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
+					String correctAnswerLetter = lineArr[7];
+					List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
+					DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[8]);
+					int marks = Integer.parseInt(lineArr[9]);
+					int timeRequiredMins = Integer.parseInt(lineArr[10].replace(Constants.QUOT_MARK, Constants.EMPTY));
 
-						Question question = new QuestionBuilder().withId(id)
-							.withSubjectId(subjectId)
-							.withStatement(statement)
-							.withAnswers(answers)
-							.withDifficultyLevel(difficultyLevel)
-							.withMarks(marks)
-							.withTimeRequiredMins(timeRequireMins)
-							.build();
+					Question question = new QuestionBuilder().withId(id)
+						.withSubjectId(subjectId)
+						.withStatement(statement)
+						.withAnswers(answers)
+						.withDifficultyLevel(difficultyLevel)
+						.withMarks(marks)
+						.withTimeRequiredMins(timeRequiredMins)
+						.build();
 
-						questions.add(question);
-					} catch (Exception e) { // reached last line
-						input.close();
-						return questions;
-					}
+					questions.add(question);
 				}
 				input.close();
+				LOGGER.info("Retrieved all " + questions.size() + " questions");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -141,6 +141,7 @@ public class QuestionDAO {
 	 * @return question with specified ID
 	 */
 	public Question getQuestionById(int id) {
+		LOGGER.info("Retrieving question by ID " + id);
 		return getAllQuestions().stream().filter(question -> question.getId() == id).findFirst().orElse(null);
 	}
 

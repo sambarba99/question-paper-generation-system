@@ -65,9 +65,7 @@ public class AdminControl {
 		Button btnUpdatePassword = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.UPDATE_PASSWORD)
 			.withClickAction(action -> {
-				if (UpdatePassword.updatePassword(currentUser)) {
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Password updated.");
-				}
+				UpdatePassword.updatePassword(currentUser);
 			})
 			.build();
 
@@ -126,7 +124,7 @@ public class AdminControl {
 				UserService.getInstance().deleteUserByUsername(username);
 				listViewUsers.getItems().clear();
 				listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
-				SystemNotification.display(SystemNotificationType.SUCCESS, "User deleted.");
+				SystemNotification.display(SystemNotificationType.SUCCESS, "User '" + username + "' deleted.");
 			}
 		}
 	}

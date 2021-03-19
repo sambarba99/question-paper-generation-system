@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.logging.Logger;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,6 +24,8 @@ import view.enums.UserAction;
  */
 public class DeletionConfirm {
 
+	public static final Logger LOGGER = Logger.getLogger(DeletionConfirm.class.getName());
+
 	private static Stage stage;
 
 	private static boolean deleted;
@@ -42,12 +46,14 @@ public class DeletionConfirm {
 			.withUserAction(UserAction.DELETE_CONFIRM_YES)
 			.withClickAction(action -> {
 				deleted = true;
+				LOGGER.info(deletingItem + " deletion confirmed");
 				stage.close();
 			})
 			.build();
 		Button btnNo = new ButtonBuilder().withWidth(70)
 			.withUserAction(UserAction.DELETE_CONFIRM_NO)
 			.withClickAction(action -> {
+				LOGGER.info(deletingItem + " deletion retracted");
 				stage.close();
 			})
 			.build();

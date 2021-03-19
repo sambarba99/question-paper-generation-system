@@ -2,6 +2,7 @@ package model.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.scene.control.ListView;
@@ -22,6 +23,8 @@ import view.utils.Constants;
  */
 public class QuestionPaperDTO {
 
+	public static final Logger LOGGER = Logger.getLogger(QuestionPaperDTO.class.getName());
+
 	private static QuestionPaperDTO instance;
 
 	/**
@@ -30,6 +33,7 @@ public class QuestionPaperDTO {
 	 * @return list of all question papers
 	 */
 	public List<String> getQuestionPaperListViewItems() {
+		LOGGER.info("Retrieving question paper titles for ListView");
 		List<QuestionPaper> allQuestionPapers = QuestionPaperService.getInstance().getAllQuestionPapers();
 		List<String> listViewItems = allQuestionPapers.stream()
 			.map(questionPaper -> (questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")"))
@@ -44,6 +48,7 @@ public class QuestionPaperDTO {
 	 * @return list of specified subject papers
 	 */
 	public List<String> getQuestionPaperListViewItemsBySubjectIds(List<Integer> subjectIds) {
+		LOGGER.info("Retrieving question paper titles by subject IDs for ListView");
 		List<String> listViewItems = new ArrayList<>();
 		for (QuestionPaper questionPaper : QuestionPaperService.getInstance().getAllQuestionPapers()) {
 			if (subjectIds.contains(questionPaper.getSubjectId())) {
@@ -60,8 +65,9 @@ public class QuestionPaperDTO {
 	 * @return ID of selected paper
 	 */
 	public int getQuestionPaperId(ListView<String> listViewQuestionPapers) {
+		LOGGER.info("Retrieving selected question paper ID from ListView");
 		/*
-		 * here we are getting the element at position (length - 1) because there can be multiple spaces in the string,
+		 * Here we are getting the element at position (length - 1) because there can be multiple spaces in the string,
 		 * e.g. "Mathematics (ID 1)". We then remove the closing bracket.
 		 */
 		String questionPaper = listViewQuestionPapers.getSelectionModel().getSelectedItem();
@@ -78,6 +84,7 @@ public class QuestionPaperDTO {
 	 * @return question string
 	 */
 	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
+		LOGGER.info("Formatting question paper data for TextArea");
 		Subject subject = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
 
 		StringBuilder txtAreaStr = new StringBuilder();

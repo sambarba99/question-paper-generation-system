@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import model.builders.QuestionPaperBuilder;
@@ -22,10 +23,14 @@ import view.utils.Constants;
  */
 public class QuestionPaperGenerator {
 
+	public static final Logger LOGGER = Logger.getLogger(QuestionPaperGenerator.class.getName());
+
 	private static QuestionPaperGenerator instance;
 
 	public QuestionPaper generatePaper(int subjectId, String title, String courseTitle, String courseCode,
 		DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) throws IOException {
+
+		LOGGER.info("Generating question paper...");
 
 		FileWriter csvWriter = new FileWriter(Constants.GENETIC_ALGORITHM_RESULTS_PATH);
 		csvWriter.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
@@ -62,6 +67,7 @@ public class QuestionPaperGenerator {
 		QuestionPaper questionPaper = makePaperOutOfIndividual(fittest, subjectId, title, courseTitle, courseCode,
 			difficultyLevel, marks, timeRequiredMins);
 
+		LOGGER.info("Question paper generated");
 		return questionPaper;
 	}
 

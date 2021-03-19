@@ -1,6 +1,7 @@
 package model.dto;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import model.persisted.User;
@@ -13,6 +14,8 @@ import model.service.UserService;
  */
 public class UserDTO {
 
+	public static final Logger LOGGER = Logger.getLogger(UserDTO.class.getName());
+
 	private static UserDTO instance;
 
 	/**
@@ -21,6 +24,7 @@ public class UserDTO {
 	 * @return list of all usernames and types
 	 */
 	public List<String> getUserListViewItems() {
+		LOGGER.info("Retrieving list of users for ListView");
 		List<User> allUsers = UserService.getInstance().getAllUsers();
 		List<String> listViewItems = allUsers.stream()
 			.map(user -> (user.getUsername() + " (" + user.getType().toString() + ")"))

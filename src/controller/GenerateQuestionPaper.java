@@ -84,7 +84,7 @@ public class GenerateQuestionPaper {
 			.withClickAction(action -> {
 				QuestionPaper generatedPaper = null;
 				try {
-					generatedPaper = generatePaperWithParams();
+					generatedPaper = prepareParamsAndGenerate();
 				} catch (IOException e) {
 					e.printStackTrace();
 					SystemNotification.display(SystemNotificationType.ERROR,
@@ -143,7 +143,7 @@ public class GenerateQuestionPaper {
 	 * 
 	 * @return whether or not paper has been generated successfully
 	 */
-	private static QuestionPaper generatePaperWithParams() throws IOException {
+	private static QuestionPaper prepareParamsAndGenerate() throws IOException {
 		String title = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
 		String courseTitle = txtCourseTitle.getText().trim();
 		String courseCode = txtCourseCode.getText().trim();

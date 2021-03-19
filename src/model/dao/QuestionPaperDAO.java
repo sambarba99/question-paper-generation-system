@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import model.builders.QuestionPaperBuilder;
@@ -23,6 +24,8 @@ import view.utils.Constants;
  * @author Sam Barba
  */
 public class QuestionPaperDAO {
+
+	public static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
 
 	private static QuestionPaperDAO instance;
 
@@ -43,6 +46,7 @@ public class QuestionPaperDAO {
 			addQuestionPaperDataToFile(questionPaper, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Question paper '" + questionPaper.getTitle() + "' added");
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -68,6 +72,7 @@ public class QuestionPaperDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Question paper with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -90,43 +95,38 @@ public class QuestionPaperDAO {
 				Scanner input = new Scanner(csvFile);
 
 				while (input.hasNextLine()) {
-					try {
-						String line = input.nextLine();
-						String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+					String line = input.nextLine();
+					String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
-						int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
-						int subjectId = Integer.parseInt(lineArr[1]);
-						String title = lineArr[2];
-						String courseTitle = lineArr[3];
-						String courseCode = lineArr[4];
-						String[] questionIdsStr = lineArr[5].split(Constants.COMMA);
-						List<Integer> questionIds = new ArrayList<>();
-						for (int i = 0; i < questionIdsStr.length; i++) {
-							questionIds.add(Integer.parseInt(questionIdsStr[i]));
-						}
-						DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[6]);
-						int marks = Integer.parseInt(lineArr[7]);
-						int timeRequiredMins = Integer
-							.parseInt(lineArr[8].replace(Constants.QUOT_MARK, Constants.EMPTY));
-
-						QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id)
-							.withSubjectId(subjectId)
-							.withTitle(title)
-							.withCourseTitle(courseTitle)
-							.withCourseCode(courseCode)
-							.withQuestionIds(questionIds)
-							.withDifficultyLevel(difficultyLevel)
-							.withMarks(marks)
-							.withTimeRequiredMins(timeRequiredMins)
-							.build();
-
-						questionPapers.add(questionPaper);
-					} catch (Exception e) { // reached last line
-						input.close();
-						return questionPapers;
+					int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					int subjectId = Integer.parseInt(lineArr[1]);
+					String title = lineArr[2];
+					String courseTitle = lineArr[3];
+					String courseCode = lineArr[4];
+					String[] questionIdsStr = lineArr[5].split(Constants.COMMA);
+					List<Integer> questionIds = new ArrayList<>();
+					for (int i = 0; i < questionIdsStr.length; i++) {
+						questionIds.add(Integer.parseInt(questionIdsStr[i]));
 					}
+					DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[6]);
+					int marks = Integer.parseInt(lineArr[7]);
+					int timeRequiredMins = Integer.parseInt(lineArr[8].replace(Constants.QUOT_MARK, Constants.EMPTY));
+
+					QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id)
+						.withSubjectId(subjectId)
+						.withTitle(title)
+						.withCourseTitle(courseTitle)
+						.withCourseCode(courseCode)
+						.withQuestionIds(questionIds)
+						.withDifficultyLevel(difficultyLevel)
+						.withMarks(marks)
+						.withTimeRequiredMins(timeRequiredMins)
+						.build();
+
+					questionPapers.add(questionPaper);
 				}
 				input.close();
+				LOGGER.info("Retrieved all " + questionPapers.size() + " question papers");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -143,6 +143,7 @@ public class QuestionPaperDAO {
 	 * @return the question paper with the specified ID
 	 */
 	public QuestionPaper getQuestionPaperById(int id) {
+		LOGGER.info("Retrieving question paper by ID " + id);
 		return getAllQuestionPapers().stream()
 			.filter(questionPaper -> questionPaper.getId() == id)
 			.findFirst()
@@ -156,6 +157,7 @@ public class QuestionPaperDAO {
 	 * @return list of papers containing question with specified ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
+		LOGGER.info("Retrieving question paper by question ID " + questionId);
 		return getAllQuestionPapers().stream()
 			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId))
 			.collect(Collectors.toList());
@@ -198,6 +200,8 @@ public class QuestionPaperDAO {
 		} else { // write
 			csvWriter.write(line);
 		}
+
+		LOGGER.info("Added data of question paper ID " + questionPaper.getId() + " to file");
 	}
 
 	public synchronized static QuestionPaperDAO getInstance() {

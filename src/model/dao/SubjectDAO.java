@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import model.builders.SubjectBuilder;
 import model.persisted.Subject;
@@ -21,6 +22,8 @@ import view.utils.Constants;
  * @author Sam Barba
  */
 public class SubjectDAO {
+
+	public static final Logger LOGGER = Logger.getLogger(SubjectDAO.class.getName());
 
 	private static SubjectDAO instance;
 
@@ -42,6 +45,7 @@ public class SubjectDAO {
 				+ Constants.COMMA + Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Subject '" + subject.getTitle() + "' added");
 		} catch (Exception e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -69,6 +73,7 @@ public class SubjectDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("Subject with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -100,6 +105,7 @@ public class SubjectDAO {
 					subjects.add(subject);
 				}
 				input.close();
+				LOGGER.info("Retrieved all " + subjects.size() + " subjects");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -116,6 +122,7 @@ public class SubjectDAO {
 	 * @return subject with specified ID
 	 */
 	public Subject getSubjectById(int id) {
+		LOGGER.info("Retrieving subject by ID " + id);
 		return getAllSubjects().stream().filter(subject -> subject.getId() == id).findFirst().orElse(null);
 	}
 

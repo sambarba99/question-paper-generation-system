@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import model.builders.UserBuilder;
 import model.persisted.User;
@@ -22,6 +23,8 @@ import view.utils.Constants;
  * @author Sam Barba
  */
 public class UserDAO {
+
+	public static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
 	private static UserDAO instance;
 
@@ -47,6 +50,7 @@ public class UserDAO {
 				+ user.getType().toString() + Constants.QUOT_MARK + Constants.NEWLINE);
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("User '" + username + "' added");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -65,6 +69,7 @@ public class UserDAO {
 		deleteUserByUsername(user.getUsername());
 		user.encryptPassword();
 		addUser(user);
+		LOGGER.info("Password of user '" + user.getUsername() + "' updated");
 	}
 
 	/**
@@ -87,6 +92,7 @@ public class UserDAO {
 			}
 			csvWriter.flush();
 			csvWriter.close();
+			LOGGER.info("User '" + username + "' deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -118,6 +124,7 @@ public class UserDAO {
 				users.add(user);
 			}
 			input.close();
+			LOGGER.info("Retrieved all " + users.size() + " users");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,

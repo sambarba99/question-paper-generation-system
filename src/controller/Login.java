@@ -35,7 +35,8 @@ public class Login extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		/*
-		 * If this is first-time system access, we need to create first user, and questions and subjects CSV files
+		 * If this is first-time system access, we need to create first user, and questions and subjects CSV files (for
+		 * demo purposes)
 		 */
 		if (!UserService.getInstance().usersFileExists()) {
 			RawQuestionTransformer.getInstance().transformAndSaveRawQuestions();
