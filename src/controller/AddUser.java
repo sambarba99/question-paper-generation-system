@@ -14,7 +14,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import model.builders.UserBuilder;
-import model.dto.UserTypeDTO;
 import model.persisted.User;
 import model.service.UserService;
 
@@ -52,20 +51,20 @@ public class AddUser {
 		Label lblEnterPass = new Label("Enter their temporary password:");
 		PasswordField passField = new PasswordField();
 		Label lblSelectType = new Label("Select their user type:");
-		ChoiceBox cbUserType = new ChoiceBox();
+		ChoiceBox choiceUserType = new ChoiceBox();
 
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
-		cbUserType.getItems().addAll(UserTypeDTO.getInstance().getUserTypeChoiceBoxItems());
-		cbUserType.getSelectionModel().selectFirst();
-		cbUserType.setMinWidth(100);
-		cbUserType.setMaxWidth(100);
+		choiceUserType.getItems().addAll(UserService.getInstance().getUserTypeChoiceBoxItems());
+		choiceUserType.getSelectionModel().selectFirst();
+		choiceUserType.setMinWidth(100);
+		choiceUserType.setMaxWidth(100);
 
 		Button btnAddUser = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.ADD)
 			.withClickAction(action -> {
-				UserType userType = UserTypeDTO.getInstance().getSelectedUserType(cbUserType);
+				UserType userType = UserService.getInstance().getSelectedUserType(choiceUserType);
 				addUser(txtUsername.getText(), passField.getText(), userType);
 			})
 			.build();
@@ -78,7 +77,7 @@ public class AddUser {
 		VBox vboxCreds = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER_LEFT)
 			.withSpacing(20)
-			.withNodes(txtUsername, passField, cbUserType)
+			.withNodes(txtUsername, passField, choiceUserType)
 			.build();
 		HBox hboxUserCreds = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)

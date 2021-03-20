@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 
 import model.builders.AnswerBuilder;
 import model.builders.QuestionBuilder;
-import model.dto.SubjectDTO;
 import model.persisted.Answer;
 import model.persisted.Question;
 import model.persisted.Subject;
@@ -51,7 +50,7 @@ public class AddQuestion {
 
 	private static boolean added;
 
-	private static ChoiceBox cbSubject = new ChoiceBox();
+	private static ChoiceBox choiceSubject = new ChoiceBox();
 
 	private static TextArea txtAreaStatement = new TextArea();
 
@@ -63,7 +62,7 @@ public class AddQuestion {
 
 	private static TextField txtAnsD = new TextField();
 
-	private static ChoiceBox cbCorrectAnsLetter = new ChoiceBox();
+	private static ChoiceBox choiceCorrectAnsLetter = new ChoiceBox();
 
 	private static Slider sliderDifficultyLvl = new Slider();
 
@@ -105,13 +104,13 @@ public class AddQuestion {
 		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectSubject, cbSubject, lblEnterStatement, txtAreaStatement, lblEnterAnsA, txtAnsA,
+			.withNodes(lblSelectSubject, choiceSubject, lblEnterStatement, txtAreaStatement, lblEnterAnsA, txtAnsA,
 				lblEnterAnsB, txtAnsB, lblEnterAnsC, txtAnsC, lblEnterAnsD, txtAnsD)
 			.build();
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectCorrect, cbCorrectAnsLetter, lblSelectDifficultyLvl, sliderDifficultyLvl,
+			.withNodes(lblSelectCorrect, choiceCorrectAnsLetter, lblSelectDifficultyLvl, sliderDifficultyLvl,
 				lblSelectedDifficultyLvl, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
 			.build();
 		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
@@ -179,7 +178,8 @@ public class AddQuestion {
 			return false;
 		}
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
-		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
+		int subjectId = SubjectService.getInstance()
+			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 
 		// capitalise statement and answers
 		statement = Character.toString(statement.charAt(0)).toUpperCase() + statement.substring(1);
@@ -188,7 +188,7 @@ public class AddQuestion {
 		ansC = Character.toString(ansC.charAt(0)).toUpperCase() + ansC.substring(1);
 		ansD = Character.toString(ansD.charAt(0)).toUpperCase() + ansD.substring(1);
 
-		int correctAnswerPos = cbCorrectAnsLetter.getSelectionModel().getSelectedIndex();
+		int correctAnswerPos = choiceCorrectAnsLetter.getSelectionModel().getSelectedIndex();
 		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
 
 		Question question = new QuestionBuilder().withId(id)
@@ -209,14 +209,14 @@ public class AddQuestion {
 	 */
 	private static void setup() {
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
-		cbSubject.getItems().clear();
-		cbSubject.getItems()
+		choiceSubject.getItems().clear();
+		choiceSubject.getItems()
 			.addAll(allSubjects.stream()
 				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
 				.collect(Collectors.toList()));
-		cbSubject.getSelectionModel().select(0);
-		cbSubject.setMinWidth(200);
-		cbSubject.setMaxWidth(200);
+		choiceSubject.getSelectionModel().select(0);
+		choiceSubject.setMinWidth(200);
+		choiceSubject.setMaxWidth(200);
 
 		txtAreaStatement.setMinSize(350, 160);
 		txtAreaStatement.setMaxSize(350, 160);
@@ -227,13 +227,13 @@ public class AddQuestion {
 					.setText(newText.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'"));
 			});
 
-		cbCorrectAnsLetter.getItems().clear();
-		cbCorrectAnsLetter.getItems().addAll("A", "B", "C", "D");
-		cbCorrectAnsLetter.getSelectionModel().select(0);
+		choiceCorrectAnsLetter.getItems().clear();
+		choiceCorrectAnsLetter.getItems().addAll("A", "B", "C", "D");
+		choiceCorrectAnsLetter.getSelectionModel().select(0);
 
-		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
+		List<DifficultyLevel> allDifficultyLvls = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		sliderDifficultyLvl.setMin(1);
-		sliderDifficultyLvl.setMax(allDifficulties.size());
+		sliderDifficultyLvl.setMax(allDifficultyLvls.size());
 		sliderDifficultyLvl.setMinWidth(200);
 		sliderDifficultyLvl.setMaxWidth(200);
 		sliderDifficultyLvl.setMajorTickUnit(1);
@@ -242,7 +242,7 @@ public class AddQuestion {
 		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = newValue.intValue();
 			sliderDifficultyLvl.setValue(intVal); // snap to exact value
-			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficulties.get(intVal - 1).getStrVal());
+			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficultyLvls.get(intVal - 1).getStrVal());
 		});
 
 		lblSelectedDifficultyLvl.setMinWidth(240);
@@ -253,13 +253,13 @@ public class AddQuestion {
 	 * Reset all nodes for adding a question.
 	 */
 	private static void resetAddQuestionFields() {
-		cbSubject.getSelectionModel().select(0);
+		choiceSubject.getSelectionModel().select(0);
 		txtAreaStatement.setText(Constants.EMPTY);
 		txtAnsA.setText(Constants.EMPTY);
 		txtAnsB.setText(Constants.EMPTY);
 		txtAnsC.setText(Constants.EMPTY);
 		txtAnsD.setText(Constants.EMPTY);
-		cbCorrectAnsLetter.getSelectionModel().select(0);
+		choiceCorrectAnsLetter.getSelectionModel().select(0);
 		sliderDifficultyLvl.setValue(1);
 		txtMarks.setText(Constants.EMPTY);
 		txtTimeRequired.setText(Constants.EMPTY);

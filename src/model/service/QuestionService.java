@@ -2,9 +2,14 @@ package model.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import model.dao.QuestionDAO;
+import model.dto.QuestionDTO;
+import model.persisted.Answer;
 import model.persisted.Question;
+import model.persisted.QuestionPaper;
+import model.persisted.Subject;
 
 import view.SystemNotification;
 import view.enums.SystemNotificationType;
@@ -69,6 +74,82 @@ public class QuestionService {
 			return 0;
 		}
 		return allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId();
+	}
+
+	/**
+	 * Get all questions converted to DTOs for using in TableViews, with applied subject and difficulty level filters
+	 * (if any selected in QuestionManagement).
+	 * 
+	 * @param difficultyLvls - difficulty levels IDs to filter by
+	 * @param subjectIds     - subject IDs to filter by
+	 * @return (filtered) list of all questions as DTOs
+	 */
+	public List<QuestionDTO> getQuestionDTOsWithFilters(List<Integer> difficultyLvls, List<Integer> subjectIds) {
+		/*
+		 * If a list is empty, say difficultyLvls, then it means the user does not want to filter by difficulty. This is
+		 * why we have the difficultyLvls.isEmpty() condition in a logical disjunction (||).
+		 */
+		return getAllQuestions().stream()
+			.filter(q -> difficultyLvls.isEmpty() || difficultyLvls.contains(q.getDifficultyLevel().getIntVal()))
+			.filter(q -> subjectIds.isEmpty() || subjectIds.contains(q.getSubjectId()))
+			.map(this::convertToQuestionDTO)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Convert a question to its DTO equivalent.
+	 * 
+	 * @param question - the question to convert
+	 * @return the equivalent QuestionDTO
+	 */
+	private QuestionDTO convertToQuestionDTO(Question question) {
+		QuestionDTO questionDto = new QuestionDTO();
+		questionDto.setId(question.getId());
+		questionDto.setSubjectTitle(SubjectService.getInstance().getSubjectById(question.getSubjectId()).getTitle());
+		questionDto.setStatement(question.getStatement());
+		questionDto.setDifficultyLevel(question.getDifficultyLevel().getDisplayStr());
+		questionDto.setMarks(question.getMarks());
+		questionDto.setTimeRequiredMins(question.getTimeRequiredMins());
+
+		return questionDto;
+	}
+
+	/**
+	 * Get a formatted question string for question TextArea.
+	 * 
+	 * @param id - the ID of the question to format
+	 * @return question string
+	 */
+	public String getTxtAreaQuestionStr(int id) {
+		Question question = getQuestionById(id);
+		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
+		List<Answer> answers = question.getAnswers();
+		Answer correctAnswer = answers.stream().filter(Answer::isCorrect).findFirst().orElse(null);
+		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
+			.getQuestionPapersByQuestionId(id);
+
+		StringBuilder txtAreaStr = new StringBuilder();
+		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
+		txtAreaStr
+			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
+		txtAreaStr.append(Constants.NEWLINE + "Marks: " + question.getMarks());
+		txtAreaStr.append(Constants.NEWLINE + "Time required (mins): " + question.getTimeRequiredMins());
+		if (papersContainingQuestion.isEmpty()) {
+			txtAreaStr.append(Constants.NEWLINE + "There are no papers which contain this question.");
+		} else {
+			txtAreaStr.append(Constants.NEWLINE + "Question papers containing this question:");
+			for (QuestionPaper questionPaper : papersContainingQuestion) {
+				txtAreaStr.append(
+					Constants.NEWLINE + "- " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
+			}
+		}
+		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement());
+		for (Answer answer : answers) {
+			txtAreaStr.append(Constants.NEWLINE + "(" + answer.getLetter() + ") " + answer.getValue());
+		}
+		txtAreaStr.append(Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
+
+		return txtAreaStr.toString();
 	}
 
 	public synchronized static QuestionService getInstance() {

@@ -9,7 +9,7 @@
 	-fx-vgap: 20;
 }
 
-.text-field, .text-area, .button, .choice-box .label, .choice-box .context-menu .label {
+.text-field, .text-area, .button, .choice-box .label, .choice-box .context-menu .label, .list-cell, .titled-pane {
 	-fx-font-family: "Arial";
 	-fx-font-size: 15px;
 	-fx-text-fill: #1e1e1e;
@@ -18,7 +18,7 @@
 	-fx-wrap-text: true;
 }
 
-.label, .check-box {
+.label {
 	-fx-font-family: "Arial";
 	-fx-font-size: 15px;
 	-fx-text-fill: #dcdcdc;
@@ -66,4 +66,25 @@
 
  .slider .axis {
 	-fx-tick-label-fill: #dcdcdc;
+}
+
+.table-view, .table-view .column-header .label, .table-cell {
+	-fx-alignment: center;
+	-fx-font-family: "Arial";
+	-fx-font-size: 15px;
+	-fx-text-fill: #1e1e1e;
+}
+
+.table-view .column-header .label {
+	-fx-background-color: #dcdcdc;
+}
+
+.check-box {
+	-fx-font-family: "Arial";
+	-fx-font-size: 15px;
+	-fx-text-fill: #1e1e1e;	
+}
+
+.check-box .box {
+	-fx-background-color: #dcdcdc;
 }

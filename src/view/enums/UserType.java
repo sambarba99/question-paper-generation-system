@@ -1,8 +1,6 @@
 package view.enums;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.Arrays;
 
 import view.SystemNotification;
 import view.utils.Constants;
@@ -24,8 +22,8 @@ public enum UserType {
 	 * @return userType - the UserType with the specified String value
 	 */
 	public static UserType getFromStr(String strVal) {
-		List<UserType> allUserTypes = new ArrayList<>(EnumSet.allOf(UserType.class));
-		UserType userType = allUserTypes.stream()
+		UserType userType = Arrays.asList(values())
+			.stream()
 			.filter(uType -> uType.toString().equals(strVal))
 			.findFirst()
 			.orElse(null);

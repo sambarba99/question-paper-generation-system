@@ -1,7 +1,11 @@
 package model.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javafx.scene.control.ListView;
 
 import model.dao.SubjectDAO;
 import model.persisted.Subject;
@@ -69,6 +73,69 @@ public class SubjectService {
 			return 0;
 		}
 		return allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId();
+	}
+
+	/**
+	 * Get a list of all subjects for subjects ListView objects.
+	 * 
+	 * @return list of all subjects
+	 */
+	public List<String> getSubjectListViewItems() {
+		return getAllSubjects().stream()
+			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get ID of selected subject in ListView or CheckBox etc. from its display string, e.g. "Maths (ID 1)".
+	 * 
+	 * @return the subject's ID
+	 */
+	public int getSubjectIdFromDisplayStr(String subjectDisplayStr) {
+		/*
+		 * Here and in getSelectedSubjectIds() we are getting the final element because there can be multiple spaces in
+		 * the subject, e.g. "Mathematical Analysis (ID 4)". We then remove the closing parentheses.
+		 */
+		String[] split = subjectDisplayStr.split(Constants.SPACE);
+		String subjectIdStr = split[split.length - 1];
+		subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
+		return Integer.parseInt(subjectIdStr);
+	}
+
+	/**
+	 * Get list of IDs of selected subjects in ListView.
+	 * 
+	 * @param listViewSubjects - the ListView of subjects
+	 * @return list of subject IDs
+	 */
+	public List<Integer> getSelectedSubjectsIds(ListView<String> listViewSubjects) {
+		List<String> subjects = listViewSubjects.getSelectionModel().getSelectedItems();
+		List<Integer> subjectIds = new ArrayList<>();
+		for (String s : subjects) {
+			String[] subjectStrSplit = s.split(Constants.SPACE);
+			String subjectIdStr = subjectStrSplit[subjectStrSplit.length - 1];
+			subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
+			subjectIds.add(Integer.parseInt(subjectIdStr));
+		}
+		return subjectIds;
+	}
+
+	/**
+	 * Capitalise each word in subject title and trim whitespace.
+	 * 
+	 * @param title - the title to format
+	 * @return formatted title
+	 */
+	public String formatTitle(String title) {
+		// remove characters that could potentially harm CSV read/write functionality
+		title = title.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'");
+		String[] words = title.trim().split(Constants.SPACE);
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < words.length; i++) {
+			result.append(Character.toString(words[i].charAt(0)).toUpperCase());
+			result.append(words[i].substring(1).toLowerCase() + Constants.SPACE);
+		}
+		return result.toString().trim(); // remove last space
 	}
 
 	public synchronized static SubjectService getInstance() {

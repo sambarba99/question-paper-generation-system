@@ -3,7 +3,6 @@ package model.rawquestiontransformation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,13 +55,13 @@ public class RawQuestionTransformer {
 	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "HistoryEurope", "HistoryUS",
 		"HistoryWorld", "Marketing", "Psychology" };
 
-	private static final String INPUT_DIRECTORY = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\rawquestions\\";
+	private static final String INPUT_DIRECTORY = "C:\\#rawquestions\\";
 
 	private static final String INPUT_EXT = ".txt";
 
 	private static final int MIN_DIFFICULTY = 1;
 
-	private static final int MAX_DIFFICULTY = EnumSet.allOf(DifficultyLevel.class).size();
+	private static final int MAX_DIFFICULTY = DifficultyLevel.values().length;
 
 	private static final int MIN_TIME_REQUIRED = 1;
 
@@ -92,6 +91,8 @@ public class RawQuestionTransformer {
 		LOGGER.info("Transforming and saving raw questions...");
 
 		for (int i = 0; i < INPUT_SUBJECTS.length; i++) {
+			LOGGER.info("Saving " + INPUT_SUBJECTS[i] + " questions...");
+
 			SubjectService.getInstance()
 				.addSubject(new SubjectBuilder().withId(subjectId).withTitle(INPUT_SUBJECTS[i]).build());
 
@@ -121,8 +122,6 @@ public class RawQuestionTransformer {
 	 * @return list of raw questions and answers
 	 */
 	private static List<String> getRawLinesFromFile(String filePath) throws FileNotFoundException {
-		LOGGER.info("Getting raw question lines from " + filePath);
-
 		File inputFile = new File(filePath);
 		Scanner input = new Scanner(inputFile);
 
@@ -150,8 +149,6 @@ public class RawQuestionTransformer {
 	 * @return list of Questions
 	 */
 	private static List<Question> makeQuestionsFromRawLines(List<String> rawLines) {
-		LOGGER.info("Making questions from raw lines");
-
 		Map<String, List<String>> questionsAndAnswers = new HashMap<>();
 
 		String questionStr = "";

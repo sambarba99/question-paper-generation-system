@@ -19,7 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import model.dto.SubjectDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
 import model.questionpapergeneration.QuestionPaperGenerator;
@@ -46,7 +45,7 @@ public class GenerateQuestionPaper {
 
 	private static boolean generated;
 
-	private static ChoiceBox cbSubject = new ChoiceBox();
+	private static ChoiceBox choiceSubject = new ChoiceBox();
 
 	private static TextField txtTitle = new TextField();
 
@@ -101,7 +100,7 @@ public class GenerateQuestionPaper {
 		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(5)
-			.withNodes(lblSelectSubject, cbSubject, lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle,
+			.withNodes(lblSelectSubject, choiceSubject, lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle,
 				lblEnterCourseCode, txtCourseCode)
 			.build();
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
@@ -144,7 +143,7 @@ public class GenerateQuestionPaper {
 	 * @return whether or not paper has been generated successfully
 	 */
 	private static QuestionPaper prepareParamsAndGenerate() throws IOException {
-		String title = SubjectDTO.getInstance().formatTitle(txtTitle.getText());
+		String title = SubjectService.getInstance().formatTitle(txtTitle.getText());
 		String courseTitle = txtCourseTitle.getText().trim();
 		String courseCode = txtCourseCode.getText().trim();
 		if (title.length() == 0 || courseTitle.length() == 0 || courseCode.length() == 0) {
@@ -175,7 +174,8 @@ public class GenerateQuestionPaper {
 			return null;
 		}
 
-		int subjectId = SubjectDTO.getInstance().getSubjectId(cbSubject);
+		int subjectId = SubjectService.getInstance()
+			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
 
 		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance()
@@ -195,18 +195,18 @@ public class GenerateQuestionPaper {
 		txtTimeRequired.setText(Constants.EMPTY);
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
-		cbSubject.getItems().clear();
-		cbSubject.getItems()
+		choiceSubject.getItems().clear();
+		choiceSubject.getItems()
 			.addAll(allSubjects.stream()
 				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
 				.collect(Collectors.toList()));
-		cbSubject.getSelectionModel().select(0);
-		cbSubject.setMinWidth(200);
-		cbSubject.setMaxWidth(200);
+		choiceSubject.getSelectionModel().select(0);
+		choiceSubject.setMinWidth(200);
+		choiceSubject.setMaxWidth(200);
 
-		List<DifficultyLevel> allDifficulties = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
+		List<DifficultyLevel> allDifficultyLvls = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		sliderDifficultyLvl.setMin(1);
-		sliderDifficultyLvl.setMax(allDifficulties.size());
+		sliderDifficultyLvl.setMax(allDifficultyLvls.size());
 		sliderDifficultyLvl.setMinWidth(200);
 		sliderDifficultyLvl.setMaxWidth(200);
 		sliderDifficultyLvl.setMajorTickUnit(1);
@@ -215,7 +215,7 @@ public class GenerateQuestionPaper {
 		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = newValue.intValue();
 			sliderDifficultyLvl.setValue(intVal); // snap to exact value
-			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficulties.get(intVal - 1).getStrVal());
+			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficultyLvls.get(intVal - 1).getStrVal());
 		});
 
 		lblSelectedDifficultyLvl.setMinWidth(240);

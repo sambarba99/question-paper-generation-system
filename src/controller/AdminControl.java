@@ -10,7 +10,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import model.dto.UserDTO;
 import model.persisted.User;
 import model.service.UserService;
 
@@ -84,7 +83,7 @@ public class AdminControl {
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().addAll(vboxUsersView, vboxActions);
 
-		listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
+		listViewUsers.getItems().addAll(UserService.getInstance().getUserListViewItems());
 		listViewUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		Scene scene = new Scene(pane, 550, 500);
@@ -101,7 +100,7 @@ public class AdminControl {
 	private static void addUser() {
 		if (AddUser.addUser()) {
 			listViewUsers.getItems().clear();
-			listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
+			listViewUsers.getItems().addAll(UserService.getInstance().getUserListViewItems());
 			SystemNotification.display(SystemNotificationType.SUCCESS, "User added!");
 		}
 	}
@@ -112,8 +111,8 @@ public class AdminControl {
 	 * @param currentUser - the user currently in session
 	 */
 	private static void deleteUser(User currentUser) {
-		if (listViewUsers.getSelectionModel().isEmpty()) {
-			SystemNotification.display(SystemNotificationType.ERROR, "Please select a user.");
+		if (listViewUsers.getSelectionModel().getSelectedItems().size() != 1) {
+			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 user.");
 		} else {
 			String user = listViewUsers.getSelectionModel().getSelectedItem();
 			String username = user.split(Constants.SPACE)[0];
@@ -123,7 +122,7 @@ public class AdminControl {
 			} else if (DeletionConfirm.confirmDelete("user")) {
 				UserService.getInstance().deleteUserByUsername(username);
 				listViewUsers.getItems().clear();
-				listViewUsers.getItems().addAll(UserDTO.getInstance().getUserListViewItems());
+				listViewUsers.getItems().addAll(UserService.getInstance().getUserListViewItems());
 				SystemNotification.display(SystemNotificationType.SUCCESS, "User '" + username + "' deleted.");
 			}
 		}

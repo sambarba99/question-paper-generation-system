@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import model.builders.SubjectBuilder;
-import model.dto.SubjectDTO;
 import model.persisted.Subject;
 import model.service.SubjectService;
 
@@ -79,7 +78,7 @@ public class AddSubject {
 		if (subjectTitle.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
 		} else {
-			String formattedTitle = SubjectDTO.getInstance().formatTitle(subjectTitle);
+			String formattedTitle = SubjectService.getInstance().formatTitle(subjectTitle);
 
 			if (formattedTitle.matches(Constants.TITLE_REGEX)) {
 				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;

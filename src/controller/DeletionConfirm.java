@@ -60,7 +60,7 @@ public class DeletionConfirm {
 
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
+			.withSpacing(10)
 			.withNodes(lbl, btnYes, btnNo)
 			.build();
 

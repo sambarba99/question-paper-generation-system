@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
+import javafx.scene.control.ChoiceBox;
 
 import model.builders.UserBuilder;
 import model.dao.UserDAO;
@@ -260,6 +264,41 @@ public class UserService {
 	public boolean usersFileExists() {
 		File csvFile = new File(Constants.USERS_FILE_PATH);
 		return csvFile.exists();
+	}
+
+	/**
+	 * Get a list of all usernames and user types, for users ListView objects.
+	 * 
+	 * @return list of all usernames and types
+	 */
+	public List<String> getUserListViewItems() {
+		return getAllUsers().stream()
+			.map(user -> (user.getUsername() + " (" + user.getType().toString() + ")"))
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of user types, for user types ChoiceBox objects.
+	 * 
+	 * @return list of all user types
+	 */
+	public List<String> getUserTypeChoiceBoxItems() {
+		List<String> choiceBoxItems = Arrays.asList(UserType.values())
+			.stream()
+			.map(UserType::toString)
+			.collect(Collectors.toList());
+		return choiceBoxItems;
+	}
+
+	/**
+	 * Get enum value of selected user type in a ChoiceBox.
+	 * 
+	 * @param choiceUserType - the ChoiceBox of user types
+	 * @return enum of selected user type
+	 */
+	public UserType getSelectedUserType(ChoiceBox choiceUserType) {
+		String userTypeSelected = choiceUserType.getSelectionModel().getSelectedItem().toString();
+		return UserType.getFromStr(userTypeSelected);
 	}
 
 	public synchronized static UserService getInstance() {

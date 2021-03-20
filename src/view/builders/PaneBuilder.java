@@ -55,7 +55,7 @@ public class PaneBuilder {
 				HBox hbox = new HBox();
 				hbox.setAlignment(alignment);
 				hbox.setSpacing(spacing);
-				if (nodes.length > 0) {
+				if (nodes != null) {
 					hbox.getChildren().addAll(nodes);
 				}
 				return hbox;
@@ -63,7 +63,7 @@ public class PaneBuilder {
 				VBox vbox = new VBox();
 				vbox.setAlignment(alignment);
 				vbox.setSpacing(spacing);
-				if (nodes.length > 0) {
+				if (nodes != null) {
 					vbox.getChildren().addAll(nodes);
 				}
 				return vbox;

@@ -14,8 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import model.dto.QuestionPaperDTO;
-import model.dto.SubjectDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.User;
 import model.service.QuestionPaperService;
@@ -160,7 +158,7 @@ public class AcademicMaterialManagement {
 			case ADD_NEW_SUBJECT:
 				if (AddSubject.addSubject()) {
 					listViewSubjects.getItems().clear();
-					listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
+					listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject added!");
 				}
 				break;
@@ -168,10 +166,10 @@ public class AcademicMaterialManagement {
 				if (listViewSubjects.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 subject.");
 				} else if (DeletionConfirm.confirmDelete("subject")) {
-					int subjectId = SubjectDTO.getInstance().getSelectedSubjectsIds(listViewSubjects).get(0);
+					int subjectId = SubjectService.getInstance().getSelectedSubjectsIds(listViewSubjects).get(0);
 					SubjectService.getInstance().deleteSubjectById(subjectId);
 					listViewSubjects.getItems().clear();
-					listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
+					listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject deleted.");
 				}
 				break;
@@ -181,11 +179,12 @@ public class AcademicMaterialManagement {
 						SystemNotification.display(SystemNotificationType.ERROR,
 							"Please select subjects to filter by.");
 					} else {
-						List<Integer> subjectIds = SubjectDTO.getInstance().getSelectedSubjectsIds(listViewSubjects);
+						List<Integer> subjectIds = SubjectService.getInstance()
+							.getSelectedSubjectsIds(listViewSubjects);
 						listViewQuestionPapers.getItems().clear();
 						listViewQuestionPapers.getItems()
-							.addAll(
-								QuestionPaperDTO.getInstance().getQuestionPaperListViewItemsBySubjectIds(subjectIds));
+							.addAll(QuestionPaperService.getInstance()
+								.getQuestionPaperListViewItemsBySubjectIds(subjectIds));
 						paperSubjectFilterOn = true;
 						lblPaperFilterStatus.setText("Paper subject filters: ON");
 					}
@@ -210,19 +209,19 @@ public class AcademicMaterialManagement {
 				}
 				break;
 			case VIEW_QUESTION_PAPER:
-				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().isEmpty()) {
-					SystemNotification.display(SystemNotificationType.ERROR, "Please select a paper.");
+				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
+					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
 				} else {
-					int id = QuestionPaperDTO.getInstance().getQuestionPaperId(listViewQuestionPapers);
+					int id = QuestionPaperService.getInstance().getQuestionPaperId(listViewQuestionPapers);
 					QuestionPaper questionPaper = QuestionPaperService.getInstance().getQuestionPaperById(id);
 					ViewQuestionPaper.display(questionPaper);
 				}
 				break;
 			case DELETE_QUESTION_PAPER:
-				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().isEmpty()) {
-					SystemNotification.display(SystemNotificationType.ERROR, "Please select a paper.");
+				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
+					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
 				} else if (DeletionConfirm.confirmDelete("question paper")) {
-					int paperId = QuestionPaperDTO.getInstance().getQuestionPaperId(listViewQuestionPapers);
+					int paperId = QuestionPaperService.getInstance().getQuestionPaperId(listViewQuestionPapers);
 					QuestionPaperService.getInstance().deleteQuestionPaperById(paperId);
 					refreshQuestionPapersListView();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Question paper deleted.");
@@ -241,11 +240,11 @@ public class AcademicMaterialManagement {
 	 */
 	private static void setup() {
 		listViewSubjects.getItems().clear();
-		listViewSubjects.getItems().addAll(SubjectDTO.getInstance().getSubjectListViewItems());
+		listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
 		listViewSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
 		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
+		listViewQuestionPapers.getItems().addAll(QuestionPaperService.getInstance().getQuestionPaperListViewItems());
 		listViewQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
 		paperSubjectFilterOn = false;
@@ -257,7 +256,7 @@ public class AcademicMaterialManagement {
 	 */
 	private static void refreshQuestionPapersListView() {
 		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(QuestionPaperDTO.getInstance().getQuestionPaperListViewItems());
+		listViewQuestionPapers.getItems().addAll(QuestionPaperService.getInstance().getQuestionPaperListViewItems());
 		paperSubjectFilterOn = false;
 		lblPaperFilterStatus.setText("Paper subject filters: OFF");
 	}

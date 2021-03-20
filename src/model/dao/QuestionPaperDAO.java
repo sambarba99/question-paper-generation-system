@@ -157,7 +157,7 @@ public class QuestionPaperDAO {
 	 * @return list of papers containing question with specified ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
-		LOGGER.info("Retrieving question paper by question ID " + questionId);
+		LOGGER.info("Retrieving question papers by question ID " + questionId);
 		return getAllQuestionPapers().stream()
 			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId))
 			.collect(Collectors.toList());

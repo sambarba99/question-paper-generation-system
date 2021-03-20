@@ -11,8 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import model.dto.QuestionPaperDTO;
 import model.persisted.QuestionPaper;
+import model.service.QuestionPaperService;
 
 import view.SystemNotification;
 import view.builders.ButtonBuilder;
@@ -40,7 +40,7 @@ public class ViewQuestionPaper {
 
 		TextArea txtAreaPaper = new TextArea();
 		txtAreaPaper.setEditable(false);
-		txtAreaPaper.setText(QuestionPaperDTO.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
+		txtAreaPaper.setText(QuestionPaperService.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
 		txtAreaPaper.setMinSize(400, 600);
 		txtAreaPaper.setMaxSize(400, 600);
 
