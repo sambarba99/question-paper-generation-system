@@ -126,7 +126,7 @@ public class GenerateQuestionPaper {
 
 		setup();
 
-		Scene scene = new Scene(pane, 550, 400);
+		Scene scene = new Scene(pane, 550, 350);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Generate Question Paper");

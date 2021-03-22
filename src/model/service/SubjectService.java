@@ -1,14 +1,12 @@
 package model.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.scene.control.ListView;
-
 import model.dao.SubjectDAO;
+import model.dto.SubjectDTO;
 import model.persisted.Subject;
 
 import view.SystemNotification;
@@ -78,12 +76,28 @@ public class SubjectService {
 	}
 
 	/**
-	 * Get a list of all subjects for subjects ListView objects.
+	 * Get all subjects converted to DTOs for using in TableViews.
 	 * 
-	 * @return list of all subjects
+	 * @return list of all subjects as DTOs
 	 */
-	public List<String> getSubjectListViewItems() {
-		return getAllSubjects().stream().map(Subject::toString).collect(Collectors.toList());
+	public List<SubjectDTO> getAllSubjectDTOs() {
+		return getAllSubjects().stream().map(this::convertToSubjectDTO).collect(Collectors.toList());
+	}
+
+	/**
+	 * Convert a subject to its DTO equivalent.
+	 * 
+	 * @param subject - the subject to convert
+	 * @return the equivalent SubjectDTO
+	 */
+	private SubjectDTO convertToSubjectDTO(Subject subject) {
+		SubjectDTO subjectDto = new SubjectDTO();
+		subjectDto.setId(subject.getId());
+		subjectDto.setTitle(subject.getTitle());
+		subjectDto.setNumQuestions(QuestionService.getInstance().getQuestionsBySubjectId(subject.getId()).size());
+		subjectDto.setDateCreated(Constants.DATE_FORMATTER.format(subject.getDateCreated()));
+
+		return subjectDto;
 	}
 
 	/**
@@ -100,24 +114,6 @@ public class SubjectService {
 		String subjectIdStr = split[split.length - 1];
 		subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
 		return Integer.parseInt(subjectIdStr);
-	}
-
-	/**
-	 * Get list of IDs of selected subjects in ListView.
-	 * 
-	 * @param listViewSubjects - the ListView of subjects
-	 * @return list of subject IDs
-	 */
-	public List<Integer> getSelectedSubjectsIds(ListView<String> listViewSubjects) {
-		List<String> subjects = listViewSubjects.getSelectionModel().getSelectedItems();
-		List<Integer> subjectIds = new ArrayList<>();
-		for (String s : subjects) {
-			String[] subjectStrSplit = s.split(Constants.SPACE);
-			String subjectIdStr = subjectStrSplit[subjectStrSplit.length - 1];
-			subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
-			subjectIds.add(Integer.parseInt(subjectIdStr));
-		}
-		return subjectIds;
 	}
 
 	/**

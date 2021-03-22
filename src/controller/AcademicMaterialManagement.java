@@ -1,19 +1,26 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import model.dto.QuestionPaperDTO;
+import model.dto.SubjectDTO;
 import model.persisted.QuestionPaper;
 import model.persisted.User;
 import model.service.QuestionPaperService;
@@ -37,13 +44,19 @@ public class AcademicMaterialManagement {
 
 	private static Stage stage;
 
+	private static List<SubjectDTO> subjectDTOs;
+
+	private static List<QuestionPaperDTO> questionPaperDTOs;
+
+	private static TableView tblSubjects = new TableView();
+
+	private static TableView tblQuestionPapers = new TableView();
+
+	private static List<Integer> subjectIdFilters = new ArrayList<>();
+
 	private static boolean paperSubjectFilterOn;
 
-	private static Label lblPaperFilterStatus = new Label();
-
-	private static ListView<String> listViewSubjects = new ListView<>();
-
-	private static ListView<String> listViewQuestionPapers = new ListView<>();
+	private static Label lblQuestionPapers = new Label();
 
 	/**
 	 * Display academic material and related user actions.
@@ -55,7 +68,6 @@ public class AcademicMaterialManagement {
 
 		Label lblHeader = new Label("Academic Material Management");
 		Label lblSubjects = new Label("Subjects");
-		Label lblQuestionPapers = new Label("Question Papers");
 		Label lblActions = new Label("Actions");
 
 		Button btnAddSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
@@ -110,23 +122,23 @@ public class AcademicMaterialManagement {
 		lblHeader.setStyle("-fx-font-size: 25px");
 
 		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER)
+			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
-			.withNodes(lblSubjects, listViewSubjects)
+			.withNodes(lblSubjects, tblSubjects)
 			.build();
 		VBox vboxQuestionPapers = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER)
+			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
-			.withNodes(lblQuestionPapers, listViewQuestionPapers)
+			.withNodes(lblQuestionPapers, tblQuestionPapers)
 			.build();
 		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
 			.withNodes(lblActions, btnAddSubject, btnDelSubject, btnQuestionManagement, btnGeneratePaper, btnViewPaper,
-				btnDelPaper, btnToggleFilter, btnUpdatePassword, lblPaperFilterStatus)
+				btnDelPaper, btnToggleFilter, btnUpdatePassword)
 			.build();
 		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.CENTER)
+			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(30)
 			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions)
 			.build();
@@ -137,7 +149,7 @@ public class AcademicMaterialManagement {
 
 		setup();
 
-		Scene scene = new Scene(pane, 900, 550);
+		Scene scene = new Scene(pane, 1700, 700);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Academic Material");
@@ -157,39 +169,41 @@ public class AcademicMaterialManagement {
 		switch (userAction) {
 			case ADD_NEW_SUBJECT:
 				if (AddSubject.addSubject()) {
-					listViewSubjects.getItems().clear();
-					listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
+					// if added a new subject, refresh subjects TableView
+					refreshSubjectsTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject added!");
 				}
 				break;
 			case DELETE_SUBJECT:
-				if (listViewSubjects.getSelectionModel().getSelectedItems().size() != 1) {
+				if (tblSubjects.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 subject.");
 				} else if (DeletionConfirm.confirmDelete("subject")) {
-					int subjectId = SubjectService.getInstance().getSelectedSubjectsIds(listViewSubjects).get(0);
-					SubjectService.getInstance().deleteSubjectById(subjectId);
-					listViewSubjects.getItems().clear();
-					listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
+					SubjectDTO subjectDto = (SubjectDTO) tblSubjects.getSelectionModel().getSelectedItem();
+					SubjectService.getInstance().deleteSubjectById(subjectDto.getId());
+					refreshSubjectsTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject deleted.");
 				}
 				break;
 			case TOGGLE_FILTER_PAPERS:
 				if (!paperSubjectFilterOn) {
-					if (listViewSubjects.getSelectionModel().getSelectedItems().isEmpty()) {
+					ObservableList<SubjectDTO> selectedSubjects = tblSubjects.getSelectionModel().getSelectedItems();
+
+					if (selectedSubjects.isEmpty()) {
 						SystemNotification.display(SystemNotificationType.ERROR,
 							"Please select subjects to filter by.");
 					} else {
-						List<Integer> subjectIds = SubjectService.getInstance()
-							.getSelectedSubjectsIds(listViewSubjects);
-						listViewQuestionPapers.getItems().clear();
-						listViewQuestionPapers.getItems()
-							.addAll(QuestionPaperService.getInstance()
-								.getQuestionPaperListViewItemsBySubjectIds(subjectIds));
+						subjectIdFilters = selectedSubjects.stream()
+							.map(SubjectDTO::getId)
+							.collect(Collectors.toList());
+						refreshSubjectsTbl();
 						paperSubjectFilterOn = true;
-						lblPaperFilterStatus.setText("Paper subject filters: ON");
+						lblQuestionPapers.setText("Question Papers (subject filters: ON)");
 					}
 				} else {
-					refreshQuestionPapersListView();
+					subjectIdFilters.clear();
+					refreshQuestionPapersTbl();
+					paperSubjectFilterOn = false;
+					lblQuestionPapers.setText("Question Papers (subject filters: OFF)");
 				}
 				break;
 			case OPEN_QUESTION_MANAGEMENT:
@@ -203,27 +217,30 @@ public class AcademicMaterialManagement {
 				if (QuestionService.getInstance().getAllQuestions().isEmpty()) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Add some questions first.");
 				} else if (GenerateQuestionPaper.generatePaper()) {
-					refreshQuestionPapersListView();
+					refreshQuestionPapersTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS,
 						"Paper generated! You can now view/export it.");
 				}
 				break;
 			case VIEW_QUESTION_PAPER:
-				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
+				if (tblQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
 				} else {
-					int id = QuestionPaperService.getInstance().getQuestionPaperId(listViewQuestionPapers);
-					QuestionPaper questionPaper = QuestionPaperService.getInstance().getQuestionPaperById(id);
+					QuestionPaperDTO questionPaperDto = (QuestionPaperDTO) tblQuestionPapers.getSelectionModel()
+						.getSelectedItem();
+					QuestionPaper questionPaper = QuestionPaperService.getInstance()
+						.getQuestionPaperById(questionPaperDto.getId());
 					ViewQuestionPaper.display(questionPaper);
 				}
 				break;
 			case DELETE_QUESTION_PAPER:
-				if (listViewQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
+				if (tblQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
 				} else if (DeletionConfirm.confirmDelete("question paper")) {
-					int paperId = QuestionPaperService.getInstance().getQuestionPaperId(listViewQuestionPapers);
-					QuestionPaperService.getInstance().deleteQuestionPaperById(paperId);
-					refreshQuestionPapersListView();
+					QuestionPaperDTO questionPaperDto = (QuestionPaperDTO) tblQuestionPapers.getSelectionModel()
+						.getSelectedItem();
+					QuestionPaperService.getInstance().deleteQuestionPaperById(questionPaperDto.getId());
+					refreshQuestionPapersTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "Question paper deleted.");
 				}
 				break;
@@ -236,28 +253,81 @@ public class AcademicMaterialManagement {
 	}
 
 	/**
-	 * Set up the window.
+	 * Set up window.
 	 */
 	private static void setup() {
-		listViewSubjects.getItems().clear();
-		listViewSubjects.getItems().addAll(SubjectService.getInstance().getSubjectListViewItems());
-		listViewSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		/*
+		 * Set up TableView of subjects
+		 */
+		TableColumn<SubjectDTO, Integer> colSubjectId = new TableColumn<>("ID");
+		TableColumn<SubjectDTO, String> colSubjectTitle = new TableColumn<>("Title");
+		TableColumn<SubjectDTO, Integer> colNumQuestions = new TableColumn<>("No. questions");
+		TableColumn<SubjectDTO, String> colSubjectDateCreated = new TableColumn<>("Date created");
 
-		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(QuestionPaperService.getInstance().getQuestionPaperListViewItems());
-		listViewQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		colSubjectId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		colSubjectTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+		colNumQuestions.setCellValueFactory(new PropertyValueFactory<>("numQuestions"));
+		colSubjectDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
+
+		colSubjectId.setPrefWidth(50);
+		colSubjectTitle.setPrefWidth(200);
+		colNumQuestions.setPrefWidth(120);
+		colSubjectDateCreated.setPrefWidth(150);
+
+		tblSubjects.getColumns().addAll(colSubjectId, colSubjectTitle, colNumQuestions, colSubjectDateCreated);
+		tblSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		tblSubjects.setPrefSize(522, 360);
+		tblSubjects.setEditable(false);
+
+		/*
+		 * Set up TableView of question papers
+		 */
+		TableColumn<QuestionPaperDTO, Integer> colPaperId = new TableColumn<>("ID");
+		TableColumn<QuestionPaperDTO, String> colPaperTitle = new TableColumn<>("Title");
+		TableColumn<QuestionPaperDTO, String> colPaperSubject = new TableColumn<>("Subject");
+		TableColumn<QuestionPaperDTO, String> colPaperCourse = new TableColumn<>("Course");
+		TableColumn<QuestionPaperDTO, String> colPaperDateCreated = new TableColumn<>("Date created");
+
+		colPaperId.setCellValueFactory(new PropertyValueFactory<>("id"));
+		colPaperTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+		colPaperSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
+		colPaperCourse.setCellValueFactory(new PropertyValueFactory<>("course"));
+		colPaperDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
+
+		colPaperId.setPrefWidth(50);
+		colPaperTitle.setPrefWidth(200);
+		colPaperSubject.setPrefWidth(200);
+		colPaperCourse.setPrefWidth(200);
+		colPaperDateCreated.setPrefWidth(150);
+
+		tblQuestionPapers.getColumns()
+			.addAll(colPaperId, colPaperTitle, colPaperSubject, colPaperCourse, colPaperDateCreated);
+		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		tblQuestionPapers.setPrefSize(800, 360);
+		tblQuestionPapers.setEditable(false);
+
+		refreshSubjectsTbl();
+		refreshQuestionPapersTbl();
 
 		paperSubjectFilterOn = false;
-		lblPaperFilterStatus.setText("Paper subject filters: OFF");
+		lblQuestionPapers.setText("Question Papers (subject filters: OFF)");
 	}
 
 	/**
-	 * Reset question papers ListView.
+	 * Refresh TableView of subjects.
 	 */
-	private static void refreshQuestionPapersListView() {
-		listViewQuestionPapers.getItems().clear();
-		listViewQuestionPapers.getItems().addAll(QuestionPaperService.getInstance().getQuestionPaperListViewItems());
-		paperSubjectFilterOn = false;
-		lblPaperFilterStatus.setText("Paper subject filters: OFF");
+	private static void refreshSubjectsTbl() {
+		subjectDTOs = SubjectService.getInstance().getAllSubjectDTOs();
+		tblSubjects.getItems().clear();
+		tblSubjects.getItems().addAll(subjectDTOs);
+	}
+
+	/**
+	 * Refresh TableView of question papers.
+	 */
+	private static void refreshQuestionPapersTbl() {
+		questionPaperDTOs = QuestionPaperService.getInstance().getQuestionPaperDTOsWithSubjectFilter(subjectIdFilters);
+		tblQuestionPapers.getItems().clear();
+		tblQuestionPapers.getItems().addAll(questionPaperDTOs);
 	}
 }

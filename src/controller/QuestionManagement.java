@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
@@ -145,7 +144,7 @@ public class QuestionManagement {
 		if (tblQuestions.getSelectionModel().getSelectedItems().size() != 1) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 question.");
 		} else if (DeletionConfirm.confirmDelete("question")) {
-			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItems().get(0);
+			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
 			QuestionService.getInstance().deleteQuestionById(questionDto.getId());
 			refreshQuestionsTbl();
 			SystemNotification.display(SystemNotificationType.SUCCESS, "Question deleted.");
@@ -186,12 +185,10 @@ public class QuestionManagement {
 		tblQuestions.getColumns()
 			.addAll(colId, colSubjectTitle, colStatement, colDifficultyLevel, colMarks, colTimeRequired,
 				colDateCreated);
-
 		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-			ObservableList<QuestionDTO> selectedItems = tblQuestions.getSelectionModel().getSelectedItems();
-			if (selectedItems.size() > 0) {
-				QuestionDTO questionDto = (QuestionDTO) selectedItems.get(0);
+			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
+			if (questionDto != null) {
 				txtAreaQuestion.setText(QuestionService.getInstance().getTxtAreaQuestionStr(questionDto.getId()));
 			}
 		});

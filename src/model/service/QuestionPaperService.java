@@ -1,14 +1,12 @@
 package model.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.scene.control.ListView;
-
 import model.dao.QuestionPaperDAO;
+import model.dto.QuestionPaperDTO;
 import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
@@ -88,46 +86,39 @@ public class QuestionPaperService {
 	}
 
 	/**
-	 * Get a list of all question papers for paper ListView objects.
+	 * Get all question papers converted to DTOs for using in TableViews, with applied subject ID filters (if any
+	 * selected in AcademicMaterialManagement).
 	 * 
-	 * @return list of all question papers
+	 * @param subjectIds - subject IDs to filter by
+	 * @return (filtered) list of all question papers as DTOs
 	 */
-	public List<String> getQuestionPaperListViewItems() {
-		return getAllQuestionPapers().stream().map(QuestionPaper::toString).collect(Collectors.toList());
-	}
-
-	/**
-	 * Get a list of question papers of specified subject IDs.
-	 * 
-	 * @param subjectIds - the list of subject IDs
-	 * @return list of specified subject papers
-	 */
-	public List<String> getQuestionPaperListViewItemsBySubjectIds(List<Integer> subjectIds) {
-		List<String> listViewItems = new ArrayList<>();
-		for (QuestionPaper questionPaper : getAllQuestionPapers()) {
-			if (subjectIds.contains(questionPaper.getSubjectId())) {
-				listViewItems.add(questionPaper.toString());
-			}
-		}
-		return listViewItems;
-	}
-
-	/**
-	 * Get ID of selected question paper in ListView.
-	 * 
-	 * @param listViewQuestionPapers - the ListView of papers
-	 * @return ID of selected paper
-	 */
-	public int getQuestionPaperId(ListView<String> listViewQuestionPapers) {
+	public List<QuestionPaperDTO> getQuestionPaperDTOsWithSubjectFilter(List<Integer> subjectIds) {
 		/*
-		 * Here we are getting the element at position (length - 1) because there can be multiple spaces in the string,
-		 * e.g. "Mathematics (ID 1)". We then remove the closing bracket.
+		 * If the subject IDs list is empty, then it means the user does not want to filter by subjects. This is why we
+		 * have the subjectIds.isEmpty() condition in a logical disjunction (||).
 		 */
-		String questionPaper = listViewQuestionPapers.getSelectionModel().getSelectedItem();
-		String[] questionPaperSplit = questionPaper.split(Constants.SPACE);
-		String questionPaperIdStr = questionPaperSplit[questionPaperSplit.length - 1];
-		questionPaperIdStr = questionPaperIdStr.replace(")", Constants.EMPTY);
-		return Integer.parseInt(questionPaperIdStr);
+		return getAllQuestionPapers().stream()
+			.filter(s -> subjectIds.isEmpty() || subjectIds.contains(s.getId()))
+			.map(this::convertToQuestionPaperDTO)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Convert a question paper to its DTO equivalent.
+	 * 
+	 * @param questionPaper - the paper to convert
+	 * @return the equivalent QuestionPaperDTO
+	 */
+	private QuestionPaperDTO convertToQuestionPaperDTO(QuestionPaper questionPaper) {
+		QuestionPaperDTO questionPaperDto = new QuestionPaperDTO();
+		questionPaperDto.setId(questionPaper.getId());
+		questionPaperDto.setTitle(questionPaper.getTitle());
+		questionPaperDto
+			.setSubjectTitle(SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId()).getTitle());
+		questionPaperDto.setCourse(questionPaper.getCourseTitle() + " (" + questionPaper.getCourseCode() + ")");
+		questionPaperDto.setDateCreated(Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()));
+
+		return questionPaperDto;
 	}
 
 	/**

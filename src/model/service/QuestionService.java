@@ -56,6 +56,18 @@ public class QuestionService {
 	}
 
 	/**
+	 * Retrieve all questions with a subject ID.
+	 * 
+	 * @param subjectId - the subject ID of the questions
+	 * @return list of questions with specified subject ID
+	 */
+	public List<Question> getQuestionsBySubjectId(int subjectId) {
+		return getAllQuestions().stream()
+			.filter(question -> question.getSubjectId() == subjectId)
+			.collect(Collectors.toList());
+	}
+
+	/**
 	 * Retrieve question using its unique ID.
 	 * 
 	 * @param id - the ID of the question to retrieve

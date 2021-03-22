@@ -54,6 +54,7 @@ public class AdminPanel {
 			.withUserAction(UserAction.ADD_NEW_USER)
 			.withClickAction(action -> {
 				if (AddUser.addUser()) {
+					// if added a new user, refresh users TableView
 					refreshUsersTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS, "User added!");
 				}
@@ -117,7 +118,7 @@ public class AdminPanel {
 		if (tblUsers.getSelectionModel().getSelectedItems().size() != 1) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 user.");
 		} else {
-			UserDTO userDto = (UserDTO) tblUsers.getSelectionModel().getSelectedItems().get(0);
+			UserDTO userDto = (UserDTO) tblUsers.getSelectionModel().getSelectedItem();
 			String username = userDto.getUsername();
 
 			if (username.equals(currentUser.getUsername())) {
@@ -150,7 +151,6 @@ public class AdminPanel {
 		colDateCreated.setPrefWidth(150);
 
 		tblUsers.getColumns().addAll(colUsername, colPrivilege, colDateCreated);
-
 		tblUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblUsers.setPrefSize(452, 300);
 		tblUsers.setEditable(false);
