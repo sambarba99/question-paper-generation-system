@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -125,9 +126,9 @@ public class SubjectDAO {
 	 * @param id - the ID of the subject to retrieve
 	 * @return subject with specified ID
 	 */
-	public Subject getSubjectById(int id) {
+	public Optional<Subject> getSubjectById(int id) {
 		LOGGER.info("Retrieving subject by ID " + id);
-		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst().orElse(null);
+		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst();
 	}
 
 	/**

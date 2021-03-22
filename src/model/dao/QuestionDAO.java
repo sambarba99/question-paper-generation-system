@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -144,9 +145,9 @@ public class QuestionDAO {
 	 * @param id - the ID of the question to retrieve
 	 * @return question with specified ID
 	 */
-	public Question getQuestionById(int id) {
+	public Optional<Question> getQuestionById(int id) {
 		LOGGER.info("Retrieving question by ID " + id);
-		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst().orElse(null);
+		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst();
 	}
 
 	/**

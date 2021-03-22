@@ -3,6 +3,7 @@ package model.service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import model.dao.QuestionDAO;
@@ -71,7 +72,7 @@ public class QuestionService {
 	 * @param id - the ID of the question to retrieve
 	 * @return question with specified ID
 	 */
-	public Question getQuestionById(int id) {
+	public Optional<Question> getQuestionById(int id) {
 		return questionDao.getQuestionById(id);
 	}
 
@@ -115,9 +116,14 @@ public class QuestionService {
 	 * @return the equivalent QuestionDTO
 	 */
 	private QuestionDTO convertToQuestionDTO(Question question) {
+		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(question.getSubjectId());
+		if (!subjectOpt.isPresent()) {
+			throw new IllegalArgumentException("Invalid subject ID passed: " + question.getSubjectId());
+		}
+
 		QuestionDTO questionDto = new QuestionDTO();
 		questionDto.setId(question.getId());
-		questionDto.setSubjectTitle(SubjectService.getInstance().getSubjectById(question.getSubjectId()).getTitle());
+		questionDto.setSubjectTitle(subjectOpt.get().getTitle());
 		questionDto.setStatement(question.getStatement());
 		questionDto.setDifficultyLevel(question.getDifficultyLevel().getDisplayStr());
 		questionDto.setMarks(question.getMarks());
@@ -134,15 +140,26 @@ public class QuestionService {
 	 * @return question string
 	 */
 	public String getTxtAreaQuestionStr(int id) {
-		Question question = getQuestionById(id);
-		Subject subject = SubjectService.getInstance().getSubjectById(question.getSubjectId());
+		Optional<Question> questionOpt = getQuestionById(id);
+		Question question = null;
+		if (questionOpt.isPresent()) {
+			question = questionOpt.get();
+		} else {
+			throw new IllegalArgumentException("Invalid question ID passed: " + id);
+		}
+
+		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(question.getSubjectId());
+		if (!subjectOpt.isPresent()) {
+			throw new IllegalArgumentException("Invalid subject ID passed: " + question.getSubjectId());
+		}
+
 		List<Answer> answers = question.getAnswers();
 		Answer correctAnswer = answers.stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
 		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append("Subject: " + subject.toString());
+		txtAreaStr.append("Subject: " + subjectOpt.get().toString());
 		txtAreaStr
 			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
 		if (papersContainingQuestion.isEmpty()) {

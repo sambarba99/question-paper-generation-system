@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javafx.collections.ObservableList;
@@ -229,9 +230,14 @@ public class AcademicMaterialManagement {
 				} else {
 					QuestionPaperDTO questionPaperDto = (QuestionPaperDTO) tblQuestionPapers.getSelectionModel()
 						.getSelectedItem();
-					QuestionPaper questionPaper = QuestionPaperService.getInstance()
+					Optional<QuestionPaper> questionPaperOpt = QuestionPaperService.getInstance()
 						.getQuestionPaperById(questionPaperDto.getId());
-					ViewQuestionPaper.display(questionPaper);
+
+					if (!questionPaperOpt.isPresent()) {
+						throw new IllegalArgumentException(
+							"Invalid question paper ID passed: " + questionPaperDto.getId());
+					}
+					ViewQuestionPaper.display(questionPaperOpt.get());
 				}
 				break;
 			case DELETE_QUESTION_PAPER:

@@ -194,9 +194,13 @@ public class GenerateQuestionPaper {
 		txtMarks.setText(Constants.EMPTY);
 		txtTimeRequired.setText(Constants.EMPTY);
 
-		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		choiceSubject.getItems().clear();
-		choiceSubject.getItems().addAll(allSubjects.stream().map(Subject::toString).collect(Collectors.toList()));
+		choiceSubject.getItems()
+			.addAll(SubjectService.getInstance()
+				.getAllSubjects()
+				.stream()
+				.map(Subject::toString)
+				.collect(Collectors.toList()));
 		choiceSubject.getSelectionModel().select(0);
 		choiceSubject.setPrefWidth(200);
 

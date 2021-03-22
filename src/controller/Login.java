@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -94,16 +96,19 @@ public class Login extends Application {
 	 */
 	private void login(String username, String password, Stage stage) {
 		try {
-			User currentUser = UserService.getInstance().login(username, password);
-			if (currentUser != null) {
-				stage.close();
-				UserPrivilege userPrivilege = currentUser.getPrivilege();
+			Optional<User> currentUser = UserService.getInstance().login(username, password);
+
+			if (currentUser.isPresent()) {
+				UserPrivilege userPrivilege = currentUser.get().getPrivilege();
+
 				switch (userPrivilege) {
 					case ADMIN:
-						AdminPanel.display(currentUser);
+						stage.close();
+						AdminPanel.display(currentUser.get());
 						break;
 					case TUTOR:
-						AcademicMaterialManagement.display(currentUser);
+						stage.close();
+						AcademicMaterialManagement.display(currentUser.get());
 						break;
 					default:
 						SystemNotification.display(SystemNotificationType.ERROR,

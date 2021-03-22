@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -125,7 +126,7 @@ public class UserService {
 	 */
 	public User checkUserExists(User checkUser)
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		for (User user : userDao.getAllUsers()) {
+		for (User user : getAllUsers()) {
 			if (user.getUsername().equals(checkUser.getUsername())
 				&& user.getPassword().equals(SecurityUtils.getInstance().sha512(checkUser.getPassword()))) {
 				return user;
@@ -165,7 +166,7 @@ public class UserService {
 	 * @param pass     - the entered password
 	 * @return the validated user, with hashed password
 	 */
-	public User login(String username, String pass)
+	public Optional<User> login(String username, String pass)
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		if (username.length() != 0 && pass.length() != 0) {
@@ -176,7 +177,7 @@ public class UserService {
 				if (validatedUser == null) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
 				} else {
-					return validatedUser;
+					return Optional.of(validatedUser);
 				}
 			} else {
 				/*
@@ -189,13 +190,13 @@ public class UserService {
 
 				if (validateFirstTimeLogin(username, pass)) {
 					addUser(user);
-					return user;
+					return Optional.of(user);
 				}
 			}
 		} else {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter credentials.");
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**

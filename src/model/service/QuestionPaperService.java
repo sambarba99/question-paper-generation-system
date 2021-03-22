@@ -3,6 +3,7 @@ package model.service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import model.dao.QuestionPaperDAO;
@@ -58,7 +59,7 @@ public class QuestionPaperService {
 	 * @param id - the ID of the paper to retrieve
 	 * @return the question paper with the specified ID
 	 */
-	public QuestionPaper getQuestionPaperById(int id) {
+	public Optional<QuestionPaper> getQuestionPaperById(int id) {
 		return questionPaperDao.getQuestionPaperById(id);
 	}
 
@@ -110,11 +111,15 @@ public class QuestionPaperService {
 	 * @return the equivalent QuestionPaperDTO
 	 */
 	private QuestionPaperDTO convertToQuestionPaperDTO(QuestionPaper questionPaper) {
+		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
+		if (!subjectOpt.isPresent()) {
+			throw new IllegalArgumentException("Invalid subject ID passed: " + questionPaper.getSubjectId());
+		}
+
 		QuestionPaperDTO questionPaperDto = new QuestionPaperDTO();
 		questionPaperDto.setId(questionPaper.getId());
 		questionPaperDto.setTitle(questionPaper.getTitle());
-		questionPaperDto
-			.setSubjectTitle(SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId()).getTitle());
+		questionPaperDto.setSubjectTitle(subjectOpt.get().getTitle());
 		questionPaperDto.setCourse(questionPaper.getCourseTitle() + " (" + questionPaper.getCourseCode() + ")");
 		questionPaperDto.setDateCreated(Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()));
 
@@ -128,11 +133,14 @@ public class QuestionPaperService {
 	 * @return question string
 	 */
 	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
-		Subject subject = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
+		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
+		if (!subjectOpt.isPresent()) {
+			throw new IllegalArgumentException("Invalid subject ID passed: " + questionPaper.getSubjectId());
+		}
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append(questionPaper.toString());
-		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.toString());
+		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subjectOpt.get().toString());
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
 		txtAreaStr.append(
@@ -143,7 +151,14 @@ public class QuestionPaperService {
 
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		for (int i = 0; i < questionIds.size(); i++) {
-			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i));
+			Optional<Question> questionOpt = QuestionService.getInstance().getQuestionById(questionIds.get(i));
+			Question question = null;
+			if (questionOpt.isPresent()) {
+				question = questionOpt.get();
+			} else {
+				throw new IllegalArgumentException("Invalid question ID passed: " + questionIds.get(i));
+			}
+
 			txtAreaStr.append(Constants.NEWLINE + (i + 1) + ". " + question.getStatement());
 			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(0).toString());
 			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(1).toString());

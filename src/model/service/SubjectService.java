@@ -3,6 +3,7 @@ package model.service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import model.dao.SubjectDAO;
@@ -58,7 +59,7 @@ public class SubjectService {
 	 * @param id - the ID of the subject to retrieve
 	 * @return subject with specified ID
 	 */
-	public Subject getSubjectById(int id) {
+	public Optional<Subject> getSubjectById(int id) {
 		return subjectDao.getSubjectById(id);
 	}
 

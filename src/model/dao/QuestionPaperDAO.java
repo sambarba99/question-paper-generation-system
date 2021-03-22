@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -146,9 +147,9 @@ public class QuestionPaperDAO {
 	 * @param id - the ID of the paper to retrieve
 	 * @return the question paper with the specified ID
 	 */
-	public QuestionPaper getQuestionPaperById(int id) {
+	public Optional<QuestionPaper> getQuestionPaperById(int id) {
 		LOGGER.info("Retrieving question paper by ID " + id);
-		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst().orElse(null);
+		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst();
 	}
 
 	/**
@@ -173,6 +174,7 @@ public class QuestionPaperDAO {
 	 */
 	private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter csvWriter, boolean append)
 		throws IOException {
+
 		StringBuilder questionIdsBld = new StringBuilder();
 		for (Integer id : questionPaper.getQuestionIds()) {
 			questionIdsBld.append(id);
