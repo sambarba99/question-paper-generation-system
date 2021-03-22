@@ -80,11 +80,7 @@ public class UserService {
 	 * @return user with specified username
 	 */
 	public User getUserByUsername(String username) {
-		return userDao.getAllUsers()
-			.stream()
-			.filter(user -> user.getUsername().equals(username))
-			.findFirst()
-			.orElse(null);
+		return getAllUsers().stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
 	}
 
 	/**

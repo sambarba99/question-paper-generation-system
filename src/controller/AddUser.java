@@ -60,13 +60,10 @@ public class AddUser {
 		choicePrivilege.getSelectionModel().selectFirst();
 		choicePrivilege.setPrefWidth(100);
 
-		Button btnAddUser = new ButtonBuilder().withWidth(100)
-			.withUserAction(UserAction.ADD)
-			.withClickAction(action -> {
-				UserPrivilege privilege = UserService.getInstance().getSelectedPrivilege(choicePrivilege);
-				addUser(txtUsername.getText(), passField.getText(), privilege);
-			})
-			.build();
+		Button btnAddUser = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
+			UserPrivilege privilege = UserService.getInstance().getSelectedPrivilege(choicePrivilege);
+			addUser(txtUsername.getText(), passField.getText(), privilege);
+		}).build();
 
 		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER_RIGHT)

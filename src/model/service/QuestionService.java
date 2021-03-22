@@ -62,9 +62,7 @@ public class QuestionService {
 	 * @return list of questions with specified subject ID
 	 */
 	public List<Question> getQuestionsBySubjectId(int subjectId) {
-		return getAllQuestions().stream()
-			.filter(question -> question.getSubjectId() == subjectId)
-			.collect(Collectors.toList());
+		return getAllQuestions().stream().filter(q -> q.getSubjectId() == subjectId).collect(Collectors.toList());
 	}
 
 	/**

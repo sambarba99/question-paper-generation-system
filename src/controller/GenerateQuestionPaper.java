@@ -80,14 +80,14 @@ public class GenerateQuestionPaper {
 
 		Button btnGenerate = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.GENERATE)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				QuestionPaper generatedPaper = null;
 				try {
 					generatedPaper = prepareParamsAndGenerate();
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (IOException ex) {
+					ex.printStackTrace();
 					SystemNotification.display(SystemNotificationType.ERROR,
-						Constants.UNEXPECTED_ERROR + e.getClass().getName());
+						Constants.UNEXPECTED_ERROR + ex.getClass().getName());
 				}
 				if (generatedPaper != null) {
 					QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);

@@ -72,49 +72,49 @@ public class AcademicMaterialManagement {
 
 		Button btnAddSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.ADD_NEW_SUBJECT)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.ADD_NEW_SUBJECT, currentUser);
 			})
 			.build();
 		Button btnDelSubject = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.DELETE_SUBJECT)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.DELETE_SUBJECT, currentUser);
 			})
 			.build();
 		Button btnQuestionManagement = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.OPEN_QUESTION_MANAGEMENT)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.OPEN_QUESTION_MANAGEMENT, currentUser);
 			})
 			.build();
 		Button btnGeneratePaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.GENERATE_QUESTION_PAPER)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.GENERATE_QUESTION_PAPER, currentUser);
 			})
 			.build();
 		Button btnViewPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.VIEW_QUESTION_PAPER)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.VIEW_QUESTION_PAPER, currentUser);
 			})
 			.build();
 		Button btnDelPaper = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.DELETE_QUESTION_PAPER)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.DELETE_QUESTION_PAPER, currentUser);
 			})
 			.build();
 		Button btnToggleFilter = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.TOGGLE_FILTER_PAPERS)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.TOGGLE_FILTER_PAPERS, currentUser);
 			})
 			.build();
 		Button btnUpdatePassword = new ButtonBuilder().withWidth(Constants.ACADEMIC_MATERIAL_BTN_WIDTH)
 			.withUserAction(UserAction.UPDATE_PASSWORD)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				performAction(UserAction.UPDATE_PASSWORD, currentUser);
 			})
 			.build();
@@ -195,7 +195,8 @@ public class AcademicMaterialManagement {
 						subjectIdFilters = selectedSubjects.stream()
 							.map(SubjectDTO::getId)
 							.collect(Collectors.toList());
-						refreshSubjectsTbl();
+
+						refreshQuestionPapersTbl();
 						paperSubjectFilterOn = true;
 						lblQuestionPapers.setText("Question Papers (subject filters: ON)");
 					}

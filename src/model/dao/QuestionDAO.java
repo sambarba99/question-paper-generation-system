@@ -146,7 +146,7 @@ public class QuestionDAO {
 	 */
 	public Question getQuestionById(int id) {
 		LOGGER.info("Retrieving question by ID " + id);
-		return getAllQuestions().stream().filter(question -> question.getId() == id).findFirst().orElse(null);
+		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst().orElse(null);
 	}
 
 	/**

@@ -75,7 +75,7 @@ public class QuestionManagement {
 
 		Button btnAddQuestion = new ButtonBuilder().withWidth(150)
 			.withUserAction(UserAction.ADD_NEW_QUESTION)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				// if added a new question, refresh questions TableView
 				if (AddQuestion.display()) {
 					refreshQuestionsTbl();
@@ -85,7 +85,7 @@ public class QuestionManagement {
 			.build();
 		Button btnDelQuestion = new ButtonBuilder().withWidth(150)
 			.withUserAction(UserAction.DELETE_QUESTION)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				deleteQuestion();
 			})
 			.build();

@@ -17,7 +17,7 @@ public class ButtonBuilder {
 
 	private UserAction userAction;
 
-	private EventHandler<ActionEvent> clickAction;
+	private EventHandler<ActionEvent> actionEvent;
 
 	public ButtonBuilder() {
 	}
@@ -32,15 +32,15 @@ public class ButtonBuilder {
 		return this;
 	}
 
-	public ButtonBuilder withClickAction(EventHandler<ActionEvent> clickAction) {
-		this.clickAction = clickAction;
+	public ButtonBuilder withActionEvent(EventHandler<ActionEvent> actionEvent) {
+		this.actionEvent = actionEvent;
 		return this;
 	}
 
 	public Button build() {
 		Button b = new Button(userAction.getStrVal());
 		b.setPrefWidth(width);
-		b.setOnAction(clickAction);
+		b.setOnAction(actionEvent);
 		return b;
 	}
 }

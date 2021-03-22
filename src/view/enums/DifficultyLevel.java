@@ -2,7 +2,6 @@ package view.enums;
 
 import java.util.Arrays;
 
-import view.SystemNotification;
 import view.utils.Constants;
 
 /**
@@ -48,17 +47,11 @@ public enum DifficultyLevel {
 	 * @return the DifficultyLevel with the specified int value
 	 */
 	public static DifficultyLevel getFromInt(int intVal) {
-		DifficultyLevel difficultyLevel = Arrays.asList(values())
+		return Arrays.asList(values())
 			.stream()
 			.filter(lvl -> lvl.getIntVal() == intVal)
 			.findFirst()
-			.orElse(null);
-		if (difficultyLevel != null) {
-			return difficultyLevel;
-		}
-		SystemNotification.display(SystemNotificationType.ERROR,
-			Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level int passed: " + intVal);
-		throw new IllegalArgumentException("Invalid Difficulty Level int passed: " + intVal);
+			.orElseThrow(() -> new IllegalArgumentException("Invalid Difficulty Level int passed: " + intVal));
 	}
 
 	/**
@@ -69,17 +62,11 @@ public enum DifficultyLevel {
 	 * @return the DifficultyLevel with the specified String value
 	 */
 	public static DifficultyLevel getFromStr(String strVal) {
-		DifficultyLevel difficultyLevel = Arrays.asList(values())
+		return Arrays.asList(values())
 			.stream()
 			.filter(lvl -> lvl.getStrVal().equals(strVal))
 			.findFirst()
-			.orElse(null);
-		if (difficultyLevel != null) {
-			return difficultyLevel;
-		}
-		SystemNotification.display(SystemNotificationType.ERROR,
-			Constants.UNEXPECTED_ERROR + "Invalid Difficulty Level string passed: " + strVal);
-		throw new IllegalArgumentException("Invalid Difficulty Level string passed: " + strVal);
+			.orElseThrow(() -> new IllegalArgumentException("Invalid Difficulty Level string passed: " + strVal));
 	}
 
 	/**

@@ -51,7 +51,7 @@ public class UpdatePassword {
 
 		Button btnUpdate = new ButtonBuilder().withWidth(150)
 			.withUserAction(UserAction.UPDATE_PASSWORD)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				String currentPass = passFieldCurrent.getText();
 				String newPass = passFieldNew.getText();
 				String repeatPass = passFieldRepeat.getText();

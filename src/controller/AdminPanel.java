@@ -52,7 +52,7 @@ public class AdminPanel {
 
 		Button btnAddUser = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.ADD_NEW_USER)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				if (AddUser.addUser()) {
 					// if added a new user, refresh users TableView
 					refreshUsersTbl();
@@ -62,19 +62,19 @@ public class AdminPanel {
 			.build();
 		Button btnDelUser = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.DELETE_USER)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				deleteUser(currentUser);
 			})
 			.build();
 		Button btnOpenAcademicMaterial = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.OPEN_ACADEMC_MATERIAL)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				AcademicMaterialManagement.display(currentUser);
 			})
 			.build();
 		Button btnUpdatePassword = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.UPDATE_PASSWORD)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				UpdatePassword.updatePassword(currentUser);
 			})
 			.build();
@@ -122,7 +122,7 @@ public class AdminPanel {
 			String username = userDto.getUsername();
 
 			if (username.equals(currentUser.getUsername())) {
-				SystemNotification.display(SystemNotificationType.ERROR, "You can't delete yourself.");
+				SystemNotification.display(SystemNotificationType.ERROR, "You can't delete yourself!");
 			} else if (DeletionConfirm.confirmDelete("user")) {
 				UserService.getInstance().deleteUserByUsername(username);
 				refreshUsersTbl();
@@ -135,9 +135,6 @@ public class AdminPanel {
 	 * Set up window.
 	 */
 	private static void setup() {
-		/*
-		 * Set up TableView of users
-		 */
 		TableColumn<UserDTO, String> colUsername = new TableColumn<>("Username");
 		TableColumn<UserDTO, String> colPrivilege = new TableColumn<>("Privilege");
 		TableColumn<UserDTO, String> colDateCreated = new TableColumn<>("Date created");

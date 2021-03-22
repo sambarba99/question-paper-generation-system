@@ -43,14 +43,11 @@ public class ViewQuestionPaper {
 		txtAreaPaper.setText(QuestionPaperService.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
 		txtAreaPaper.setPrefSize(400, 600);
 
-		Button btnExport = new ButtonBuilder().withWidth(100)
-			.withUserAction(UserAction.EXPORT)
-			.withClickAction(action -> {
-				// use Constants.EXPORTED_PAPERS_FILE_PATH;
-				LOGGER.info("Exporting papers is unimplemented");
-				SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
-			})
-			.build();
+		Button btnExport = new ButtonBuilder().withWidth(100).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
+			// use Constants.EXPORTED_PAPERS_FILE_PATH;
+			LOGGER.info("Exporting papers is unimplemented");
+			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
+		}).build();
 
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)

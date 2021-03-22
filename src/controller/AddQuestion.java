@@ -90,16 +90,13 @@ public class AddQuestion {
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
-		Button btnAddQuestion = new ButtonBuilder().withWidth(100)
-			.withUserAction(UserAction.ADD)
-			.withClickAction(action -> {
-				if (validateAndAddQuestion()) {
-					resetAddQuestionFields();
-					added = true;
-					stage.close();
-				}
-			})
-			.build();
+		Button btnAddQuestion = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
+			if (validateAndAddQuestion()) {
+				resetAddQuestionFields();
+				added = true;
+				stage.close();
+			}
+		}).build();
 
 		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)

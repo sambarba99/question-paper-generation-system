@@ -127,7 +127,7 @@ public class SubjectDAO {
 	 */
 	public Subject getSubjectById(int id) {
 		LOGGER.info("Retrieving subject by ID " + id);
-		return getAllSubjects().stream().filter(subject -> subject.getId() == id).findFirst().orElse(null);
+		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst().orElse(null);
 	}
 
 	/**

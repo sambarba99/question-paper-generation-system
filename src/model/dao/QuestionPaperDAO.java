@@ -148,10 +148,7 @@ public class QuestionPaperDAO {
 	 */
 	public QuestionPaper getQuestionPaperById(int id) {
 		LOGGER.info("Retrieving question paper by ID " + id);
-		return getAllQuestionPapers().stream()
-			.filter(questionPaper -> questionPaper.getId() == id)
-			.findFirst()
-			.orElse(null);
+		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst().orElse(null);
 	}
 
 	/**
@@ -163,7 +160,7 @@ public class QuestionPaperDAO {
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
 		LOGGER.info("Retrieving question papers by question ID " + questionId);
 		return getAllQuestionPapers().stream()
-			.filter(questionPaper -> questionPaper.getQuestionIds().contains(questionId))
+			.filter(qp -> qp.getQuestionIds().contains(questionId))
 			.collect(Collectors.toList());
 	}
 

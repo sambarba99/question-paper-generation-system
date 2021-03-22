@@ -44,7 +44,7 @@ public class AddSubject {
 
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
-		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withClickAction(action -> {
+		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
 			addSubject(txtTitle.getText());
 		}).build();
 

@@ -44,7 +44,7 @@ public class DeletionConfirm {
 
 		Button btnYes = new ButtonBuilder().withWidth(70)
 			.withUserAction(UserAction.DELETE_CONFIRM_YES)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				deleted = true;
 				LOGGER.info(deletingItem + " deletion confirmed");
 				stage.close();
@@ -52,7 +52,7 @@ public class DeletionConfirm {
 			.build();
 		Button btnNo = new ButtonBuilder().withWidth(70)
 			.withUserAction(UserAction.DELETE_CONFIRM_NO)
-			.withClickAction(action -> {
+			.withActionEvent(e -> {
 				LOGGER.info(deletingItem + " deletion retracted");
 				stage.close();
 			})

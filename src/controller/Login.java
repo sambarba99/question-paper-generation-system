@@ -53,12 +53,9 @@ public class Login extends Application {
 			txtUsername.setText(newText.toLowerCase());
 		});
 
-		Button btnLogin = new ButtonBuilder().withWidth(76)
-			.withUserAction(UserAction.LOG_IN)
-			.withClickAction(action -> {
-				login(txtUsername.getText(), passField.getText(), primaryStage);
-			})
-			.build();
+		Button btnLogin = new ButtonBuilder().withWidth(76).withUserAction(UserAction.LOG_IN).withActionEvent(e -> {
+			login(txtUsername.getText(), passField.getText(), primaryStage);
+		}).build();
 
 		HBox hboxUsername = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
