@@ -127,7 +127,7 @@ public class AcademicMaterialManagement {
 			.build();
 		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
+			.withSpacing(30)
 			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions)
 			.build();
 

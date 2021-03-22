@@ -23,7 +23,7 @@ import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 import view.utils.Constants;
 
 /**
@@ -50,33 +50,33 @@ public class AddUser {
 		TextField txtUsername = new TextField();
 		Label lblEnterPass = new Label("Enter their temporary password:");
 		PasswordField passField = new PasswordField();
-		Label lblSelectType = new Label("Select their user type:");
-		ChoiceBox choiceUserType = new ChoiceBox();
+		Label lblSelectPrivilege = new Label("Select their privilege:");
+		ChoiceBox choicePrivilege = new ChoiceBox();
 
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
-		choiceUserType.getItems().addAll(UserService.getInstance().getUserTypeChoiceBoxItems());
-		choiceUserType.getSelectionModel().selectFirst();
-		choiceUserType.setPrefWidth(100);
+		choicePrivilege.getItems().addAll(UserService.getInstance().getUserPrivilegeChoiceBoxItems());
+		choicePrivilege.getSelectionModel().selectFirst();
+		choicePrivilege.setPrefWidth(100);
 
 		Button btnAddUser = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.ADD)
 			.withClickAction(action -> {
-				UserType userType = UserService.getInstance().getSelectedUserType(choiceUserType);
-				addUser(txtUsername.getText(), passField.getText(), userType);
+				UserPrivilege privilege = UserService.getInstance().getSelectedPrivilege(choicePrivilege);
+				addUser(txtUsername.getText(), passField.getText(), privilege);
 			})
 			.build();
 
 		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER_RIGHT)
 			.withSpacing(30)
-			.withNodes(lblEnterUsername, lblEnterPass, lblSelectType)
+			.withNodes(lblEnterUsername, lblEnterPass, lblSelectPrivilege)
 			.build();
 		VBox vboxCreds = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER_LEFT)
 			.withSpacing(20)
-			.withNodes(txtUsername, passField, choiceUserType)
+			.withNodes(txtUsername, passField, choicePrivilege)
 			.build();
 		HBox hboxUserCreds = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -102,14 +102,18 @@ public class AddUser {
 	/**
 	 * Add a new user.
 	 * 
-	 * @param username - the new user's username
-	 * @param password - the new user's raw password
-	 * @param userType - the new user's user type, i.e. tutor or admin
+	 * @param username  - the new user's username
+	 * @param password  - the new user's raw password
+	 * @param privilege - the new user's privilege level
 	 */
-	private static void addUser(String username, String password, UserType userType) {
+	private static void addUser(String username, String password, UserPrivilege privilege) {
 		try {
 			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
-				User user = new UserBuilder().withUsername(username).withPassword(password).withType(userType).build();
+				User user = new UserBuilder().withUsername(username)
+					.withPassword(password)
+					.withPrivilege(privilege)
+					.build();
+
 				UserService.getInstance().addUser(user);
 				added = true;
 				stage.close();

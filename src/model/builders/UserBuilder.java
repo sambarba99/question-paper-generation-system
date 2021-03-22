@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import model.persisted.User;
 
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 
 /**
  * This class utilises the builder pattern, and is used to build persisted User objects.
@@ -17,7 +17,7 @@ public class UserBuilder {
 
 	private String password;
 
-	private UserType type;
+	private UserPrivilege privilege;
 
 	private LocalDateTime dateCreated;
 
@@ -34,8 +34,8 @@ public class UserBuilder {
 		return this;
 	}
 
-	public UserBuilder withType(UserType type) {
-		this.type = type;
+	public UserBuilder withPrivilege(UserPrivilege privilege) {
+		this.privilege = privilege;
 		return this;
 	}
 
@@ -45,6 +45,6 @@ public class UserBuilder {
 	}
 
 	public User build() {
-		return new User(username, password, type, dateCreated);
+		return new User(username, password, privilege, dateCreated);
 	}
 }

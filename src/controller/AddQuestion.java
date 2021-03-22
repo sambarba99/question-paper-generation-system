@@ -119,11 +119,11 @@ public class AddQuestion {
 			.withNodes(vbox1, vbox2)
 			.build();
 
-		setup();
-
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().add(hboxMain);
+
+		setup();
 
 		Scene scene = new Scene(pane, 750, 600);
 		scene.getStylesheets().add("style.css");

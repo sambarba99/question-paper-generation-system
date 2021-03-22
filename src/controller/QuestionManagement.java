@@ -91,8 +91,6 @@ public class QuestionManagement {
 			})
 			.build();
 
-		setup();
-
 		VBox vboxTbl = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
@@ -127,6 +125,8 @@ public class QuestionManagement {
 		FlowPane pane = new FlowPane();
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().add(vboxMain);
+
+		setup();
 
 		Scene scene = new Scene(pane, 1450, 800);
 		scene.getStylesheets().add("style.css");
@@ -186,8 +186,6 @@ public class QuestionManagement {
 		tblQuestions.getColumns()
 			.addAll(colId, colSubjectTitle, colStatement, colDifficultyLevel, colMarks, colTimeRequired,
 				colDateCreated);
-		questionDTOs = QuestionService.getInstance().getQuestionDTOsWithFilters(difficultyLvlFilters, subjectIdFilters);
-		tblQuestions.getItems().addAll(questionDTOs);
 
 		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {

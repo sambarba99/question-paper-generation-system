@@ -2,7 +2,7 @@ package model.persisted;
 
 import java.time.LocalDateTime;
 
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 
 /**
  * Represents a user.
@@ -15,14 +15,14 @@ public class User {
 
 	private String password;
 
-	private UserType type;
+	private UserPrivilege privilege;
 
 	private LocalDateTime dateCreated;
 
-	public User(String username, String password, UserType type, LocalDateTime dateCreated) {
+	public User(String username, String password, UserPrivilege privilege, LocalDateTime dateCreated) {
 		this.username = username;
 		this.password = password;
-		this.type = type;
+		this.privilege = privilege;
 		this.dateCreated = dateCreated;
 	}
 
@@ -42,12 +42,12 @@ public class User {
 		this.password = password;
 	}
 
-	public UserType getType() {
-		return type;
+	public UserPrivilege getPrivilege() {
+		return privilege;
 	}
 
-	public void setType(UserType type) {
-		this.type = type;
+	public void setPrivilege(UserPrivilege privilege) {
+		this.privilege = privilege;
 	}
 
 	public LocalDateTime getDateCreated() {
@@ -60,6 +60,6 @@ public class User {
 
 	@Override
 	public String toString() {
-		return username + " (" + type.toString() + ")";
+		return username + " (" + privilege.toString() + ")";
 	}
 }

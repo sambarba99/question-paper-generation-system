@@ -14,11 +14,12 @@ import javafx.scene.control.ChoiceBox;
 
 import model.builders.UserBuilder;
 import model.dao.UserDAO;
+import model.dto.UserDTO;
 import model.persisted.User;
 
 import view.SystemNotification;
 import view.enums.SystemNotificationType;
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 import view.utils.Constants;
 import view.utils.SecurityUtils;
 
@@ -86,6 +87,30 @@ public class UserService {
 			.orElse(null);
 	}
 
+	/**
+	 * Get all users converted to DTOs for using in TableViews.
+	 * 
+	 * @return list of all users as DTOs
+	 */
+	public List<UserDTO> getAllUserDTOs() {
+		return getAllUsers().stream().map(this::convertToUserDTO).collect(Collectors.toList());
+	}
+
+	/**
+	 * Convert a user to its DTO equivalent.
+	 * 
+	 * @param user - the user to convert
+	 * @return the equivalent UserDTO
+	 */
+	private UserDTO convertToUserDTO(User user) {
+		UserDTO userDto = new UserDTO();
+		userDto.setUsername(user.getUsername());
+		userDto.setPrivilege(user.getPrivilege().toString());
+		userDto.setDateCreated(Constants.DATE_FORMATTER.format(user.getDateCreated()));
+
+		return userDto;
+	}
+
 	private void encryptPassword(User user) {
 		try {
 			user.setPassword(SecurityUtils.getInstance().sha512(user.getPassword()));
@@ -149,7 +174,7 @@ public class UserService {
 
 		if (username.length() != 0 && pass.length() != 0) {
 			if (usersFileExists()) {
-				// no need to pass the UserType here, as it is retrieved with checkUserExists(user).
+				// no need to pass the UserPrivilege here, as it is retrieved with checkUserExists(user).
 				User user = new UserBuilder().withUsername(username).withPassword(pass).build();
 				User validatedUser = checkUserExists(user);
 				if (validatedUser == null) {
@@ -163,7 +188,7 @@ public class UserService {
 				 */
 				User user = new UserBuilder().withUsername(username)
 					.withPassword(pass)
-					.withType(UserType.ADMIN)
+					.withPrivilege(UserPrivilege.ADMIN)
 					.build();
 
 				if (validateFirstTimeLogin(username, pass)) {
@@ -279,36 +304,27 @@ public class UserService {
 	}
 
 	/**
-	 * Get a list of all usernames and user types, for users ListView objects.
+	 * Get a list of user privileges, for privilege ChoiceBox objects.
 	 * 
-	 * @return list of all usernames and types
+	 * @return list of all user privilege levels
 	 */
-	public List<String> getUserListViewItems() {
-		return getAllUsers().stream().map(User::toString).collect(Collectors.toList());
-	}
-
-	/**
-	 * Get a list of user types, for user types ChoiceBox objects.
-	 * 
-	 * @return list of all user types
-	 */
-	public List<String> getUserTypeChoiceBoxItems() {
-		List<String> choiceBoxItems = Arrays.asList(UserType.values())
+	public List<String> getUserPrivilegeChoiceBoxItems() {
+		List<String> choiceBoxItems = Arrays.asList(UserPrivilege.values())
 			.stream()
-			.map(UserType::toString)
+			.map(UserPrivilege::toString)
 			.collect(Collectors.toList());
 		return choiceBoxItems;
 	}
 
 	/**
-	 * Get enum value of selected user type in a ChoiceBox.
+	 * Get enum value of selected user privilege in a ChoiceBox.
 	 * 
-	 * @param choiceUserType - the ChoiceBox of user types
-	 * @return enum of selected user type
+	 * @param choiceUserPrivilege - the ChoiceBox of user privileges
+	 * @return enum of selected user privilege
 	 */
-	public UserType getSelectedUserType(ChoiceBox choiceUserType) {
-		String userTypeSelected = choiceUserType.getSelectionModel().getSelectedItem().toString();
-		return UserType.getFromStr(userTypeSelected);
+	public UserPrivilege getSelectedPrivilege(ChoiceBox choiceUserPrivilege) {
+		String privilegeSelected = choiceUserPrivilege.getSelectionModel().getSelectedItem().toString();
+		return UserPrivilege.getFromStr(privilegeSelected);
 	}
 
 	public synchronized static UserService getInstance() {

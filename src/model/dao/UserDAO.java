@@ -15,7 +15,7 @@ import model.persisted.User;
 
 import view.SystemNotification;
 import view.enums.SystemNotificationType;
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 import view.utils.Constants;
 
 /**
@@ -111,13 +111,13 @@ public class UserDAO {
 
 				String username = lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY);
 				String passHash = lineArr[1];
-				UserType userType = UserType.getFromStr(lineArr[2]);
+				UserPrivilege privilege = UserPrivilege.getFromStr(lineArr[2]);
 				LocalDateTime dateCreated = LocalDateTime
 					.parse(lineArr[3].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
 				User user = new UserBuilder().withUsername(username)
 					.withPassword(passHash)
-					.withType(userType)
+					.withPrivilege(privilege)
 					.withDateCreated(dateCreated)
 					.build();
 
@@ -142,11 +142,11 @@ public class UserDAO {
 	 */
 	private void addUserDataToFile(User user, FileWriter csvWriter, boolean append) throws IOException {
 		/*
-		 * 1 line contains: unique username (ID), encrypted password, date created
+		 * 1 line contains: unique username (ID), encrypted password, privilege level, date created
 		 */
 		String line = Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ user.getType().toString() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ user.getPrivilege().toString() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ Constants.DATE_FORMATTER.format(user.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {

@@ -120,6 +120,6 @@ public class Question {
 		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
 			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "difficultyLevel="
 			+ difficultyLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins
-			+ Constants.NEWLINE + "Created=" + Constants.DATE_FORMATTER.format(dateCreated);
+			+ Constants.NEWLINE + "dateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

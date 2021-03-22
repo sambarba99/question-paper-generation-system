@@ -22,7 +22,7 @@ import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
-import view.enums.UserType;
+import view.enums.UserPrivilege;
 import view.utils.Constants;
 
 /**
@@ -100,18 +100,19 @@ public class Login extends Application {
 			User currentUser = UserService.getInstance().login(username, password);
 			if (currentUser != null) {
 				stage.close();
-				UserType userType = currentUser.getType();
-				switch (userType) {
+				UserPrivilege userPrivilege = currentUser.getPrivilege();
+				switch (userPrivilege) {
 					case ADMIN:
-						AdminControl.display(currentUser);
+						AdminPanel.display(currentUser);
 						break;
 					case TUTOR:
 						AcademicMaterialManagement.display(currentUser);
 						break;
 					default:
 						SystemNotification.display(SystemNotificationType.ERROR,
-							Constants.UNEXPECTED_ERROR + "Invalid User Type passed: " + userType.toString());
-						throw new IllegalArgumentException("Invalid User Type passed: " + userType.toString());
+							Constants.UNEXPECTED_ERROR + "Invalid User Privilege passed: " + userPrivilege.toString());
+						throw new IllegalArgumentException(
+							"Invalid User Privilege passed: " + userPrivilege.toString());
 				}
 			}
 		} catch (Exception e) {
