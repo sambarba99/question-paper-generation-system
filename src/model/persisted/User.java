@@ -61,4 +61,9 @@ public class User {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 	}
+
+	@Override
+	public String toString() {
+		return username + " (" + type.toString() + ")";
+	}
 }

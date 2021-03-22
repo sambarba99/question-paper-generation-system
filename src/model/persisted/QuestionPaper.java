@@ -118,4 +118,9 @@ public class QuestionPaper {
 	public void setTimeRequiredMins(int timeRequiredMins) {
 		this.timeRequiredMins = timeRequiredMins;
 	}
+
+	@Override
+	public String toString() {
+		return title + " (ID " + id + ")";
+	}
 }

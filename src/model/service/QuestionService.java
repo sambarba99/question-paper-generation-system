@@ -129,7 +129,7 @@ public class QuestionService {
 			.getQuestionPapersByQuestionId(id);
 
 		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append("Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
+		txtAreaStr.append("Subject: " + subject.toString());
 		txtAreaStr
 			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
 		txtAreaStr.append(Constants.NEWLINE + "Marks: " + question.getMarks());
@@ -139,13 +139,12 @@ public class QuestionService {
 		} else {
 			txtAreaStr.append(Constants.NEWLINE + "Question papers containing this question:");
 			for (QuestionPaper questionPaper : papersContainingQuestion) {
-				txtAreaStr.append(
-					Constants.NEWLINE + "- " + questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
+				txtAreaStr.append(Constants.NEWLINE + "- " + questionPaper.toString());
 			}
 		}
 		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement());
 		for (Answer answer : answers) {
-			txtAreaStr.append(Constants.NEWLINE + "(" + answer.getLetter() + ") " + answer.getValue());
+			txtAreaStr.append(Constants.NEWLINE + answer.toString());
 		}
 		txtAreaStr.append(Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
 

@@ -203,7 +203,7 @@ public class QuestionManagement {
 		cbSubjects = SubjectService.getInstance()
 			.getAllSubjects()
 			.stream()
-			.map(subject -> new CheckBox(subject.getTitle() + " (ID " + subject.getId() + ")"))
+			.map(subject -> new CheckBox(subject.toString()))
 			.collect(Collectors.toList());
 
 		// TableView of questions must be refreshed if these CheckBoxes are toggled

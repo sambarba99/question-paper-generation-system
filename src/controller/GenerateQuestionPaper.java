@@ -196,10 +196,7 @@ public class GenerateQuestionPaper {
 
 		List<Subject> allSubjects = SubjectService.getInstance().getAllSubjects();
 		choiceSubject.getItems().clear();
-		choiceSubject.getItems()
-			.addAll(allSubjects.stream()
-				.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
-				.collect(Collectors.toList()));
+		choiceSubject.getItems().addAll(allSubjects.stream().map(Subject::toString).collect(Collectors.toList()));
 		choiceSubject.getSelectionModel().select(0);
 		choiceSubject.setMinWidth(200);
 		choiceSubject.setMaxWidth(200);

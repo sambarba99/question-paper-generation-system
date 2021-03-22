@@ -81,9 +81,7 @@ public class SubjectService {
 	 * @return list of all subjects
 	 */
 	public List<String> getSubjectListViewItems() {
-		return getAllSubjects().stream()
-			.map(subject -> (subject.getTitle() + " (ID " + subject.getId() + ")"))
-			.collect(Collectors.toList());
+		return getAllSubjects().stream().map(Subject::toString).collect(Collectors.toList());
 	}
 
 	/**

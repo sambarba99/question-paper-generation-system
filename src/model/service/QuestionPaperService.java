@@ -91,9 +91,7 @@ public class QuestionPaperService {
 	 * @return list of all question papers
 	 */
 	public List<String> getQuestionPaperListViewItems() {
-		return getAllQuestionPapers().stream()
-			.map(questionPaper -> (questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")"))
-			.collect(Collectors.toList());
+		return getAllQuestionPapers().stream().map(QuestionPaper::toString).collect(Collectors.toList());
 	}
 
 	/**
@@ -106,7 +104,7 @@ public class QuestionPaperService {
 		List<String> listViewItems = new ArrayList<>();
 		for (QuestionPaper questionPaper : getAllQuestionPapers()) {
 			if (subjectIds.contains(questionPaper.getSubjectId())) {
-				listViewItems.add(questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
+				listViewItems.add(questionPaper.toString());
 			}
 		}
 		return listViewItems;
@@ -140,12 +138,12 @@ public class QuestionPaperService {
 		Subject subject = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
 
 		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append(questionPaper.getTitle() + " (ID " + questionPaper.getId() + ")");
-		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.getTitle() + " (ID " + subject.getId() + ")");
+		txtAreaStr.append(questionPaper.toString());
+		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subject.toString());
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
-		txtAreaStr
-			.append(Constants.NEWLINE + "Difficulty level: " + questionPaper.getDifficultyLevel().getIntVal() + "/6");
+		txtAreaStr.append(
+			Constants.NEWLINE + "Average difficulty level: " + questionPaper.getDifficultyLevel().getIntVal() + "/6");
 		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		txtAreaStr.append(
 			Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);
@@ -154,10 +152,10 @@ public class QuestionPaperService {
 		for (int i = 0; i < questionIds.size(); i++) {
 			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i));
 			txtAreaStr.append(Constants.NEWLINE + (i + 1) + ". " + question.getStatement());
-			txtAreaStr.append(Constants.NEWLINE + "(A) " + question.getAnswers().get(0).getValue());
-			txtAreaStr.append(Constants.NEWLINE + "(B) " + question.getAnswers().get(1).getValue());
-			txtAreaStr.append(Constants.NEWLINE + "(C) " + question.getAnswers().get(2).getValue());
-			txtAreaStr.append(Constants.NEWLINE + "(D) " + question.getAnswers().get(3).getValue() + Constants.NEWLINE);
+			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(0).toString());
+			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(1).toString());
+			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(2).toString());
+			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(3).toString() + Constants.NEWLINE);
 		}
 
 		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'

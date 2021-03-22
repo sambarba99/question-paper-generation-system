@@ -272,9 +272,7 @@ public class UserService {
 	 * @return list of all usernames and types
 	 */
 	public List<String> getUserListViewItems() {
-		return getAllUsers().stream()
-			.map(user -> (user.getUsername() + " (" + user.getType().toString() + ")"))
-			.collect(Collectors.toList());
+		return getAllUsers().stream().map(User::toString).collect(Collectors.toList());
 	}
 
 	/**
