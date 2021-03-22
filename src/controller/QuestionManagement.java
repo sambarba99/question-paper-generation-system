@@ -49,6 +49,8 @@ public class QuestionManagement {
 
 	private static List<QuestionDTO> questionDTOs;
 
+	private static Label lblSelectQuestion = new Label();
+
 	private static TableView tblQuestions = new TableView();
 
 	private static List<CheckBox> cbSubjects;
@@ -62,8 +64,6 @@ public class QuestionManagement {
 	private static List<Integer> difficultyLvlFilters = new ArrayList<>();
 
 	private static TextArea txtAreaQuestion = new TextArea();
-
-	private static Label lblSelectQuestion = new Label();
 
 	/**
 	 * Display all questions and capability to filter and modify them.
@@ -128,7 +128,7 @@ public class QuestionManagement {
 		pane.getStyleClass().add("flow-pane");
 		pane.getChildren().add(vboxMain);
 
-		Scene scene = new Scene(pane, 1250, 650);
+		Scene scene = new Scene(pane, 1450, 800);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Question Management");
@@ -165,6 +165,7 @@ public class QuestionManagement {
 		TableColumn<QuestionDTO, String> colDifficultyLevel = new TableColumn<>("Difficulty level");
 		TableColumn<QuestionDTO, Integer> colMarks = new TableColumn<>("Marks");
 		TableColumn<QuestionDTO, Integer> colTimeRequired = new TableColumn<>("Time required (mins)");
+		TableColumn<QuestionDTO, String> colDateCreated = new TableColumn<>("Date created");
 
 		colId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		colSubjectTitle.setCellValueFactory(new PropertyValueFactory<>("subjectTitle"));
@@ -172,6 +173,7 @@ public class QuestionManagement {
 		colDifficultyLevel.setCellValueFactory(new PropertyValueFactory<>("difficultyLevel"));
 		colMarks.setCellValueFactory(new PropertyValueFactory<>("marks"));
 		colTimeRequired.setCellValueFactory(new PropertyValueFactory<>("timeRequiredMins"));
+		colDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
 
 		colId.setPrefWidth(50);
 		colSubjectTitle.setPrefWidth(200);
@@ -179,9 +181,11 @@ public class QuestionManagement {
 		colDifficultyLevel.setPrefWidth(200);
 		colMarks.setPrefWidth(70);
 		colTimeRequired.setPrefWidth(180);
+		colDateCreated.setPrefWidth(150);
 
 		tblQuestions.getColumns()
-			.addAll(colId, colSubjectTitle, colStatement, colDifficultyLevel, colMarks, colTimeRequired);
+			.addAll(colId, colSubjectTitle, colStatement, colDifficultyLevel, colMarks, colTimeRequired,
+				colDateCreated);
 		questionDTOs = QuestionService.getInstance().getQuestionDTOsWithFilters(difficultyLvlFilters, subjectIdFilters);
 		tblQuestions.getItems().addAll(questionDTOs);
 
@@ -193,8 +197,7 @@ public class QuestionManagement {
 				txtAreaQuestion.setText(QuestionService.getInstance().getTxtAreaQuestionStr(questionDto.getId()));
 			}
 		});
-		tblQuestions.setMinSize(950, 300);
-		tblQuestions.setMaxSize(950, 300);
+		tblQuestions.setPrefSize(1119, 300);
 		tblQuestions.setEditable(false);
 
 		/*
@@ -253,8 +256,7 @@ public class QuestionManagement {
 		 * Set up question info TextArea
 		 */
 		txtAreaQuestion.setEditable(false);
-		txtAreaQuestion.setMinSize(400, 240);
-		txtAreaQuestion.setMaxSize(400, 240);
+		txtAreaQuestion.setPrefSize(700, 350);
 		txtAreaQuestion.setText("No question selected.");
 
 		refreshQuestionsTbl();

@@ -1,5 +1,6 @@
 package model.service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class QuestionService {
 	 * @param question - the question to add
 	 */
 	public void addQuestion(Question question) {
+		question.setDateCreated(LocalDateTime.now());
 		questionDao.addQuestion(question);
 	}
 
@@ -80,7 +82,7 @@ public class QuestionService {
 	 * Get all questions converted to DTOs for using in TableViews, with applied subject and difficulty level filters
 	 * (if any selected in QuestionManagement).
 	 * 
-	 * @param difficultyLvls - difficulty levels IDs to filter by
+	 * @param difficultyLvls - difficulty level IDs to filter by
 	 * @param subjectIds     - subject IDs to filter by
 	 * @return (filtered) list of all questions as DTOs
 	 */
@@ -110,6 +112,7 @@ public class QuestionService {
 		questionDto.setDifficultyLevel(question.getDifficultyLevel().getDisplayStr());
 		questionDto.setMarks(question.getMarks());
 		questionDto.setTimeRequiredMins(question.getTimeRequiredMins());
+		questionDto.setDateCreated(Constants.DATE_FORMATTER.format(question.getDateCreated()));
 
 		return questionDto;
 	}
@@ -132,8 +135,6 @@ public class QuestionService {
 		txtAreaStr.append("Subject: " + subject.toString());
 		txtAreaStr
 			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
-		txtAreaStr.append(Constants.NEWLINE + "Marks: " + question.getMarks());
-		txtAreaStr.append(Constants.NEWLINE + "Time required (mins): " + question.getTimeRequiredMins());
 		if (papersContainingQuestion.isEmpty()) {
 			txtAreaStr.append(Constants.NEWLINE + "There are no papers which contain this question.");
 		} else {
@@ -142,11 +143,11 @@ public class QuestionService {
 				txtAreaStr.append(Constants.NEWLINE + "- " + questionPaper.toString());
 			}
 		}
-		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement());
+		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement() + Constants.NEWLINE);
 		for (Answer answer : answers) {
 			txtAreaStr.append(Constants.NEWLINE + answer.toString());
 		}
-		txtAreaStr.append(Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
+		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
 
 		return txtAreaStr.toString();
 	}

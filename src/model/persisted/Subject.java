@@ -1,5 +1,7 @@
 package model.persisted;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents a subject.
  *
@@ -11,9 +13,12 @@ public class Subject {
 
 	private String title;
 
-	public Subject(int id, String title) {
+	private LocalDateTime dateCreated;
+
+	public Subject(int id, String title, LocalDateTime dateCreated) {
 		this.id = id;
 		this.title = title;
+		this.dateCreated = dateCreated;
 	}
 
 	public int getId() {
@@ -30,6 +35,14 @@ public class Subject {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	@Override

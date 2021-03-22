@@ -1,13 +1,8 @@
 package model.persisted;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
-import view.SystemNotification;
-import view.enums.SystemNotificationType;
 import view.enums.UserType;
-import view.utils.Constants;
-import view.utils.SecurityUtils;
 
 /**
  * Represents a user.
@@ -22,10 +17,13 @@ public class User {
 
 	private UserType type;
 
-	public User(String username, String password, UserType type) {
+	private LocalDateTime dateCreated;
+
+	public User(String username, String password, UserType type, LocalDateTime dateCreated) {
 		this.username = username;
 		this.password = password;
 		this.type = type;
+		this.dateCreated = dateCreated;
 	}
 
 	public String getUsername() {
@@ -52,14 +50,12 @@ public class User {
 		this.type = type;
 	}
 
-	public void encryptPassword() {
-		try {
-			setPassword(SecurityUtils.getInstance().sha512(password));
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	@Override

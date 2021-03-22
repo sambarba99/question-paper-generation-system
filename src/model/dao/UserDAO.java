@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,16 +42,11 @@ public class UserDAO {
 				csvFile.createNewFile();
 			}
 
-			String username = user.getUsername();
-			String password = user.getPassword();
-
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(Constants.QUOT_MARK + username + Constants.QUOT_MARK + Constants.COMMA
-				+ Constants.QUOT_MARK + password + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-				+ user.getType().toString() + Constants.QUOT_MARK + Constants.NEWLINE);
+			addUserDataToFile(user, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
-			LOGGER.info("User '" + username + "' added");
+			LOGGER.info("User '" + user.getUsername() + "' added");
 		} catch (IOException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,
@@ -67,7 +63,6 @@ public class UserDAO {
 	public void updatePassword(User user, String pass) {
 		user.setPassword(pass);
 		deleteUserByUsername(user.getUsername());
-		user.encryptPassword();
 		addUser(user);
 		LOGGER.info("Password of user '" + user.getUsername() + "' updated");
 	}
@@ -81,13 +76,11 @@ public class UserDAO {
 		try {
 			List<User> allUsers = getAllUsers();
 			File csvFile = new File(Constants.USERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false);
+			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
 
 			for (User user : allUsers) {
 				if (!user.getUsername().equals(username)) {
-					csvWriter.write(Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
-						+ Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA
-						+ Constants.QUOT_MARK + user.getType().toString() + Constants.QUOT_MARK + Constants.NEWLINE);
+					addUserDataToFile(user, csvWriter, false);
 				}
 			}
 			csvWriter.flush();
@@ -118,9 +111,16 @@ public class UserDAO {
 
 				String username = lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY);
 				String passHash = lineArr[1];
-				UserType userType = UserType.getFromStr(lineArr[2].replace(Constants.QUOT_MARK, Constants.EMPTY));
+				UserType userType = UserType.getFromStr(lineArr[2]);
+				LocalDateTime dateCreated = LocalDateTime
+					.parse(lineArr[3].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
-				User user = new UserBuilder().withUsername(username).withPassword(passHash).withType(userType).build();
+				User user = new UserBuilder().withUsername(username)
+					.withPassword(passHash)
+					.withType(userType)
+					.withDateCreated(dateCreated)
+					.build();
+
 				users.add(user);
 			}
 			input.close();
@@ -131,6 +131,29 @@ public class UserDAO {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return users;
+	}
+
+	/**
+	 * Add user data to the users CSV file.
+	 * 
+	 * @param user      - the user to add
+	 * @param csvWriter - the file writer
+	 * @param append    - whether to append or write to the file
+	 */
+	private void addUserDataToFile(User user, FileWriter csvWriter, boolean append) throws IOException {
+		/*
+		 * 1 line contains: unique username (ID), encrypted password, date created
+		 */
+		String line = Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ user.getType().toString() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ Constants.DATE_FORMATTER.format(user.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
+
+		if (append) {
+			csvWriter.append(line);
+		} else { // write
+			csvWriter.write(line);
+		}
 	}
 
 	public synchronized static UserDAO getInstance() {

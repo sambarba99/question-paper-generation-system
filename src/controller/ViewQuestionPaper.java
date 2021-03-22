@@ -41,8 +41,7 @@ public class ViewQuestionPaper {
 		TextArea txtAreaPaper = new TextArea();
 		txtAreaPaper.setEditable(false);
 		txtAreaPaper.setText(QuestionPaperService.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
-		txtAreaPaper.setMinSize(400, 600);
-		txtAreaPaper.setMaxSize(400, 600);
+		txtAreaPaper.setPrefSize(400, 600);
 
 		Button btnExport = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.EXPORT)

@@ -1,5 +1,6 @@
 package model.persisted;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import view.enums.DifficultyLevel;
@@ -26,8 +27,11 @@ public class Question {
 
 	private int timeRequiredMins;
 
+	private LocalDateTime dateCreated;
+
 	public Question(int id, int subjectId, String statement, List<Answer> answers, DifficultyLevel difficultyLevel,
-		int marks, int timeRequiredMins) {
+		int marks, int timeRequiredMins, LocalDateTime dateCreated) {
+
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
@@ -35,6 +39,7 @@ public class Question {
 		this.difficultyLevel = difficultyLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
+		this.dateCreated = dateCreated;
 	}
 
 	public int getId() {
@@ -93,6 +98,14 @@ public class Question {
 		this.timeRequiredMins = timeRequiredMins;
 	}
 
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder answersBld = new StringBuilder();
@@ -106,6 +119,7 @@ public class Question {
 
 		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
 			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "difficultyLevel="
-			+ difficultyLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins;
+			+ difficultyLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins
+			+ Constants.NEWLINE + "Created=" + Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

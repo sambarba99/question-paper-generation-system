@@ -1,5 +1,6 @@
 package model.builders;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import model.persisted.QuestionPaper;
@@ -30,6 +31,8 @@ public class QuestionPaperBuilder {
 	private int marks;
 
 	private int timeRequiredMins;
+
+	private LocalDateTime dateCreated;
 
 	public QuestionPaperBuilder() {
 	}
@@ -79,8 +82,13 @@ public class QuestionPaperBuilder {
 		return this;
 	}
 
+	public QuestionPaperBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
+
 	public QuestionPaper build() {
 		return new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds, difficultyLevel, marks,
-			timeRequiredMins);
+			timeRequiredMins, dateCreated);
 	}
 }

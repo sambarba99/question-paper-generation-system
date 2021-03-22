@@ -1,5 +1,7 @@
 package model.builders;
 
+import java.time.LocalDateTime;
+
 import model.persisted.Subject;
 
 /**
@@ -12,6 +14,8 @@ public class SubjectBuilder {
 	private int id;
 
 	private String title;
+
+	private LocalDateTime dateCreated;
 
 	public SubjectBuilder() {
 	}
@@ -26,7 +30,12 @@ public class SubjectBuilder {
 		return this;
 	}
 
+	public SubjectBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
+
 	public Subject build() {
-		return new Subject(id, title);
+		return new Subject(id, title, dateCreated);
 	}
 }

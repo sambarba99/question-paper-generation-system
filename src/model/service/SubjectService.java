@@ -1,5 +1,6 @@
 package model.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +32,7 @@ public class SubjectService {
 	 * @param subject - the subject to add
 	 */
 	public void addSubject(Subject subject) {
+		subject.setDateCreated(LocalDateTime.now());
 		subjectDao.addSubject(subject);
 	}
 

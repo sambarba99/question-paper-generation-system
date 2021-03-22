@@ -1,5 +1,6 @@
 package model.persisted;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import view.enums.DifficultyLevel;
@@ -30,8 +31,12 @@ public class QuestionPaper {
 
 	private int timeRequiredMins;
 
+	private LocalDateTime dateCreated;
+
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins) {
+		List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins,
+		LocalDateTime dateCreated) {
+
 		this.id = id;
 		this.subjectId = subjectId;
 		this.title = title;
@@ -41,6 +46,7 @@ public class QuestionPaper {
 		this.difficultyLevel = difficultyLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
+		this.dateCreated = dateCreated;
 	}
 
 	public int getId() {
@@ -87,12 +93,8 @@ public class QuestionPaper {
 		return questionIds;
 	}
 
-	public void addQuestionId(int questionId) {
-		this.questionIds.add(questionId);
-	}
-
-	public void removeQuestionId(int questionId) {
-		this.questionIds.remove(questionIds.indexOf(questionId));
+	public void setQuestionIds(List<Integer> questionIds) {
+		this.questionIds = questionIds;
 	}
 
 	public DifficultyLevel getDifficultyLevel() {
@@ -117,6 +119,14 @@ public class QuestionPaper {
 
 	public void setTimeRequiredMins(int timeRequiredMins) {
 		this.timeRequiredMins = timeRequiredMins;
+	}
+
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
 	@Override

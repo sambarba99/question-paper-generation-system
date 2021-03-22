@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,7 +111,9 @@ public class QuestionDAO {
 					List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
 					DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[8]);
 					int marks = Integer.parseInt(lineArr[9]);
-					int timeRequiredMins = Integer.parseInt(lineArr[10].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					int timeRequiredMins = Integer.parseInt(lineArr[10]);
+					LocalDateTime dateCreated = LocalDateTime
+						.parse(lineArr[11].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
 					Question question = new QuestionBuilder().withId(id)
 						.withSubjectId(subjectId)
@@ -119,6 +122,7 @@ public class QuestionDAO {
 						.withDifficultyLevel(difficultyLevel)
 						.withMarks(marks)
 						.withTimeRequiredMins(timeRequiredMins)
+						.withDateCreated(dateCreated)
 						.build();
 
 					questions.add(question);
@@ -148,7 +152,7 @@ public class QuestionDAO {
 	/**
 	 * Add question data to the questions CSV file.
 	 * 
-	 * @param data      - the string values of the question data
+	 * @param question  - the question to add
 	 * @param csvWriter - the file writer
 	 * @param append    - whether to append or write to the file
 	 */
@@ -156,7 +160,7 @@ public class QuestionDAO {
 		Answer correctAnswer = question.getAnswers().stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		/*
 		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), difficulty level,
-		 * marks, time required (mins)
+		 * marks, time required (mins), date created
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(question.getId()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getSubjectId()) + Constants.QUOT_MARK + Constants.COMMA
@@ -169,7 +173,8 @@ public class QuestionDAO {
 			+ Constants.QUOT_MARK + question.getDifficultyLevel().getStrVal() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins()) + Constants.QUOT_MARK
-			+ Constants.NEWLINE;
+			+ Constants.COMMA + Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(question.getDateCreated())
+			+ Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
 			csvWriter.append(line);

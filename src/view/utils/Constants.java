@@ -1,5 +1,7 @@
 package view.utils;
 
+import java.time.format.DateTimeFormatter;
+
 import model.questionpapergeneration.SelectionType;
 
 import view.SystemNotification;
@@ -85,6 +87,8 @@ public class Constants {
 	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
+
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm");
 
 	/**
 	 * The caller references constants using Constants.USER_FILE_PATH etc. Thus, the caller should be prevented from

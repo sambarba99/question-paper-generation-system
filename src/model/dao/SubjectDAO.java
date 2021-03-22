@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,8 +42,7 @@ public class SubjectDAO {
 			}
 
 			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			csvWriter.append(Constants.QUOT_MARK + Integer.toString(subject.getId()) + Constants.QUOT_MARK
-				+ Constants.COMMA + Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.NEWLINE);
+			addSubjectDataToFile(subject, csvWriter, true);
 			csvWriter.flush();
 			csvWriter.close();
 			LOGGER.info("Subject '" + subject.getTitle() + "' added");
@@ -62,13 +62,11 @@ public class SubjectDAO {
 		try {
 			List<Subject> allSubjects = getAllSubjects();
 			File csvFile = new File(Constants.SUBJECTS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false);
+			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
 
 			for (Subject subject : allSubjects) {
 				if (subject.getId() != id) {
-					csvWriter.write(
-						Constants.QUOT_MARK + Integer.toString(subject.getId()) + Constants.QUOT_MARK + Constants.COMMA
-							+ Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.NEWLINE);
+					addSubjectDataToFile(subject, csvWriter, false);
 				}
 			}
 			csvWriter.flush();
@@ -99,9 +97,15 @@ public class SubjectDAO {
 					String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
 					int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
-					String title = lineArr[1].replace(Constants.QUOT_MARK, Constants.EMPTY);
+					String title = lineArr[1];
+					LocalDateTime dateCreated = LocalDateTime
+						.parse(lineArr[2].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
-					Subject subject = new SubjectBuilder().withId(id).withTitle(title).build();
+					Subject subject = new SubjectBuilder().withId(id)
+						.withTitle(title)
+						.withDateCreated(dateCreated)
+						.build();
+
 					subjects.add(subject);
 				}
 				input.close();
@@ -124,6 +128,28 @@ public class SubjectDAO {
 	public Subject getSubjectById(int id) {
 		LOGGER.info("Retrieving subject by ID " + id);
 		return getAllSubjects().stream().filter(subject -> subject.getId() == id).findFirst().orElse(null);
+	}
+
+	/**
+	 * Add subject data to the subjects CSV file.
+	 * 
+	 * @param subject   - the subject to add
+	 * @param csvWriter - the file writer
+	 * @param append    - whether to append or write to the file
+	 */
+	private void addSubjectDataToFile(Subject subject, FileWriter csvWriter, boolean append) throws IOException {
+		/*
+		 * 1 line contains: ID, title, date created
+		 */
+		String line = Constants.QUOT_MARK + subject.getId() + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + subject.getTitle() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ Constants.DATE_FORMATTER.format(subject.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
+
+		if (append) {
+			csvWriter.append(line);
+		} else { // write
+			csvWriter.write(line);
+		}
 	}
 
 	public synchronized static SubjectDAO getInstance() {

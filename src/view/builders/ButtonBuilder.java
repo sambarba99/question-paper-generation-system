@@ -39,8 +39,7 @@ public class ButtonBuilder {
 
 	public Button build() {
 		Button b = new Button(userAction.getStrVal());
-		b.setMinWidth(width);
-		b.setMaxWidth(width);
+		b.setPrefWidth(width);
 		b.setOnAction(clickAction);
 		return b;
 	}

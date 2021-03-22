@@ -1,5 +1,6 @@
 package model.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +34,7 @@ public class QuestionPaperService {
 	 * @param questionPaper - the question paper to add
 	 */
 	public void addQuestionPaper(QuestionPaper questionPaper) {
+		questionPaper.setDateCreated(LocalDateTime.now());
 		questionPaperDao.addQuestionPaper(questionPaper);
 	}
 

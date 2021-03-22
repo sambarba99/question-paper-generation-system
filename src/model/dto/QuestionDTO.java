@@ -19,6 +19,8 @@ public class QuestionDTO {
 
 	private int timeRequiredMins;
 
+	private String dateCreated;
+
 	public QuestionDTO() {
 	}
 
@@ -68,5 +70,13 @@ public class QuestionDTO {
 
 	public void setTimeRequiredMins(int timeRequiredMins) {
 		this.timeRequiredMins = timeRequiredMins;
+	}
+
+	public String getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 }

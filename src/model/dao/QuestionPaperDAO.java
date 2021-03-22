@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -110,7 +111,9 @@ public class QuestionPaperDAO {
 					}
 					DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[6]);
 					int marks = Integer.parseInt(lineArr[7]);
-					int timeRequiredMins = Integer.parseInt(lineArr[8].replace(Constants.QUOT_MARK, Constants.EMPTY));
+					int timeRequiredMins = Integer.parseInt(lineArr[8]);
+					LocalDateTime dateCreated = LocalDateTime
+						.parse(lineArr[9].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
 					QuestionPaper questionPaper = new QuestionPaperBuilder().withId(id)
 						.withSubjectId(subjectId)
@@ -121,6 +124,7 @@ public class QuestionPaperDAO {
 						.withDifficultyLevel(difficultyLevel)
 						.withMarks(marks)
 						.withTimeRequiredMins(timeRequiredMins)
+						.withDateCreated(dateCreated)
 						.build();
 
 					questionPapers.add(questionPaper);
@@ -166,9 +170,9 @@ public class QuestionPaperDAO {
 	/**
 	 * Add question paper data to the question papers CSV file.
 	 * 
-	 * @param data      - the string values of the question paper data
-	 * @param csvWriter - the file writer
-	 * @param append    - whether to append or write to the file
+	 * @param questionPaper - the question paper to add
+	 * @param csvWriter     - the file writer
+	 * @param append        - whether to append or write to the file
 	 */
 	private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter csvWriter, boolean append)
 		throws IOException {
@@ -182,7 +186,7 @@ public class QuestionPaperDAO {
 
 		/*
 		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, difficulty level, marks,
-		 * time required (mins)
+		 * time required (mins), date created
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(questionPaper.getId()) + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getSubjectId())
@@ -193,7 +197,9 @@ public class QuestionPaperDAO {
 			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getDifficultyLevel().getStrVal()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks())
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.NEWLINE;
+			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(questionPaper.getDateCreated())
+			+ Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
 			csvWriter.append(line);

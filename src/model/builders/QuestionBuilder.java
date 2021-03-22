@@ -1,5 +1,6 @@
 package model.builders;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import model.persisted.Answer;
@@ -27,6 +28,8 @@ public class QuestionBuilder {
 	private int marks;
 
 	private int timeRequiredMins;
+
+	private LocalDateTime dateCreated;
 
 	public QuestionBuilder() {
 	}
@@ -66,7 +69,12 @@ public class QuestionBuilder {
 		return this;
 	}
 
+	public QuestionBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
+
 	public Question build() {
-		return new Question(id, subjectId, statement, answers, difficultyLevel, marks, timeRequiredMins);
+		return new Question(id, subjectId, statement, answers, difficultyLevel, marks, timeRequiredMins, dateCreated);
 	}
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -33,11 +34,13 @@ public class UserService {
 	private UserDAO userDao = UserDAO.getInstance();
 
 	/**
-	 * Add a user to the users CSV file.
+	 * Encrypt a user's password before adding them to the users CSV file.
 	 * 
 	 * @param user - the user to add
 	 */
 	public void addUser(User user) {
+		encryptPassword(user);
+		user.setDateCreated(LocalDateTime.now());
 		userDao.addUser(user);
 	}
 
@@ -81,6 +84,16 @@ public class UserService {
 			.filter(user -> user.getUsername().equals(username))
 			.findFirst()
 			.orElse(null);
+	}
+
+	private void encryptPassword(User user) {
+		try {
+			user.setPassword(SecurityUtils.getInstance().sha512(user.getPassword()));
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
+		}
 	}
 
 	/**
@@ -154,8 +167,7 @@ public class UserService {
 					.build();
 
 				if (validateFirstTimeLogin(username, pass)) {
-					user.encryptPassword(); // apply SHA-512 before adding
-					userDao.addUser(user);
+					addUser(user);
 					return user;
 				}
 			}

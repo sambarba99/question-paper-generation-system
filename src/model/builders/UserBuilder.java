@@ -1,5 +1,7 @@
 package model.builders;
 
+import java.time.LocalDateTime;
+
 import model.persisted.User;
 
 import view.enums.UserType;
@@ -16,6 +18,8 @@ public class UserBuilder {
 	private String password;
 
 	private UserType type;
+
+	private LocalDateTime dateCreated;
 
 	public UserBuilder() {
 	}
@@ -35,7 +39,12 @@ public class UserBuilder {
 		return this;
 	}
 
+	public UserBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
+
 	public User build() {
-		return new User(username, password, type);
+		return new User(username, password, type, dateCreated);
 	}
 }

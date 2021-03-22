@@ -212,11 +212,9 @@ public class AddQuestion {
 		choiceSubject.getItems().clear();
 		choiceSubject.getItems().addAll(allSubjects.stream().map(Subject::toString).collect(Collectors.toList()));
 		choiceSubject.getSelectionModel().select(0);
-		choiceSubject.setMinWidth(200);
-		choiceSubject.setMaxWidth(200);
+		choiceSubject.setPrefWidth(200);
 
-		txtAreaStatement.setMinSize(350, 160);
-		txtAreaStatement.setMaxSize(350, 160);
+		txtAreaStatement.setPrefSize(350, 160);
 		txtAreaStatement.textProperty()
 			.addListener((obs, oldText, newText) -> {
 				// remove characters that could potentially harm CSV read/write functionality
@@ -231,8 +229,7 @@ public class AddQuestion {
 		List<DifficultyLevel> allDifficultyLvls = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
 		sliderDifficultyLvl.setMin(1);
 		sliderDifficultyLvl.setMax(allDifficultyLvls.size());
-		sliderDifficultyLvl.setMinWidth(200);
-		sliderDifficultyLvl.setMaxWidth(200);
+		sliderDifficultyLvl.setPrefWidth(200);
 		sliderDifficultyLvl.setMajorTickUnit(1);
 		sliderDifficultyLvl.setShowTickLabels(true);
 		sliderDifficultyLvl.setShowTickMarks(true);
@@ -242,8 +239,7 @@ public class AddQuestion {
 			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficultyLvls.get(intVal - 1).getStrVal());
 		});
 
-		lblSelectedDifficultyLvl.setMinWidth(240);
-		lblSelectedDifficultyLvl.setMaxWidth(240);
+		lblSelectedDifficultyLvl.setPrefWidth(240);
 	}
 
 	/**

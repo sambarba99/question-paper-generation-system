@@ -58,8 +58,7 @@ public class AddUser {
 		});
 		choiceUserType.getItems().addAll(UserService.getInstance().getUserTypeChoiceBoxItems());
 		choiceUserType.getSelectionModel().selectFirst();
-		choiceUserType.setMinWidth(100);
-		choiceUserType.setMaxWidth(100);
+		choiceUserType.setPrefWidth(100);
 
 		Button btnAddUser = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.ADD)
@@ -111,7 +110,6 @@ public class AddUser {
 		try {
 			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
 				User user = new UserBuilder().withUsername(username).withPassword(password).withType(userType).build();
-				user.encryptPassword(); // apply SHA-512 before adding
 				UserService.getInstance().addUser(user);
 				added = true;
 				stage.close();
