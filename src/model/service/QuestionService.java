@@ -117,13 +117,11 @@ public class QuestionService {
 	 */
 	private QuestionDTO convertToQuestionDTO(Question question) {
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(question.getSubjectId());
-		if (!subjectOpt.isPresent()) {
-			throw new IllegalArgumentException("Invalid subject ID passed: " + question.getSubjectId());
-		}
+		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
 		QuestionDTO questionDto = new QuestionDTO();
 		questionDto.setId(question.getId());
-		questionDto.setSubjectTitle(subjectOpt.get().getTitle());
+		questionDto.setSubjectTitle(subjectTitle);
 		questionDto.setStatement(question.getStatement());
 		questionDto.setDifficultyLevel(question.getDifficultyLevel().getDisplayStr());
 		questionDto.setMarks(question.getMarks());
@@ -149,9 +147,7 @@ public class QuestionService {
 		}
 
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(question.getSubjectId());
-		if (!subjectOpt.isPresent()) {
-			throw new IllegalArgumentException("Invalid subject ID passed: " + question.getSubjectId());
-		}
+		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
 		List<Answer> answers = question.getAnswers();
 		Answer correctAnswer = answers.stream().filter(Answer::isCorrect).findFirst().orElse(null);
@@ -159,7 +155,7 @@ public class QuestionService {
 			.getQuestionPapersByQuestionId(id);
 
 		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append("Subject: " + subjectOpt.get().toString());
+		txtAreaStr.append("Subject: " + subjectTitle);
 		txtAreaStr
 			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
 		if (papersContainingQuestion.isEmpty()) {

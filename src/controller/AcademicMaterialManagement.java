@@ -14,7 +14,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -35,6 +34,7 @@ import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
+import view.utils.LogoMaker;
 
 /**
  * Allows the user to view and modify academic material.
@@ -120,7 +120,7 @@ public class AcademicMaterialManagement {
 			})
 			.build();
 
-		lblHeader.setStyle("-fx-font-size: 25px");
+		lblHeader.setStyle("-fx-font-size: 30px");
 
 		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -140,17 +140,18 @@ public class AcademicMaterialManagement {
 			.build();
 		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(30)
+			.withSpacing(20)
 			.withNodes(vboxSubjects, vboxQuestionPapers, vboxActions)
 			.build();
-
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().addAll(lblHeader, hboxViews);
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(30)
+			.withNodes(LogoMaker.makeLogo(300), lblHeader, hboxViews)
+			.build();
 
 		setup();
 
-		Scene scene = new Scene(pane, 1700, 700);
+		Scene scene = new Scene(vboxMain, 1650, 680);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Academic Material");
@@ -182,7 +183,8 @@ public class AcademicMaterialManagement {
 					SubjectDTO subjectDto = (SubjectDTO) tblSubjects.getSelectionModel().getSelectedItem();
 					SubjectService.getInstance().deleteSubjectById(subjectDto.getId());
 					refreshSubjectsTbl();
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Subject deleted.");
+					SystemNotification.display(SystemNotificationType.SUCCESS,
+						"Subject '" + subjectDto.getTitle() + "' deleted.");
 				}
 				break;
 			case TOGGLE_FILTER_PAPERS:
@@ -283,7 +285,7 @@ public class AcademicMaterialManagement {
 
 		tblSubjects.getColumns().addAll(colSubjectId, colSubjectTitle, colNumQuestions, colSubjectDateCreated);
 		tblSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		tblSubjects.setPrefSize(522, 360);
+		tblSubjects.setPrefSize(522, 365);
 		tblSubjects.setEditable(false);
 
 		/*
@@ -310,7 +312,7 @@ public class AcademicMaterialManagement {
 		tblQuestionPapers.getColumns()
 			.addAll(colPaperId, colPaperTitle, colPaperSubject, colPaperCourse, colPaperDateCreated);
 		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		tblQuestionPapers.setPrefSize(800, 360);
+		tblQuestionPapers.setPrefSize(800, 365);
 		tblQuestionPapers.setEditable(false);
 
 		refreshSubjectsTbl();

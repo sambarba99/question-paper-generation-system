@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -26,6 +25,7 @@ import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.enums.UserPrivilege;
 import view.utils.Constants;
+import view.utils.LogoMaker;
 
 /**
  * Allows the user to access the system with correct username and password.
@@ -51,35 +51,33 @@ public class Login extends Application {
 		Label lblEnterPass = new Label("Enter password:");
 		PasswordField passField = new PasswordField();
 
+		txtUsername.setMaxWidth(200);
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
+		passField.setMaxWidth(200);
 
-		Button btnLogin = new ButtonBuilder().withWidth(76).withUserAction(UserAction.LOG_IN).withActionEvent(e -> {
+		Button btnLogin = new ButtonBuilder().withWidth(100).withUserAction(UserAction.LOG_IN).withActionEvent(e -> {
 			login(txtUsername.getText(), passField.getText(), primaryStage);
 		}).build();
 
-		HBox hboxUsername = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.CENTER)
-			.withSpacing(5)
-			.withNodes(lblEnterUsername, txtUsername)
+		VBox vboxCredentials = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER_LEFT)
+			.withSpacing(10)
+			.withNodes(lblEnterUsername, txtUsername, lblEnterPass, passField)
 			.build();
-		HBox hboxPass = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+		HBox hboxCredsAndLogin = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(5)
-			.withNodes(lblEnterPass, passField)
+			.withSpacing(30)
+			.withNodes(vboxCredentials, btnLogin)
 			.build();
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
-			.withNodes(hboxUsername, hboxPass, btnLogin)
+			.withSpacing(40)
+			.withNodes(LogoMaker.makeLogo(400), hboxCredsAndLogin)
 			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
-
-		Scene scene = new Scene(pane, 650, 300);
+		Scene scene = new Scene(vboxMain, 600, 500);
 		scene.getStylesheets().add("style.css");
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Login");

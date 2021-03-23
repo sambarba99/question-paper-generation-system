@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -80,11 +79,7 @@ public class UpdatePassword {
 			.withNodes(hbox, btnUpdate)
 			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
-
-		Scene scene = new Scene(pane, 600, 300);
+		Scene scene = new Scene(vboxMain, 500, 300);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Update Password");

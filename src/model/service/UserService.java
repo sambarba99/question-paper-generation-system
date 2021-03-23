@@ -5,13 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-
-import javafx.scene.control.ChoiceBox;
 
 import model.builders.UserBuilder;
 import model.dao.UserDAO;
@@ -298,30 +295,6 @@ public class UserService {
 	public boolean usersFileExists() {
 		File csvFile = new File(Constants.USERS_FILE_PATH);
 		return csvFile.exists();
-	}
-
-	/**
-	 * Get a list of user privileges, for privilege ChoiceBox objects.
-	 * 
-	 * @return list of all user privilege levels
-	 */
-	public List<String> getUserPrivilegeChoiceBoxItems() {
-		List<String> choiceBoxItems = Arrays.asList(UserPrivilege.values())
-			.stream()
-			.map(UserPrivilege::toString)
-			.collect(Collectors.toList());
-		return choiceBoxItems;
-	}
-
-	/**
-	 * Get enum value of selected user privilege in a ChoiceBox.
-	 * 
-	 * @param choiceUserPrivilege - the ChoiceBox of user privileges
-	 * @return enum of selected user privilege
-	 */
-	public UserPrivilege getSelectedPrivilege(ChoiceBox choiceUserPrivilege) {
-		String privilegeSelected = choiceUserPrivilege.getSelectionModel().getSelectedItem().toString();
-		return UserPrivilege.getFromStr(privilegeSelected);
 	}
 
 	public synchronized static UserService getInstance() {

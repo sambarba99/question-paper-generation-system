@@ -13,7 +13,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -33,6 +32,8 @@ import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
+import view.utils.LogoMaker;
+import view.utils.StringFormatter;
 
 /**
  * Allows the user to generate a question paper with specified parameters such as subject and difficulty.
@@ -117,16 +118,12 @@ public class GenerateQuestionPaper {
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(20)
-			.withNodes(hbox, btnGenerate)
+			.withNodes(LogoMaker.makeLogo(250), hbox, btnGenerate)
 			.build();
-
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
 
 		setup();
 
-		Scene scene = new Scene(pane, 550, 350);
+		Scene scene = new Scene(vboxMain, 550, 450);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Generate Question Paper");
@@ -143,9 +140,10 @@ public class GenerateQuestionPaper {
 	 * @return whether or not paper has been generated successfully
 	 */
 	private static QuestionPaper prepareParamsAndGenerate() throws IOException {
-		String title = SubjectService.getInstance().formatTitle(txtTitle.getText());
-		String courseTitle = txtCourseTitle.getText().trim();
-		String courseCode = txtCourseCode.getText().trim();
+		String title = StringFormatter.formatTitle(txtTitle.getText());
+		String courseTitle = StringFormatter.formatTitle(txtCourseTitle.getText());
+		String courseCode = txtCourseCode.getText();
+
 		if (title.length() == 0 || courseTitle.length() == 0 || courseCode.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Please enter the title, course title and course code.");

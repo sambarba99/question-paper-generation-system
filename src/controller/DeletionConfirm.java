@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -64,11 +63,7 @@ public class DeletionConfirm {
 			.withNodes(lbl, btnYes, btnNo)
 			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
-
-		Scene scene = new Scene(pane, 600, 300);
+		Scene scene = new Scene(vboxMain, 600, 300);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Deletion Confirmation");

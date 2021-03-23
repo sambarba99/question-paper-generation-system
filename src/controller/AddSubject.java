@@ -5,8 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -21,6 +21,7 @@ import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
+import view.utils.StringFormatter;
 
 /**
  * Allows user to add a new subject.
@@ -45,7 +46,7 @@ public class AddSubject {
 		Label lblEnterTitle = new Label("Enter the subject title:");
 		TextField txtTitle = new TextField();
 		Button btnAdd = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
-			addSubject(txtTitle.getText());
+			formatTitleAndAddSubject(txtTitle.getText());
 		}).build();
 
 		HBox hboxTitle = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
@@ -53,12 +54,13 @@ public class AddSubject {
 			.withSpacing(5)
 			.withNodes(lblEnterTitle, txtTitle)
 			.build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(hboxTitle, btnAdd)
+			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().addAll(hboxTitle, btnAdd);
-
-		Scene scene = new Scene(pane, 450, 150);
+		Scene scene = new Scene(vboxMain, 450, 150);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Add New Subject");
@@ -74,15 +76,15 @@ public class AddSubject {
 	 * 
 	 * @param subjectTitle - the title of the subject
 	 */
-	private static void addSubject(String subjectTitle) {
+	private static void formatTitleAndAddSubject(String subjectTitle) {
+		subjectTitle = StringFormatter.formatTitle(subjectTitle);
+
 		if (subjectTitle.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
 		} else {
-			String formattedTitle = SubjectService.getInstance().formatTitle(subjectTitle);
-
-			if (formattedTitle.matches(Constants.TITLE_REGEX)) {
+			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
 				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
-				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(formattedTitle).build();
+				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build();
 				SubjectService.getInstance().addSubject(subject);
 				added = true;
 				stage.close();

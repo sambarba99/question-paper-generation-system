@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -36,6 +35,8 @@ import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
+import view.utils.LogoMaker;
+import view.utils.StringFormatter;
 
 /**
  * Allows the user to view all stored questions, and manage questions.
@@ -110,19 +111,20 @@ public class AddQuestion {
 			.withNodes(lblSelectCorrect, choiceCorrectAnsLetter, lblSelectDifficultyLvl, sliderDifficultyLvl,
 				lblSelectedDifficultyLvl, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
 			.build();
-		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(20)
 			.withNodes(vbox1, vbox2)
 			.build();
-
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(hboxMain);
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(LogoMaker.makeLogo(250), hbox)
+			.build();
 
 		setup();
 
-		Scene scene = new Scene(pane, 750, 600);
+		Scene scene = new Scene(vboxMain, 700, 700);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Add New Question");
@@ -140,10 +142,10 @@ public class AddQuestion {
 	 */
 	private static boolean validateAndAddQuestion() {
 		String statement = txtAreaStatement.getText();
-		String ansA = txtAnsA.getText().trim();
-		String ansB = txtAnsB.getText().trim();
-		String ansC = txtAnsC.getText().trim();
-		String ansD = txtAnsD.getText().trim();
+		String ansA = txtAnsA.getText();
+		String ansB = txtAnsB.getText();
+		String ansC = txtAnsC.getText();
+		String ansD = txtAnsD.getText();
 
 		if (statement.length() == 0 || ansA.length() == 0 || ansB.length() == 0 || ansC.length() == 0
 			|| ansD.length() == 0) {
@@ -157,6 +159,12 @@ public class AddQuestion {
 				"Statement and answers must not have repeating spaces.");
 			return false;
 		}
+
+		statement = StringFormatter.capitalise(statement);
+		ansA = StringFormatter.capitalise(ansA);
+		ansB = StringFormatter.capitalise(ansB);
+		ansC = StringFormatter.capitalise(ansC);
+		ansD = StringFormatter.capitalise(ansD);
 
 		int marks = 0;
 		try {
@@ -177,13 +185,6 @@ public class AddQuestion {
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
 		int subjectId = SubjectService.getInstance()
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
-
-		// capitalise statement and answers
-		statement = Character.toString(statement.charAt(0)).toUpperCase() + statement.substring(1);
-		ansA = Character.toString(ansA.charAt(0)).toUpperCase() + ansA.substring(1);
-		ansB = Character.toString(ansB.charAt(0)).toUpperCase() + ansB.substring(1);
-		ansC = Character.toString(ansC.charAt(0)).toUpperCase() + ansC.substring(1);
-		ansD = Character.toString(ansD.charAt(0)).toUpperCase() + ansD.substring(1);
 
 		int correctAnswerPos = choiceCorrectAnsLetter.getSelectionModel().getSelectedIndex();
 		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());

@@ -112,14 +112,12 @@ public class QuestionPaperService {
 	 */
 	private QuestionPaperDTO convertToQuestionPaperDTO(QuestionPaper questionPaper) {
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
-		if (!subjectOpt.isPresent()) {
-			throw new IllegalArgumentException("Invalid subject ID passed: " + questionPaper.getSubjectId());
-		}
+		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
 		QuestionPaperDTO questionPaperDto = new QuestionPaperDTO();
 		questionPaperDto.setId(questionPaper.getId());
 		questionPaperDto.setTitle(questionPaper.getTitle());
-		questionPaperDto.setSubjectTitle(subjectOpt.get().getTitle());
+		questionPaperDto.setSubjectTitle(subjectTitle);
 		questionPaperDto.setCourse(questionPaper.getCourseTitle() + " (" + questionPaper.getCourseCode() + ")");
 		questionPaperDto.setDateCreated(Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()));
 
@@ -134,13 +132,11 @@ public class QuestionPaperService {
 	 */
 	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
-		if (!subjectOpt.isPresent()) {
-			throw new IllegalArgumentException("Invalid subject ID passed: " + questionPaper.getSubjectId());
-		}
+		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append(questionPaper.toString());
-		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subjectOpt.get().toString());
+		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subjectTitle);
 		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
 		txtAreaStr.append(

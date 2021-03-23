@@ -1,11 +1,14 @@
 package view;
 
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import view.builders.PaneBuilder;
+import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 
 /**
@@ -25,13 +28,13 @@ public class SystemNotification {
 	 */
 	public static void display(SystemNotificationType notificationType, String notification) {
 		stage = new Stage();
-		Label lblNotification = new Label(notification);
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(lblNotification);
+		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withNodes(new Label(notification))
+			.build();
 
-		Scene scene = new Scene(pane, 600, 150);
+		Scene scene = new Scene(hboxMain, 600, 150);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle(notificationType.getStrVal());

@@ -84,9 +84,13 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
+	public static final String SUBJECT_DELETED = "Subject deleted";
+
 	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
+
+	public static final String LOGO_PATH = "src/logo.png";
 
 	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm");
 

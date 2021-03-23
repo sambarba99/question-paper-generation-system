@@ -10,7 +10,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -25,6 +24,7 @@ import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.LogoMaker;
 
 /**
  * Allows admin users to modify/delete existing users.
@@ -48,7 +48,6 @@ public class AdminPanel {
 		stage = new Stage();
 
 		Label lblUsers = new Label("System Users");
-		Label lblActions = new Label("Actions");
 
 		Button btnAddUser = new ButtonBuilder().withWidth(200)
 			.withUserAction(UserAction.ADD_NEW_USER)
@@ -80,31 +79,32 @@ public class AdminPanel {
 			.build();
 
 		VBox vboxUsersView = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.TOP_CENTER)
+			.withAlignment(Pos.CENTER)
 			.withSpacing(10)
 			.withNodes(lblUsers, tblUsers)
 			.build();
 		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.TOP_CENTER)
+			.withAlignment(Pos.CENTER)
 			.withSpacing(10)
-			.withNodes(lblActions, btnAddUser, btnDelUser, btnOpenAcademicMaterial, btnUpdatePassword)
+			.withNodes(btnAddUser, btnDelUser, btnOpenAcademicMaterial, btnUpdatePassword)
 			.build();
-		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(30)
+		HBox hboxViewAndActions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
 			.withNodes(vboxUsersView, vboxActions)
 			.build();
-
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(hboxMain);
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(LogoMaker.makeLogo(250), hboxViewAndActions)
+			.build();
 
 		setup();
 
-		Scene scene = new Scene(pane, 750, 400);
+		Scene scene = new Scene(vboxMain, 750, 500);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
-		stage.setTitle("Admin Control");
+		stage.setTitle("Administration");
 		stage.setResizable(false);
 		stage.show();
 	}

@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,7 +10,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -56,13 +58,18 @@ public class AddUser {
 		txtUsername.textProperty().addListener((obs, oldText, newText) -> {
 			txtUsername.setText(newText.toLowerCase());
 		});
-		choicePrivilege.getItems().addAll(UserService.getInstance().getUserPrivilegeChoiceBoxItems());
+		choicePrivilege.getItems()
+			.addAll(Arrays.asList(UserPrivilege.values())
+				.stream()
+				.map(UserPrivilege::toString)
+				.collect(Collectors.toList()));
 		choicePrivilege.getSelectionModel().selectFirst();
 		choicePrivilege.setPrefWidth(100);
 
 		Button btnAddUser = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
-			UserPrivilege privilege = UserService.getInstance().getSelectedPrivilege(choicePrivilege);
-			addUser(txtUsername.getText(), passField.getText(), privilege);
+			UserPrivilege privilege = UserPrivilege
+				.getFromStr(choicePrivilege.getSelectionModel().getSelectedItem().toString());
+			prepareDataAndAddUser(txtUsername.getText(), passField.getText(), privilege);
 		}).build();
 
 		VBox vboxLbls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
@@ -80,12 +87,13 @@ public class AddUser {
 			.withSpacing(10)
 			.withNodes(vboxLbls, vboxCreds)
 			.build();
+		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(20)
+			.withNodes(hboxUserCreds, btnAddUser)
+			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().addAll(hboxUserCreds, btnAddUser);
-
-		Scene scene = new Scene(pane, 500, 300);
+		Scene scene = new Scene(vboxMain, 500, 300);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Add New User");
@@ -103,7 +111,7 @@ public class AddUser {
 	 * @param password  - the new user's raw password
 	 * @param privilege - the new user's privilege level
 	 */
-	private static void addUser(String username, String password, UserPrivilege privilege) {
+	private static void prepareDataAndAddUser(String username, String password, UserPrivilege privilege) {
 		try {
 			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
 				User user = new UserBuilder().withUsername(username)

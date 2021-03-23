@@ -117,24 +117,6 @@ public class SubjectService {
 		return Integer.parseInt(subjectIdStr);
 	}
 
-	/**
-	 * Capitalise each word in subject title and trim whitespace.
-	 * 
-	 * @param title - the title to format
-	 * @return formatted title
-	 */
-	public String formatTitle(String title) {
-		// remove characters that could potentially harm CSV read/write functionality
-		title = title.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'");
-		String[] words = title.trim().split(Constants.SPACE);
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < words.length; i++) {
-			result.append(Character.toString(words[i].charAt(0)).toUpperCase());
-			result.append(words[i].substring(1).toLowerCase() + Constants.SPACE);
-		}
-		return result.toString().trim(); // remove last space
-	}
-
 	public synchronized static SubjectService getInstance() {
 		if (instance == null) {
 			instance = new SubjectService(SubjectDAO.getInstance());

@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,11 +54,7 @@ public class ViewQuestionPaper {
 			.withNodes(txtAreaPaper, btnExport)
 			.build();
 
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
-
-		Scene scene = new Scene(pane, 600, 700);
+		Scene scene = new Scene(vboxMain, 600, 700);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("View Question Paper");

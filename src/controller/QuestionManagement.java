@@ -19,7 +19,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -36,6 +35,7 @@ import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.LogoMaker;
 
 /**
  * Allows the user to view all stored questions, and manage them.
@@ -56,7 +56,7 @@ public class QuestionManagement {
 
 	private static List<CheckBox> cbDifficultyLvls;
 
-	private static Accordion accFilters = new Accordion();
+	private static Accordion accFilters;
 
 	private static List<Integer> subjectIdFilters = new ArrayList<>();
 
@@ -69,8 +69,8 @@ public class QuestionManagement {
 	 */
 	public static void display() {
 		stage = new Stage();
+		accFilters = new Accordion();
 
-		lblSelectQuestion.setStyle("-fx-font-size: 20px");
 		Label lblSelectFilters = new Label("Select filters to apply?");
 
 		Button btnAddQuestion = new ButtonBuilder().withWidth(150)
@@ -102,7 +102,7 @@ public class QuestionManagement {
 			.build();
 		HBox hbox1 = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(30)
+			.withSpacing(20)
 			.withNodes(vboxTbl, vboxFilter)
 			.build();
 		VBox vboxBtns = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
@@ -118,16 +118,12 @@ public class QuestionManagement {
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(30)
-			.withNodes(hbox1, hbox2)
+			.withNodes(LogoMaker.makeLogo(300), hbox1, hbox2)
 			.build();
-
-		FlowPane pane = new FlowPane();
-		pane.getStyleClass().add("flow-pane");
-		pane.getChildren().add(vboxMain);
 
 		setup();
 
-		Scene scene = new Scene(pane, 1450, 800);
+		Scene scene = new Scene(vboxMain, 1400, 900);
 		scene.getStylesheets().add("style.css");
 		stage.setScene(scene);
 		stage.setTitle("Question Management");
