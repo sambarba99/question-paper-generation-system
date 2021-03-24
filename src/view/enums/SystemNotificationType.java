@@ -9,7 +9,9 @@ public enum SystemNotificationType {
 
 	ERROR("Error"),
 	NEUTRAL("Notification"),
-	SUCCESS("Success!");
+	SUCCESS("Success!"),
+	CONFIRM_DELETION("Delete?"),
+	CONFIRM_EXIT_APPLICATION("Exit application?");
 
 	private String strVal;
 

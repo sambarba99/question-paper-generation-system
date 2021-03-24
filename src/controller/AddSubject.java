@@ -61,7 +61,7 @@ public class AddSubject {
 			.build();
 
 		Scene scene = new Scene(vboxMain, 450, 150);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Add New Subject");
 		stage.setResizable(false);
@@ -83,8 +83,8 @@ public class AddSubject {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
 		} else {
 			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
-				int subjectId = SubjectService.getInstance().getHighestSubjectId() + 1;
-				Subject subject = new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build();
+				int id = SubjectService.getInstance().getHighestSubjectId() + 1;
+				Subject subject = new SubjectBuilder().withId(id).withTitle(subjectTitle).build();
 				SubjectService.getInstance().addSubject(subject);
 				added = true;
 				stage.close();

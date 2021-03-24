@@ -23,8 +23,8 @@ import view.enums.DifficultyLevel;
 import view.utils.Constants;
 
 /**
- * This class is a singleton, the use of which is to perform the preliminary transformation of online-sourced
- * multiple-choice questions, in order to make them usable for this system.
+ * This class performs the preliminary transformation of online-sourced multiple-choice questions, in order to make them
+ * usable for this system.
  *
  * An example of a raw question:
  * 
@@ -77,8 +77,6 @@ public class RawQuestionTransformer {
 
 	private static final Random RAND = new Random();
 
-	private static RawQuestionTransformer instance;
-
 	private static int subjectId = 1;
 
 	private static int questionId = 1;
@@ -87,7 +85,7 @@ public class RawQuestionTransformer {
 	 * Loop through subjects and add them to subjects CSV file, and write questions for each subject to their respective
 	 * CSV file.
 	 */
-	public void transformAndSaveRawQuestions() {
+	public static void transformAndSaveRawQuestions() {
 		LOGGER.info("Transforming and saving raw questions...");
 
 		for (int i = 0; i < INPUT_SUBJECTS.length; i++) {
@@ -255,13 +253,6 @@ public class RawQuestionTransformer {
 	 */
 	private static double map(double x, double r1start, double r1end, double r2start, double r2end) {
 		return (x - r1start) * (r2end - r2start) / (r1end - r1start) + r2start;
-	}
-
-	public synchronized static RawQuestionTransformer getInstance() {
-		if (instance == null) {
-			instance = new RawQuestionTransformer();
-		}
-		return instance;
 	}
 
 	private RawQuestionTransformer() {

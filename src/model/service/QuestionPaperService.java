@@ -99,7 +99,7 @@ public class QuestionPaperService {
 		 * have the subjectIds.isEmpty() condition in a logical disjunction (||).
 		 */
 		return getAllQuestionPapers().stream()
-			.filter(s -> subjectIds.isEmpty() || subjectIds.contains(s.getId()))
+			.filter(qp -> subjectIds.isEmpty() || subjectIds.contains(qp.getSubjectId()))
 			.map(this::convertToQuestionPaperDTO)
 			.collect(Collectors.toList());
 	}
@@ -128,41 +128,36 @@ public class QuestionPaperService {
 	 * Get a formatted question paper string for question paper TextArea object.
 	 * 
 	 * @param questionPaper - the paper to format
-	 * @return question string
+	 * @return question paper as a string
 	 */
 	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
 		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
-		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append(questionPaper.toString());
-		txtAreaStr.append(Constants.NEWLINE + "Subject: " + subjectTitle);
-		txtAreaStr.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
+		StringBuilder resultBld = new StringBuilder();
+		resultBld.append(questionPaper.toString());
+		resultBld.append(Constants.NEWLINE + "Subject: " + subjectTitle);
+		resultBld.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
-		txtAreaStr.append(
+		resultBld.append(
 			Constants.NEWLINE + "Average difficulty level: " + questionPaper.getDifficultyLevel().getIntVal() + "/6");
-		txtAreaStr.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
-		txtAreaStr.append(
-			Constants.NEWLINE + "Time required (mins): " + questionPaper.getTimeRequiredMins() + Constants.NEWLINE);
+		resultBld.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
+		resultBld.append(Constants.NEWLINE + "Time required: " + questionPaper.getTimeRequiredMins() + " minutes");
 
 		List<Integer> questionIds = questionPaper.getQuestionIds();
+		int numQ = questionIds.size();
 		for (int i = 0; i < questionIds.size(); i++) {
-			Optional<Question> questionOpt = QuestionService.getInstance().getQuestionById(questionIds.get(i));
-			Question question = null;
-			if (questionOpt.isPresent()) {
-				question = questionOpt.get();
-			} else {
-				throw new IllegalArgumentException("Invalid question ID passed: " + questionIds.get(i));
-			}
+			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i)).get();
 
-			txtAreaStr.append(Constants.NEWLINE + (i + 1) + ". " + question.getStatement());
-			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(0).toString());
-			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(1).toString());
-			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(2).toString());
-			txtAreaStr.append(Constants.NEWLINE + question.getAnswers().get(3).toString() + Constants.NEWLINE);
+			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + "Question " + (i + 1) + "/" + numQ + " ("
+				+ question.getMarks() + " marks). " + question.getStatement());
+			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + question.getAnswers().get(0).toString());
+			resultBld.append(Constants.NEWLINE + question.getAnswers().get(1).toString());
+			resultBld.append(Constants.NEWLINE + question.getAnswers().get(2).toString());
+			resultBld.append(Constants.NEWLINE + question.getAnswers().get(3).toString());
 		}
 
-		return txtAreaStr.substring(0, txtAreaStr.length() - 1); // remove last '\n'
+		return resultBld.toString();
 	}
 
 	public synchronized static QuestionPaperService getInstance() {

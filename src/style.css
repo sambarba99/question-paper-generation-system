@@ -39,6 +39,18 @@
 	-fx-scale-y: 0.98;
 }
 
+.btn-exit {
+	-fx-background-color: linear-gradient(#fa7000, #f55520);
+	-fx-min-height: 30px;
+	-fx-max-height: 30px;
+	-fx-min-width: 60px;
+	-fx-max-width: 60px;
+}
+
+.btn-exit:hover {
+	-fx-background-color: linear-gradient(#f0200a, #f55520);
+}
+
 .slider .axis {
 	-fx-tick-label-fill: #dcdcdc;
 }

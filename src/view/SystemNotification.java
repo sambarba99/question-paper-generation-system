@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
+import view.utils.Constants;
 
 /**
  * Displays an error, neutral, or success notification.
@@ -35,7 +36,7 @@ public class SystemNotification {
 			.build();
 
 		Scene scene = new Scene(hboxMain, 600, 150);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle(notificationType.getStrVal());
 		stage.setResizable(false);

@@ -136,7 +136,7 @@ public class AcademicMaterialManagement {
 			.withAlignment(Pos.TOP_CENTER)
 			.withSpacing(10)
 			.withNodes(lblActions, btnAddSubject, btnDelSubject, btnQuestionManagement, btnGeneratePaper, btnViewPaper,
-				btnDelPaper, btnToggleFilter, btnUpdatePassword)
+				btnDelPaper, btnToggleFilter, btnUpdatePassword, new ButtonBuilder().buildExitBtn(117, 17))
 			.build();
 		HBox hboxViews = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -152,7 +152,7 @@ public class AcademicMaterialManagement {
 		setup();
 
 		Scene scene = new Scene(vboxMain, 1650, 680);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Academic Material");
 		stage.setResizable(false);
@@ -179,7 +179,7 @@ public class AcademicMaterialManagement {
 			case DELETE_SUBJECT:
 				if (tblSubjects.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 subject.");
-				} else if (DeletionConfirm.confirmDelete("subject")) {
+				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "subject")) {
 					SubjectDTO subjectDto = (SubjectDTO) tblSubjects.getSelectionModel().getSelectedItem();
 					SubjectService.getInstance().deleteSubjectById(subjectDto.getId());
 					refreshSubjectsTbl();
@@ -199,16 +199,15 @@ public class AcademicMaterialManagement {
 							.map(SubjectDTO::getId)
 							.collect(Collectors.toList());
 
-						refreshQuestionPapersTbl();
 						paperSubjectFilterOn = true;
 						lblQuestionPapers.setText("Question Papers (subject filters: ON)");
 					}
 				} else {
 					subjectIdFilters.clear();
-					refreshQuestionPapersTbl();
 					paperSubjectFilterOn = false;
 					lblQuestionPapers.setText("Question Papers (subject filters: OFF)");
 				}
+				refreshQuestionPapersTbl();
 				break;
 			case OPEN_QUESTION_MANAGEMENT:
 				if (SubjectService.getInstance().getAllSubjects().isEmpty()) {
@@ -245,7 +244,7 @@ public class AcademicMaterialManagement {
 			case DELETE_QUESTION_PAPER:
 				if (tblQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
-				} else if (DeletionConfirm.confirmDelete("question paper")) {
+				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "question paper")) {
 					QuestionPaperDTO questionPaperDto = (QuestionPaperDTO) tblQuestionPapers.getSelectionModel()
 						.getSelectedItem();
 					QuestionPaperService.getInstance().deleteQuestionPaperById(questionPaperDto.getId());
@@ -299,7 +298,7 @@ public class AcademicMaterialManagement {
 
 		colPaperId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		colPaperTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
-		colPaperSubject.setCellValueFactory(new PropertyValueFactory<>("subject"));
+		colPaperSubject.setCellValueFactory(new PropertyValueFactory<>("subjectTitle"));
 		colPaperCourse.setCellValueFactory(new PropertyValueFactory<>("course"));
 		colPaperDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
 

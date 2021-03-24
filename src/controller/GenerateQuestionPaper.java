@@ -72,7 +72,7 @@ public class GenerateQuestionPaper {
 		generated = false;
 
 		Label lblSelectSubject = new Label("Select the subject:");
-		Label lblEnterTitle = new Label("Enter the title:");
+		Label lblEnterTitle = new Label("Enter the paper title:");
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
 		Label lblSelectDifficulty = new Label("Select average question difficulty:");
@@ -117,14 +117,14 @@ public class GenerateQuestionPaper {
 			.build();
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
-			.withNodes(LogoMaker.makeLogo(250), hbox, btnGenerate)
+			.withSpacing(30)
+			.withNodes(LogoMaker.makeLogo(300), hbox, btnGenerate)
 			.build();
 
 		setup();
 
-		Scene scene = new Scene(vboxMain, 550, 450);
-		scene.getStylesheets().add("style.css");
+		Scene scene = new Scene(vboxMain, 550, 500);
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Generate Question Paper");
 		stage.setResizable(false);

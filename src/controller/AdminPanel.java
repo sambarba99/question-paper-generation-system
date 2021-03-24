@@ -24,6 +24,7 @@ import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 import view.utils.LogoMaker;
 
 /**
@@ -86,7 +87,8 @@ public class AdminPanel {
 		VBox vboxActions = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(10)
-			.withNodes(btnAddUser, btnDelUser, btnOpenAcademicMaterial, btnUpdatePassword)
+			.withNodes(btnAddUser, btnDelUser, btnOpenAcademicMaterial, btnUpdatePassword,
+				new ButtonBuilder().buildExitBtn(112, 92))
 			.build();
 		HBox hboxViewAndActions = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -95,14 +97,14 @@ public class AdminPanel {
 			.build();
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
-			.withNodes(LogoMaker.makeLogo(250), hboxViewAndActions)
+			.withSpacing(30)
+			.withNodes(LogoMaker.makeLogo(300), hboxViewAndActions)
 			.build();
 
 		setup();
 
-		Scene scene = new Scene(vboxMain, 750, 500);
-		scene.getStylesheets().add("style.css");
+		Scene scene = new Scene(vboxMain, 750, 550);
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Administration");
 		stage.setResizable(false);
@@ -123,7 +125,7 @@ public class AdminPanel {
 
 			if (username.equals(currentUser.getUsername())) {
 				SystemNotification.display(SystemNotificationType.ERROR, "You can't delete yourself!");
-			} else if (DeletionConfirm.confirmDelete("user")) {
+			} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "user")) {
 				UserService.getInstance().deleteUserByUsername(username);
 				refreshUsersTbl();
 				SystemNotification.display(SystemNotificationType.SUCCESS, "User '" + username + "' deleted.");

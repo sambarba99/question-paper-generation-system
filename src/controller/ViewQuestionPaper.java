@@ -19,6 +19,8 @@ import view.builders.PaneBuilder;
 import view.enums.BoxType;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
+import view.utils.LogoMaker;
 
 /**
  * Allows the user to view a question paper.
@@ -40,9 +42,10 @@ public class ViewQuestionPaper {
 		TextArea txtAreaPaper = new TextArea();
 		txtAreaPaper.setEditable(false);
 		txtAreaPaper.setText(QuestionPaperService.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
-		txtAreaPaper.setPrefSize(400, 600);
+		txtAreaPaper.setMinSize(600, 600);
+		txtAreaPaper.setMaxSize(600, 600);
 
-		Button btnExport = new ButtonBuilder().withWidth(100).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
+		Button btnExport = new ButtonBuilder().withWidth(120).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
 			// use Constants.EXPORTED_PAPERS_FILE_PATH;
 			LOGGER.info("Exporting papers is unimplemented");
 			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
@@ -51,11 +54,11 @@ public class ViewQuestionPaper {
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(20)
-			.withNodes(txtAreaPaper, btnExport)
+			.withNodes(LogoMaker.makeLogo(300), txtAreaPaper, btnExport)
 			.build();
 
-		Scene scene = new Scene(vboxMain, 600, 700);
-		scene.getStylesheets().add("style.css");
+		Scene scene = new Scene(vboxMain, 700, 850);
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("View Question Paper");
 		stage.setResizable(false);

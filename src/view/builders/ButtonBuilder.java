@@ -4,7 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 
+import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+
+import controller.UserConfirmation;
 
 /**
  * This class utilises the builder pattern, and is used to generate Buttons used in UI pages.
@@ -38,9 +41,27 @@ public class ButtonBuilder {
 	}
 
 	public Button build() {
-		Button b = new Button(userAction.getStrVal());
-		b.setPrefWidth(width);
-		b.setOnAction(actionEvent);
-		return b;
+		Button btn = new Button(userAction.getStrVal());
+		btn.setPrefWidth(width);
+		btn.setOnAction(actionEvent);
+		return btn;
+	}
+
+	/**
+	 * Create button specifically for exiting application.
+	 * 
+	 * @param translateX - x value needed to place it in bottom-right corner
+	 * @param translateY - y value needed to place it in bottom-right corner
+	 * @return a button that exits the application when clicked
+	 */
+	public Button buildExitBtn(int translateX, int translateY) {
+		Button btn = new Button(UserAction.EXIT_APPLICATION.getStrVal());
+		btn.setTranslateX(translateX);
+		btn.setTranslateY(translateY);
+		btn.setOnAction(e -> {
+			UserConfirmation.confirm(SystemNotificationType.CONFIRM_EXIT_APPLICATION, null);
+		});
+		btn.getStyleClass().add("btn-exit");
+		return btn;
 	}
 }

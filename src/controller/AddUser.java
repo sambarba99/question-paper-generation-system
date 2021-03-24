@@ -94,7 +94,7 @@ public class AddUser {
 			.build();
 
 		Scene scene = new Scene(vboxMain, 500, 300);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Add New User");
 		stage.setResizable(false);

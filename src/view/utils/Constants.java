@@ -4,9 +4,6 @@ import java.time.format.DateTimeFormatter;
 
 import model.questionpapergeneration.SelectionType;
 
-import view.SystemNotification;
-import view.enums.SystemNotificationType;
-
 /**
  * This class contains constants to be used system-wide.
  *
@@ -82,25 +79,23 @@ public class Constants {
 	public static final int TOURNAMENT_SIZE = 4;
 
 	/*
+	 * UI design constants
+	 */
+	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;
+
+	public static final String LOGO_PATH = "src/logo.png";
+
+	public static final String CSS_STYLE_PATH = "style.css";
+
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm");
+
+	/*
 	 * Misc constants
 	 */
 	public static final String SUBJECT_DELETED = "Subject deleted";
 
-	public static final double ACADEMIC_MATERIAL_BTN_WIDTH = 238;
-
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
 
-	public static final String LOGO_PATH = "src/logo.png";
-
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm");
-
-	/**
-	 * The caller references constants using Constants.USER_FILE_PATH etc. Thus, the caller should be prevented from
-	 * constructing objects of this class.
-	 */
-	public Constants() {
-		SystemNotification.display(SystemNotificationType.ERROR,
-			Constants.UNEXPECTED_ERROR + "Constants class constructor shouldn't be called!");
-		throw new AssertionError();
+	private Constants() {
 	}
 }

@@ -35,6 +35,7 @@ import view.enums.BoxType;
 import view.enums.DifficultyLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
+import view.utils.Constants;
 import view.utils.LogoMaker;
 
 /**
@@ -108,7 +109,7 @@ public class QuestionManagement {
 		VBox vboxBtns = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(10)
-			.withNodes(btnAddQuestion, btnDelQuestion)
+			.withNodes(btnAddQuestion, btnDelQuestion, new ButtonBuilder().buildExitBtn(308, 136))
 			.build();
 		HBox hbox2 = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -124,7 +125,7 @@ public class QuestionManagement {
 		setup();
 
 		Scene scene = new Scene(vboxMain, 1400, 900);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Question Management");
 		stage.setResizable(false);
@@ -139,7 +140,7 @@ public class QuestionManagement {
 	private static void deleteQuestion() {
 		if (tblQuestions.getSelectionModel().getSelectedItems().size() != 1) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 question.");
-		} else if (DeletionConfirm.confirmDelete("question")) {
+		} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "question")) {
 			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
 			QuestionService.getInstance().deleteQuestionById(questionDto.getId());
 			refreshQuestionsTbl();

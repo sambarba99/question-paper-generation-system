@@ -41,7 +41,7 @@ public class Login extends Application {
 		 * demo purposes)
 		 */
 		if (!UserService.getInstance().usersFileExists()) {
-			RawQuestionTransformer.getInstance().transformAndSaveRawQuestions();
+			RawQuestionTransformer.transformAndSaveRawQuestions();
 			SystemNotification.display(SystemNotificationType.NEUTRAL,
 				"You are the first user (an admin). Set a secure password.");
 		}
@@ -78,7 +78,7 @@ public class Login extends Application {
 			.build();
 
 		Scene scene = new Scene(vboxMain, 600, 500);
-		scene.getStylesheets().add("style.css");
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Login");
 		primaryStage.setResizable(false);

@@ -118,14 +118,14 @@ public class AddQuestion {
 			.build();
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
-			.withSpacing(20)
-			.withNodes(LogoMaker.makeLogo(250), hbox)
+			.withSpacing(30)
+			.withNodes(LogoMaker.makeLogo(300), hbox)
 			.build();
 
 		setup();
 
-		Scene scene = new Scene(vboxMain, 700, 700);
-		scene.getStylesheets().add("style.css");
+		Scene scene = new Scene(vboxMain, 700, 750);
+		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Add New Question");
 		stage.setResizable(false);
