@@ -19,8 +19,7 @@ public enum UserPrivilege {
 	 * @return privilege - the UserPrivilege with the specified String value
 	 */
 	public static UserPrivilege getFromStr(String strVal) {
-		return Arrays.asList(values())
-			.stream()
+		return Arrays.stream(values())
 			.filter(uPriv -> uPriv.toString().equals(strVal))
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("Invalid privilege String value passed: " + strVal));

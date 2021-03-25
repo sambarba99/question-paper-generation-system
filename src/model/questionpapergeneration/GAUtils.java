@@ -2,7 +2,6 @@ package model.questionpapergeneration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -31,7 +30,7 @@ public class GAUtils {
 	public Individual[] initialiseIndividualArray(int popSize, int geneSize) {
 		Individual[] individuals = new Individual[popSize];
 		for (int i = 0; i < popSize; i++) {
-			individuals[i] = new Individual(geneSize);
+			individuals[i] = new Individual();
 		}
 		return individuals;
 	}
@@ -40,16 +39,15 @@ public class GAUtils {
 	 * Randomise the genes of the individuals in a population.
 	 * 
 	 * @param population - the array of individuals whose genes will be randomised
+	 * @param geneSize   - the number of questions to use (chromosomes per gene)
 	 * @param questions  - list of questions to use when selecting random chromosomes
 	 */
-	public void randomisePopulationGenes(Individual[] population, List<Question> questions) {
-		int geneSize = population[0].getGene().length;
-
+	public void randomisePopulationGenes(Individual[] population, int geneSize, List<Question> questions) {
 		for (int i = 0; i < population.length; i++) {
 			List<Question> questionsCopy = new ArrayList<>(questions);
 			for (int j = 0; j < geneSize; j++) {
 				int idx = RAND.nextInt(questionsCopy.size());
-				population[i].getGene()[j] = questionsCopy.get(idx);
+				population[i].getGene().set(j, questionsCopy.get(idx));
 				questionsCopy.remove(idx); // avoid repeated questions in an Individual's gene
 			}
 		}
@@ -133,86 +131,44 @@ public class GAUtils {
 	 * 
 	 * @param population    - the array representing the current population
 	 * @param offspring     - the array representing the offspring set
+	 * @param geneSize      - the number of questions to use (chromosomes per gene)
 	 * @param crossoverRate - the crossover rate, ranging from 0 to 1 (inclusive)
 	 * @param points        - the number of random crossover points (i.e. k)
 	 */
-	public void crossover(Individual[] population, Individual[] offspring, double crossoverRate, int points) {
-		int geneSize = population[0].getGene().length;
-		int swapStart, swapEnd;
-
+	public void crossover(Individual[] population, Individual[] offspring, int geneSize, double crossoverRate) {
 		for (int i = 0; i < population.length; i += 2) {
 			if (RAND.nextDouble() < crossoverRate) {
-				List<Integer> crossoverPoints = getRandCrossPoints(points, geneSize);
-
 				Individual temp = offspring[i];
-
-				for (int c = 0; c < crossoverPoints.size() - 1; c++) {
-					if (c % 2 == 0) {
-						swapStart = crossoverPoints.get(c);
-						swapEnd = crossoverPoints.get(c + 1);
-						for (int j = swapStart; j < swapEnd; j++) {
-							offspring[i].getGene()[j] = offspring[i + 1].getGene()[j];
-							offspring[i + 1].getGene()[j] = temp.getGene()[j];
-						}
-					}
-				}
+				// TODO
 			}
 		}
-	}
-
-	/**
-	 * Generate a list of random crossover points.
-	 * 
-	 * @param points   - the number of points to create
-	 * @param geneSize - the number of genes per chromosome of an individual
-	 * @return a list of random indices
-	 */
-	private List<Integer> getRandCrossPoints(int points, int geneSize) {
-		List<Integer> possiblePoints = new ArrayList<>();
-		for (int i = 1; i < geneSize; i++) {
-			possiblePoints.add(i);
-		}
-
-		List<Integer> crossoverPoints = new ArrayList<>();
-		for (int i = 0; i < points; i++) {
-			int randIndex = RAND.nextInt(possiblePoints.size());
-			int point = possiblePoints.remove(randIndex);
-			crossoverPoints.add(point);
-		}
-		crossoverPoints.add(0);
-		crossoverPoints.add(geneSize);
-		Collections.sort(crossoverPoints);
-		return crossoverPoints;
 	}
 
 	/**
 	 * Perform mutation on offspring.
 	 * 
 	 * @param offspring    - the array representing the offspring set
+	 * @param geneSize     - the number of questions to use (chromosomes per gene)
 	 * @param mutationRate - the mutation rate, ranging from 0 to 1 (inclusive)
 	 */
-	public void mutation(Individual[] offspring, double mutationRate) {
-		int geneSize = offspring[0].getGene().length;
-
+	public void mutation(Individual[] offspring, int geneSize, double mutationRate) {
 		for (int i = 0; i < offspring.length; i++) {
 			for (int j = 0; j < geneSize; j++) {
 				if (RAND.nextDouble() < mutationRate) {
-					/*
-					 * ???
-					 */
+					// TODO
 				}
 			}
 		}
 	}
 
 	/**
-	 * Calculate the average, highest, and lowest fitnesses to write to CSV file.
+	 * Calculate the mean, highest, and lowest fitnesses to write to CSV file.
 	 * 
 	 * @param population - the current population of which to calculate the fitnesses
-	 * @return list representing a CSV row, containing the average, highest and lowest fitness of the generation
+	 * @return list representing a CSV row, containing the mean, highest and lowest fitness of the generation
 	 */
 	public List<Double> calculateTableFitnesses(Individual[] population) {
-		double average = 0, sum = 0;
+		double mean = 0, sum = 0;
 		double highest = population[0].calculateFitness();
 		double lowest = highest;
 
@@ -226,8 +182,8 @@ public class GAUtils {
 				lowest = f;
 			}
 		}
-		average = sum / population.length;
-		return Arrays.asList(average, highest, lowest);
+		mean = sum / population.length;
+		return Arrays.asList(mean, highest, lowest);
 	}
 
 	/**
@@ -237,7 +193,7 @@ public class GAUtils {
 	 * @return the individual representing the best question paper
 	 */
 	public Individual findFittest(Individual[] population) {
-		return Arrays.asList(population).stream().max(Comparator.comparing(Individual::calculateFitness)).get();
+		return Arrays.stream(population).max(Comparator.comparing(Individual::calculateFitness)).get();
 	}
 
 	public synchronized static GAUtils getInstance() {

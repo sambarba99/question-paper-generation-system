@@ -218,8 +218,7 @@ public class QuestionManagement {
 		vboxSubjects.getChildren().addAll(cbSubjects);
 		TitledPane tPaneSubjects = new TitledPane("Filter by subject", vboxSubjects);
 
-		cbSkillLvls = Arrays.asList(SkillLevel.values())
-			.stream()
+		cbSkillLvls = Arrays.stream(SkillLevel.values())
 			.map(skillLvl -> new CheckBox(skillLvl.getDisplayStr()))
 			.collect(Collectors.toList());
 

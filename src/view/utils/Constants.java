@@ -64,17 +64,13 @@ public class Constants {
 	/*
 	 * Constants for the Genetic Algorithm
 	 */
-	public static final SelectionType SELECTION_TYPE = SelectionType.ROULETTE_WHEEL;
-
-	public static final int GENE_SIZE = 50;
+	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
 	public static final int POP_SIZE = 100;
 
 	public static final double MUTATION_RATE = 0.02;
 
 	public static final double CROSSOVER_RATE = 0.8;
-
-	public static final int CROSSOVER_POINTS = 1;
 
 	public static final int GENERATIONS = 100;
 

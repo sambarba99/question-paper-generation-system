@@ -182,7 +182,7 @@ public class GenerateQuestionPaper {
 	}
 
 	/**
-	 * Set up choice boxes.
+	 * Set up window.
 	 */
 	private static void setup() {
 		txtTitle.setText(Constants.EMPTY);

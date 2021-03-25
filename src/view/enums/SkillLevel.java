@@ -46,8 +46,7 @@ public enum SkillLevel {
 	 * @return the SkillLevel with the specified int value
 	 */
 	public static SkillLevel getFromInt(int intVal) {
-		return Arrays.asList(values())
-			.stream()
+		return Arrays.stream(values())
 			.filter(lvl -> lvl.getIntVal() == intVal)
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("Invalid Skill Level int passed: " + intVal));
@@ -60,8 +59,7 @@ public enum SkillLevel {
 	 * @return the SkillLevel with the specified String value
 	 */
 	public static SkillLevel getFromStr(String strVal) {
-		return Arrays.asList(values())
-			.stream()
+		return Arrays.stream(values())
 			.filter(lvl -> lvl.getStrVal().equals(strVal))
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("Invalid Skill Level string passed: " + strVal));

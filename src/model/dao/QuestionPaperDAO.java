@@ -193,12 +193,11 @@ public class QuestionPaperDAO {
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseTitle()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseCode()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getSkillLevel().getStrVal()
-			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks())
+			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getSkillLevel().getStrVal() + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks()) + Constants.QUOT_MARK
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getTimeRequiredMins())
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(questionPaper.getDateCreated())
-			+ Constants.QUOT_MARK + Constants.NEWLINE;
+			+ Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
 			csvWriter.append(line);

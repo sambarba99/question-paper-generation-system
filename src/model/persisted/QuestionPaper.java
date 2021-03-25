@@ -34,8 +34,7 @@ public class QuestionPaper {
 	private LocalDateTime dateCreated;
 
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, SkillLevel skillLevel, int marks, int timeRequiredMins,
-		LocalDateTime dateCreated) {
+		List<Integer> questionIds, SkillLevel skillLevel, int marks, int timeRequiredMins, LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;

@@ -59,10 +59,7 @@ public class AddUser {
 			txtUsername.setText(newText.toLowerCase());
 		});
 		choicePrivilege.getItems()
-			.addAll(Arrays.asList(UserPrivilege.values())
-				.stream()
-				.map(UserPrivilege::toString)
-				.collect(Collectors.toList()));
+			.addAll(Arrays.stream(UserPrivilege.values()).map(UserPrivilege::toString).collect(Collectors.toList()));
 		choicePrivilege.getSelectionModel().selectFirst();
 		choicePrivilege.setPrefWidth(100);
 
