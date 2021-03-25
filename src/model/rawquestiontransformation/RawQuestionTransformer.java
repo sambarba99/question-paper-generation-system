@@ -73,8 +73,6 @@ public class RawQuestionTransformer {
 
 	private static final int ANSWERS_PER_QUESTION = 4;
 
-	private static final int ASCII_A = 65;
-
 	private static final Random RAND = new Random();
 
 	private static int subjectId = 1;
@@ -185,12 +183,8 @@ public class RawQuestionTransformer {
 				boolean correct = answerStr.charAt(0) == '1';
 				answerStr = answerStr.substring(2); // remove leading 0/1 and space
 				answerStr = Character.toString(answerStr.charAt(0)).toUpperCase() + answerStr.substring(1); // capitalise
-				String letter = Character.toString((char) (ASCII_A + i));
 
-				Answer answer = new AnswerBuilder().withValue(answerStr)
-					.withLetter(letter)
-					.withIsCorrect(correct)
-					.build();
+				Answer answer = new AnswerBuilder().withValue(answerStr).withIsCorrect(correct).build();
 				answers.add(answer);
 			}
 

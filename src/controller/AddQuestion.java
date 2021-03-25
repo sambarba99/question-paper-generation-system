@@ -45,8 +45,6 @@ import view.utils.StringFormatter;
  */
 public class AddQuestion {
 
-	private static final int ASCII_A = 65;
-
 	private static Stage stage;
 
 	private static boolean added;
@@ -259,8 +257,8 @@ public class AddQuestion {
 	/**
 	 * Make answers for a question, given a list of possible answers and the position of the correct one.
 	 * 
-	 * @param answersStr          - the list of possible answers
-	 * @param correctAnswerLetter - the position of the correct answer
+	 * @param answersStr       - the list of possible answers
+	 * @param correctAnswerPos - the position of the correct answer
 	 * @return - list of Answer objects to be used in Question building
 	 */
 	private static List<Answer> makeAnswers(List<String> answersStr, int correctAnswerPos) {
@@ -268,7 +266,6 @@ public class AddQuestion {
 
 		for (int i = 0; i < answersStr.size(); i++) {
 			Answer answer = new AnswerBuilder().withValue(answersStr.get(i))
-				.withLetter(Character.toString((char) (ASCII_A + i)))
 				.withIsCorrect(i == correctAnswerPos)
 				.build();
 

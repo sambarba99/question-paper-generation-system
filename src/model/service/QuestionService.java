@@ -148,7 +148,6 @@ public class QuestionService {
 		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
 		List<Answer> answers = question.getAnswers();
-		Answer correctAnswer = answers.stream().filter(Answer::isCorrect).findFirst().orElse(null);
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
@@ -164,10 +163,13 @@ public class QuestionService {
 			}
 		}
 		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement() + Constants.NEWLINE);
-		for (Answer answer : answers) {
-			txtAreaStr.append(Constants.NEWLINE + answer.toString());
+		for (int i = 0; i < answers.size(); i++) {
+			Answer ans = answers.get(i);
+			txtAreaStr.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + i)) + ") " + ans.getValue());
+			if (ans.isCorrect()) {
+				txtAreaStr.append(" <- CORRECT");
+			}
 		}
-		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + "Correct answer: " + correctAnswer.getLetter());
 
 		return txtAreaStr.toString();
 	}

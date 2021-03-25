@@ -31,8 +31,6 @@ public class QuestionDAO {
 
 	private static final Logger LOGGER = Logger.getLogger(QuestionDAO.class.getName());
 
-	private static final int ASCII_A = 65;
-
 	private static QuestionDAO instance;
 
 	/**
@@ -109,7 +107,6 @@ public class QuestionDAO {
 					String statement = lineArr[2];
 					List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
 					String correctAnswerLetter = lineArr[7];
-					List<Answer> answers = makeAnswers(strAnswers, correctAnswerLetter);
 					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[8]);
 					int marks = Integer.parseInt(lineArr[9]);
 					int timeRequiredMins = Integer.parseInt(lineArr[10]);
@@ -119,7 +116,7 @@ public class QuestionDAO {
 					Question question = new QuestionBuilder().withId(id)
 						.withSubjectId(subjectId)
 						.withStatement(statement)
-						.withAnswers(answers)
+						.withAnswers(makeAnswers(strAnswers, correctAnswerLetter))
 						.withSkillLevel(skillLevel)
 						.withMarks(marks)
 						.withTimeRequiredMins(timeRequiredMins)
@@ -158,7 +155,14 @@ public class QuestionDAO {
 	 * @param append    - whether to append or write to the file
 	 */
 	private void addQuestionDataToFile(Question question, FileWriter csvWriter, boolean append) throws IOException {
-		Answer correctAnswer = question.getAnswers().stream().filter(Answer::isCorrect).findFirst().orElse(null);
+		String correctAnswerLetter = "";
+		for (int i = 0; i < question.getAnswers().size(); i++) {
+			if (question.getAnswers().get(i).isCorrect()) {
+				correctAnswerLetter = Character.toString((char) (Constants.ASCII_A + i));
+				break;
+			}
+		}
+
 		/*
 		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), skill level, marks,
 		 * time required (mins), date created
@@ -170,12 +174,12 @@ public class QuestionDAO {
 			+ Constants.QUOT_MARK + question.getAnswers().get(1).getValue() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + question.getAnswers().get(2).getValue() + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + question.getAnswers().get(3).getValue() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + correctAnswer.getLetter() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + question.getSkillLevel().getStrVal() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + Integer.toString(question.getMarks()) + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + Integer.toString(question.getTimeRequiredMins()) + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(question.getDateCreated())
-			+ Constants.QUOT_MARK + Constants.NEWLINE;
+			+ Constants.QUOT_MARK + correctAnswerLetter + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ question.getSkillLevel().getStrVal() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ Integer.toString(question.getMarks()) + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+			+ Integer.toString(question.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(question.getDateCreated()) + Constants.QUOT_MARK
+			+ Constants.NEWLINE;
 
 		if (append) {
 			csvWriter.append(line);
@@ -196,13 +200,12 @@ public class QuestionDAO {
 		 * Since correct answer is A-D, we subtract these 2 ASCII values to get its position in the list of answers.
 		 * E.g. If C is correct, then position in list = 67 - 65 = 2.
 		 */
-		int correctAnswerPos = (int) correctAnswerLetter.charAt(0) - ASCII_A;
+		int correctAnswerPos = (int) correctAnswerLetter.charAt(0) - Constants.ASCII_A;
 
 		List<Answer> answers = new ArrayList<>();
 
 		for (int i = 0; i < answersStr.size(); i++) {
 			Answer answer = new AnswerBuilder().withValue(answersStr.get(i))
-				.withLetter(Character.toString((char) (ASCII_A + i)))
 				.withIsCorrect(i == correctAnswerPos)
 				.build();
 

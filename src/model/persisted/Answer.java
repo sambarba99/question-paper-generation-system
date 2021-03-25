@@ -9,13 +9,10 @@ public class Answer {
 
 	private String value;
 
-	private String letter; // A,B,C,D
-
 	private boolean correct;
 
-	public Answer(String value, String letter, boolean correct) {
+	public Answer(String value, boolean correct) {
 		this.value = value;
-		this.letter = letter;
 		this.correct = correct;
 	}
 
@@ -27,24 +24,11 @@ public class Answer {
 		this.value = answerValue;
 	}
 
-	public String getLetter() {
-		return letter;
-	}
-
-	public void setLetter(String letter) {
-		this.letter = letter;
-	}
-
 	public boolean isCorrect() {
 		return correct;
 	}
 
 	public void setCorrect(boolean correct) {
 		this.correct = correct;
-	}
-
-	@Override
-	public String toString() {
-		return "(" + letter + ") " + value;
 	}
 }

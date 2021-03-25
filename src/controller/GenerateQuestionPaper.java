@@ -114,7 +114,7 @@ public class GenerateQuestionPaper {
 
 		setup();
 
-		Scene scene = new Scene(vboxMain, 550, 500);
+		Scene scene = new Scene(vboxMain, 550, 550);
 		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("Generate Question Paper");

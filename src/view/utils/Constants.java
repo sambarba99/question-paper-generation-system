@@ -39,6 +39,8 @@ public class Constants {
 
 	public static final String QUOT_MARK = "\"";
 
+	public static final int ASCII_A = 65;
+
 	/**
 	 * Question statement and answers must not have repeating spaces.
 	 */
