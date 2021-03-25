@@ -27,7 +27,7 @@ import view.utils.Constants;
  */
 public class UserConfirmation {
 
-	public static final Logger LOGGER = Logger.getLogger(UserConfirmation.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(UserConfirmation.class.getName());
 
 	private static Stage stage;
 

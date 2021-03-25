@@ -25,13 +25,13 @@ public class GAUtils {
 	 * Initialise an array of individuals, which can be used to represent the population or offspring.
 	 * 
 	 * @param popSize  - the population size
-	 * @param numGenes - the number of genes in each individual
+	 * @param geneSize - the number of chromosomes in each individual's gene
 	 * @return the array of individuals
 	 */
-	public Individual[] initialiseIndividualArray(int popSize, int numGenes) {
+	public Individual[] initialiseIndividualArray(int popSize, int geneSize) {
 		Individual[] individuals = new Individual[popSize];
 		for (int i = 0; i < popSize; i++) {
-			individuals[i] = new Individual(numGenes);
+			individuals[i] = new Individual(geneSize);
 		}
 		return individuals;
 	}
@@ -39,16 +39,18 @@ public class GAUtils {
 	/**
 	 * Randomise the genes of the individuals in a population.
 	 * 
-	 * @param population   - the array of individuals whose genes will be randomised
-	 * @param allQuestions - list of all existing questions, to use when making genes
+	 * @param population - the array of individuals whose genes will be randomised
+	 * @param questions  - list of questions to use when selecting random chromosomes
 	 */
-	public void randomisePopulationGenes(Individual[] population, List<Question> allQuestions) {
-		int numGenes = population[0].getGenes().length;
+	public void randomisePopulationGenes(Individual[] population, List<Question> questions) {
+		int geneSize = population[0].getGene().length;
+
 		for (int i = 0; i < population.length; i++) {
-			for (int j = 0; j < numGenes; j++) {
-				/*
-				 * ???
-				 */
+			List<Question> questionsCopy = new ArrayList<>(questions);
+			for (int j = 0; j < geneSize; j++) {
+				int idx = RAND.nextInt(questionsCopy.size());
+				population[i].getGene()[j] = questionsCopy.get(idx);
+				questionsCopy.remove(idx); // avoid repeated questions in an Individual's gene
 			}
 		}
 	}
@@ -60,13 +62,13 @@ public class GAUtils {
 	 * @param offspring        - the array of individuals in the current offspring set
 	 * @param selectionType    - the type of selection to use, i.e. tournament or roulette wheel
 	 * @param tournamentSize   - number of individuals in a tournament (if this selection is used), the fittest of which
-	 *                         will be selected to copy genes from
+	 *                         will be selected to copy chromosomes from
 	 * @param initialSelection - whether or not this is the first selection process (determines if either the offspring
 	 *                         set is generated, or the next population)
 	 */
 	public void selection(Individual[] population, Individual[] offspring, SelectionType selectionType,
 		int tournamentSize, boolean initialSelection) {
-		int size = population.length;
+		int popSize = population.length;
 
 		switch (selectionType) {
 			case ROULETTE_WHEEL:
@@ -74,7 +76,7 @@ public class GAUtils {
 				List<Individual> rouletteWheel = new ArrayList<>();
 				int numTimesToAdd;
 
-				for (int i = 0; i < size; i++) {
+				for (int i = 0; i < popSize; i++) {
 					numTimesToAdd = initialSelection
 						? (int) Math.abs(Math.floor(population[i].calculateFitness() * 100))
 						: (int) Math.abs(Math.floor(offspring[i].calculateFitness() * 100));
@@ -90,23 +92,23 @@ public class GAUtils {
 				}
 
 				// select random individuals from wheel
-				for (int i = 0; i < size; i++) {
+				for (int i = 0; i < popSize; i++) {
 					Individual randIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
 					if (initialSelection) {
-						offspring[i].copyGenes(randIndividual.getGenes());
+						offspring[i].copyGene(randIndividual.getGene());
 					} else {
-						population[i].copyGenes(randIndividual.getGenes());
+						population[i].copyGene(randIndividual.getGene());
 					}
 				}
 				break;
 			case TOURNAMENT:
-				for (int i = 0; i < size; i++) {
+				for (int i = 0; i < popSize; i++) {
 					List<Individual> tournamentIndividuals = new ArrayList<>();
 					for (int n = 0; n < tournamentSize; n++) {
 						if (initialSelection) {
-							tournamentIndividuals.add(population[RAND.nextInt(size)]);
+							tournamentIndividuals.add(population[RAND.nextInt(popSize)]);
 						} else {
-							tournamentIndividuals.add(offspring[RAND.nextInt(size)]);
+							tournamentIndividuals.add(offspring[RAND.nextInt(popSize)]);
 						}
 					}
 
@@ -115,9 +117,9 @@ public class GAUtils {
 						.get();
 
 					if (initialSelection) {
-						offspring[i].copyGenes(tournamentFittest.getGenes());
+						offspring[i].copyGene(tournamentFittest.getGene());
 					} else {
-						population[i].copyGenes(tournamentFittest.getGenes());
+						population[i].copyGene(tournamentFittest.getGene());
 					}
 				}
 				break;
@@ -135,12 +137,12 @@ public class GAUtils {
 	 * @param points        - the number of random crossover points (i.e. k)
 	 */
 	public void crossover(Individual[] population, Individual[] offspring, double crossoverRate, int points) {
-		int numGenes = population[0].getGenes().length;
+		int geneSize = population[0].getGene().length;
 		int swapStart, swapEnd;
 
 		for (int i = 0; i < population.length; i += 2) {
 			if (RAND.nextDouble() < crossoverRate) {
-				List<Integer> crossoverPoints = getRandCrossPoints(points, numGenes);
+				List<Integer> crossoverPoints = getRandCrossPoints(points, geneSize);
 
 				Individual temp = offspring[i];
 
@@ -149,8 +151,8 @@ public class GAUtils {
 						swapStart = crossoverPoints.get(c);
 						swapEnd = crossoverPoints.get(c + 1);
 						for (int j = swapStart; j < swapEnd; j++) {
-							offspring[i].getGenes()[j] = offspring[i + 1].getGenes()[j];
-							offspring[i + 1].getGenes()[j] = temp.getGenes()[j];
+							offspring[i].getGene()[j] = offspring[i + 1].getGene()[j];
+							offspring[i + 1].getGene()[j] = temp.getGene()[j];
 						}
 					}
 				}
@@ -162,12 +164,12 @@ public class GAUtils {
 	 * Generate a list of random crossover points.
 	 * 
 	 * @param points   - the number of points to create
-	 * @param numGenes - the number of genes per chromosome of an individual
+	 * @param geneSize - the number of genes per chromosome of an individual
 	 * @return a list of random indices
 	 */
-	private List<Integer> getRandCrossPoints(int points, int numGenes) {
+	private List<Integer> getRandCrossPoints(int points, int geneSize) {
 		List<Integer> possiblePoints = new ArrayList<>();
-		for (int i = 1; i < numGenes; i++) {
+		for (int i = 1; i < geneSize; i++) {
 			possiblePoints.add(i);
 		}
 
@@ -178,7 +180,7 @@ public class GAUtils {
 			crossoverPoints.add(point);
 		}
 		crossoverPoints.add(0);
-		crossoverPoints.add(numGenes);
+		crossoverPoints.add(geneSize);
 		Collections.sort(crossoverPoints);
 		return crossoverPoints;
 	}
@@ -190,9 +192,10 @@ public class GAUtils {
 	 * @param mutationRate - the mutation rate, ranging from 0 to 1 (inclusive)
 	 */
 	public void mutation(Individual[] offspring, double mutationRate) {
-		int numGenes = offspring[0].getGenes().length;
+		int geneSize = offspring[0].getGene().length;
+
 		for (int i = 0; i < offspring.length; i++) {
-			for (int j = 0; j < numGenes; j++) {
+			for (int j = 0; j < geneSize; j++) {
 				if (RAND.nextDouble() < mutationRate) {
 					/*
 					 * ???
@@ -230,28 +233,13 @@ public class GAUtils {
 	/**
 	 * Find the fittest individual (question paper) of a population.
 	 * 
-	 * @param population - the population to examine
+	 * @param population - the population to traverse
 	 * @return the individual representing the best question paper
 	 */
 	public Individual findFittest(Individual[] population) {
-		Individual fittest = population[0];
-		double highestFitness = population[0].calculateFitness();
-
-		for (int i = 0; i < population.length; i++) {
-			double f = population[i].calculateFitness();
-			if (f > highestFitness) {
-				highestFitness = f;
-				fittest = population[i];
-			}
-		}
-		return fittest;
+		return Arrays.asList(population).stream().max(Comparator.comparing(Individual::calculateFitness)).get();
 	}
 
-	/**
-	 * To assure only one and the same instance of this class every time.
-	 * 
-	 * @return instance of GAUtils
-	 */
 	public synchronized static GAUtils getInstance() {
 		if (instance == null) {
 			instance = new GAUtils();

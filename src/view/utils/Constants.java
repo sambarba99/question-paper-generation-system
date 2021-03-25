@@ -64,7 +64,7 @@ public class Constants {
 	 */
 	public static final SelectionType SELECTION_TYPE = SelectionType.ROULETTE_WHEEL;
 
-	public static final int NUM_GENES = 50;
+	public static final int GENE_SIZE = 50;
 
 	public static final int POP_SIZE = 100;
 

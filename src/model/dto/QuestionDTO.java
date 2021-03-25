@@ -13,7 +13,7 @@ public class QuestionDTO {
 
 	private String statement;
 
-	private String difficultyLevel;
+	private String skillLevel;
 
 	private int marks;
 
@@ -48,12 +48,12 @@ public class QuestionDTO {
 		this.statement = statement;
 	}
 
-	public String getDifficultyLevel() {
-		return difficultyLevel;
+	public String getSkillLevel() {
+		return skillLevel;
 	}
 
-	public void setDifficultyLevel(String difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
+	public void setSkillLevel(String skillLevel) {
+		this.skillLevel = skillLevel;
 	}
 
 	public int getMarks() {

@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.persisted.QuestionPaper;
 
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 
 /**
  * This class utilises the builder pattern, and is used to build persisted Question Paper objects.
@@ -26,7 +26,7 @@ public class QuestionPaperBuilder {
 
 	private List<Integer> questionIds;
 
-	private DifficultyLevel difficultyLevel;
+	private SkillLevel skillLevel;
 
 	private int marks;
 
@@ -67,8 +67,8 @@ public class QuestionPaperBuilder {
 		return this;
 	}
 
-	public QuestionPaperBuilder withDifficultyLevel(DifficultyLevel difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
+	public QuestionPaperBuilder withSkillLevel(SkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
 		return this;
 	}
 
@@ -88,7 +88,7 @@ public class QuestionPaperBuilder {
 	}
 
 	public QuestionPaper build() {
-		return new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds, difficultyLevel, marks,
+		return new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds, skillLevel, marks,
 			timeRequiredMins, dateCreated);
 	}
 }

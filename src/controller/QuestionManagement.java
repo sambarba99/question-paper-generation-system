@@ -32,7 +32,7 @@ import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -55,13 +55,13 @@ public class QuestionManagement {
 
 	private static List<CheckBox> cbSubjects;
 
-	private static List<CheckBox> cbDifficultyLvls;
+	private static List<CheckBox> cbSkillLvls;
 
 	private static Accordion accFilters;
 
 	private static List<Integer> subjectIdFilters = new ArrayList<>();
 
-	private static List<Integer> difficultyLvlFilters = new ArrayList<>();
+	private static List<Integer> skillLvlFilters = new ArrayList<>();
 
 	private static TextArea txtAreaQuestion = new TextArea();
 
@@ -158,7 +158,7 @@ public class QuestionManagement {
 		TableColumn<QuestionDTO, Integer> colId = new TableColumn<>("ID");
 		TableColumn<QuestionDTO, String> colSubjectTitle = new TableColumn<>("Subject");
 		TableColumn<QuestionDTO, String> colStatement = new TableColumn<>("Statement");
-		TableColumn<QuestionDTO, String> colDifficultyLevel = new TableColumn<>("Difficulty level");
+		TableColumn<QuestionDTO, String> colSkillLevel = new TableColumn<>("Skill level");
 		TableColumn<QuestionDTO, Integer> colMarks = new TableColumn<>("Marks");
 		TableColumn<QuestionDTO, Integer> colTimeRequired = new TableColumn<>("Time required (mins)");
 		TableColumn<QuestionDTO, String> colDateCreated = new TableColumn<>("Date created");
@@ -166,7 +166,7 @@ public class QuestionManagement {
 		colId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		colSubjectTitle.setCellValueFactory(new PropertyValueFactory<>("subjectTitle"));
 		colStatement.setCellValueFactory(new PropertyValueFactory<>("statement"));
-		colDifficultyLevel.setCellValueFactory(new PropertyValueFactory<>("difficultyLevel"));
+		colSkillLevel.setCellValueFactory(new PropertyValueFactory<>("skillLevel"));
 		colMarks.setCellValueFactory(new PropertyValueFactory<>("marks"));
 		colTimeRequired.setCellValueFactory(new PropertyValueFactory<>("timeRequiredMins"));
 		colDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
@@ -174,14 +174,13 @@ public class QuestionManagement {
 		colId.setPrefWidth(50);
 		colSubjectTitle.setPrefWidth(200);
 		colStatement.setPrefWidth(250);
-		colDifficultyLevel.setPrefWidth(200);
+		colSkillLevel.setPrefWidth(200);
 		colMarks.setPrefWidth(70);
 		colTimeRequired.setPrefWidth(180);
 		colDateCreated.setPrefWidth(150);
 
 		tblQuestions.getColumns()
-			.addAll(colId, colSubjectTitle, colStatement, colDifficultyLevel, colMarks, colTimeRequired,
-				colDateCreated);
+			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colTimeRequired, colDateCreated);
 		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
@@ -219,13 +218,13 @@ public class QuestionManagement {
 		vboxSubjects.getChildren().addAll(cbSubjects);
 		TitledPane tPaneSubjects = new TitledPane("Filter by subject", vboxSubjects);
 
-		cbDifficultyLvls = Arrays.asList(DifficultyLevel.values())
+		cbSkillLvls = Arrays.asList(SkillLevel.values())
 			.stream()
-			.map(difficultyLvl -> new CheckBox(difficultyLvl.getDisplayStr()))
+			.map(skillLvl -> new CheckBox(skillLvl.getDisplayStr()))
 			.collect(Collectors.toList());
 
 		// TableView of questions must be refreshed if these CheckBoxes are toggled
-		for (CheckBox cb : cbDifficultyLvls) {
+		for (CheckBox cb : cbSkillLvls) {
 			cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
 				@Override
@@ -235,14 +234,14 @@ public class QuestionManagement {
 			});
 		}
 
-		VBox vboxDifficultyLvls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
+		VBox vboxskillLvls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER_LEFT)
 			.withSpacing(3)
 			.build();
-		vboxDifficultyLvls.getChildren().addAll(cbDifficultyLvls);
-		TitledPane tPaneDifficultyLvls = new TitledPane("Filter by difficulty", vboxDifficultyLvls);
+		vboxskillLvls.getChildren().addAll(cbSkillLvls);
+		TitledPane tPaneSkillLvls = new TitledPane("Filter by skill level", vboxskillLvls);
 
-		accFilters.getPanes().addAll(tPaneSubjects, tPaneDifficultyLvls);
+		accFilters.getPanes().addAll(tPaneSubjects, tPaneSkillLvls);
 
 		/*
 		 * Set up question info TextArea
@@ -263,12 +262,12 @@ public class QuestionManagement {
 			.map(cb -> SubjectService.getInstance().getSubjectIdFromDisplayStr(cb.getText()))
 			.collect(Collectors.toList());
 
-		difficultyLvlFilters = cbDifficultyLvls.stream()
+		skillLvlFilters = cbSkillLvls.stream()
 			.filter(CheckBox::isSelected)
-			.map(cb -> DifficultyLevel.getIntFromDisplayStr(cb.getText()))
+			.map(cb -> SkillLevel.getIntFromDisplayStr(cb.getText()))
 			.collect(Collectors.toList());
 
-		questionDTOs = QuestionService.getInstance().getQuestionDTOsWithFilters(difficultyLvlFilters, subjectIdFilters);
+		questionDTOs = QuestionService.getInstance().getQuestionDTOsWithFilters(skillLvlFilters, subjectIdFilters);
 		tblQuestions.getItems().clear();
 		tblQuestions.getItems().addAll(questionDTOs);
 

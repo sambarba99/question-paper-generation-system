@@ -80,10 +80,8 @@ public class QuestionPaperService {
 	 */
 	public int getHighestQuestionPaperId() {
 		List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-		if (allQuestionPapers.isEmpty()) {
-			return 0;
-		}
-		return allQuestionPapers.stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
+		return allQuestionPapers.isEmpty() ? 0
+			: allQuestionPapers.stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
 	}
 
 	/**
@@ -140,7 +138,7 @@ public class QuestionPaperService {
 		resultBld.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
 		resultBld.append(
-			Constants.NEWLINE + "Average difficulty level: " + questionPaper.getDifficultyLevel().getIntVal() + "/6");
+			Constants.NEWLINE + "Average Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
 		resultBld.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		resultBld.append(Constants.NEWLINE + "Time required: " + questionPaper.getTimeRequiredMins() + " minutes");
 

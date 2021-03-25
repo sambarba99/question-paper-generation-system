@@ -31,7 +31,7 @@ import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -65,9 +65,9 @@ public class AddQuestion {
 
 	private static ChoiceBox choiceCorrectAnsLetter = new ChoiceBox();
 
-	private static Slider sliderDifficultyLvl = new Slider();
+	private static Slider sliderSkillLvl = new Slider();
 
-	private static Label lblSelectedDifficultyLvl = new Label("Difficulty level: KNOWLEDGE");
+	private static Label lblSelectedSkillLvl = new Label("Skill level: KNOWLEDGE");
 
 	private static TextField txtMarks = new TextField();
 
@@ -87,7 +87,7 @@ public class AddQuestion {
 		Label lblEnterAnsC = new Label("Enter answer C:");
 		Label lblEnterAnsD = new Label("Enter answer D:");
 		Label lblSelectCorrect = new Label("Select correct answer:");
-		Label lblSelectDifficultyLvl = new Label("Select difficulty level\n(based on Bloom's taxonomy):");
+		Label lblSelectSkillLvl = new Label("Select skill level\n(based on Bloom's taxonomy):");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
@@ -108,8 +108,8 @@ public class AddQuestion {
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectCorrect, choiceCorrectAnsLetter, lblSelectDifficultyLvl, sliderDifficultyLvl,
-				lblSelectedDifficultyLvl, lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
+			.withNodes(lblSelectCorrect, choiceCorrectAnsLetter, lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl,
+				lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -187,13 +187,13 @@ public class AddQuestion {
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 
 		int correctAnswerPos = choiceCorrectAnsLetter.getSelectionModel().getSelectedIndex();
-		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
+		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
 
 		Question question = new QuestionBuilder().withId(id)
 			.withSubjectId(subjectId)
 			.withStatement(statement)
 			.withAnswers(makeAnswers(Arrays.asList(ansA, ansB, ansC, ansD), correctAnswerPos))
-			.withDifficultyLevel(difficultyLevel)
+			.withSkillLevel(skillLevel)
 			.withMarks(marks)
 			.withTimeRequiredMins(timeReq)
 			.build();
@@ -224,20 +224,20 @@ public class AddQuestion {
 		choiceCorrectAnsLetter.getItems().addAll("A", "B", "C", "D");
 		choiceCorrectAnsLetter.getSelectionModel().select(0);
 
-		List<DifficultyLevel> allDifficultyLvls = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		sliderDifficultyLvl.setMin(1);
-		sliderDifficultyLvl.setMax(allDifficultyLvls.size());
-		sliderDifficultyLvl.setPrefWidth(200);
-		sliderDifficultyLvl.setMajorTickUnit(1);
-		sliderDifficultyLvl.setShowTickLabels(true);
-		sliderDifficultyLvl.setShowTickMarks(true);
-		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
+		List<SkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(SkillLevel.class));
+		sliderSkillLvl.setMin(1);
+		sliderSkillLvl.setMax(allSkillLvls.size());
+		sliderSkillLvl.setPrefWidth(200);
+		sliderSkillLvl.setMajorTickUnit(1);
+		sliderSkillLvl.setShowTickLabels(true);
+		sliderSkillLvl.setShowTickMarks(true);
+		sliderSkillLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = newValue.intValue();
-			sliderDifficultyLvl.setValue(intVal); // snap to exact value
-			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficultyLvls.get(intVal - 1).getStrVal());
+			sliderSkillLvl.setValue(intVal); // snap to exact value
+			lblSelectedSkillLvl.setText("Skill level: " + allSkillLvls.get(intVal - 1).getStrVal());
 		});
 
-		lblSelectedDifficultyLvl.setPrefWidth(240);
+		lblSelectedSkillLvl.setPrefWidth(240);
 	}
 
 	/**
@@ -251,7 +251,7 @@ public class AddQuestion {
 		txtAnsC.setText(Constants.EMPTY);
 		txtAnsD.setText(Constants.EMPTY);
 		choiceCorrectAnsLetter.getSelectionModel().select(0);
-		sliderDifficultyLvl.setValue(1);
+		sliderSkillLvl.setValue(1);
 		txtMarks.setText(Constants.EMPTY);
 		txtTimeRequired.setText(Constants.EMPTY);
 	}

@@ -25,7 +25,7 @@ import view.utils.Constants;
  */
 public class UserDAO {
 
-	public static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
 	private static UserDAO instance;
 

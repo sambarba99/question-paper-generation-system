@@ -19,7 +19,7 @@ import model.persisted.Question;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.utils.Constants;
 
 /**
@@ -50,7 +50,7 @@ import view.utils.Constants;
  */
 public class RawQuestionTransformer {
 
-	public static final Logger LOGGER = Logger.getLogger(RawQuestionTransformer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RawQuestionTransformer.class.getName());
 
 	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "HistoryEurope", "HistoryUS",
 		"HistoryWorld", "Marketing", "Psychology" };
@@ -59,9 +59,9 @@ public class RawQuestionTransformer {
 
 	private static final String INPUT_EXT = ".txt";
 
-	private static final int MIN_DIFFICULTY = 1;
+	private static final int MIN_SKILL_LVL = 1;
 
-	private static final int MAX_DIFFICULTY = DifficultyLevel.values().length;
+	private static final int MAX_SKILL_LVL = SkillLevel.values().length;
 
 	private static final int MIN_TIME_REQUIRED = 1;
 
@@ -195,8 +195,8 @@ public class RawQuestionTransformer {
 			}
 
 			/*
-			 * Find shortest question and longest question statement in order to determine difficulty level, time
-			 * required, and marks
+			 * Find shortest question and longest question statement in order to determine skill level, time required,
+			 * and marks
 			 */
 			int minLength = Integer.MAX_VALUE, maxLength = 0;
 			for (String questionKey : questionsAndAnswers.keySet()) {
@@ -210,13 +210,13 @@ public class RawQuestionTransformer {
 			}
 
 			/*
-			 * Determine difficulty level, time required, and marks, by mapping question statement length to specified
-			 * range e.g. between 1 and 10 for marks
+			 * Determine skill level, time required, and marks, by mapping question statement length to specified range
+			 * e.g. between 1 and 10 for marks
 			 */
 			String questionStatement = entry.getKey();
 			int len = questionStatement.length();
-			int difficultyLevelInt = (int) Math.round(map(len, minLength, maxLength, MIN_DIFFICULTY, MAX_DIFFICULTY));
-			DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt(difficultyLevelInt);
+			int skillLevelInt = (int) Math.round(map(len, minLength, maxLength, MIN_SKILL_LVL, MAX_SKILL_LVL));
+			SkillLevel skillLevel = SkillLevel.getFromInt(skillLevelInt);
 			int timeRequired = (int) Math.round(map(len, minLength, maxLength, MIN_TIME_REQUIRED, MAX_TIME_REQUIRED));
 			int marks = (int) Math.round(map(len, minLength, maxLength, MIN_MARKS, MAX_MARKS));
 
@@ -224,7 +224,7 @@ public class RawQuestionTransformer {
 				.withSubjectId(subjectId)
 				.withStatement(questionStatement)
 				.withAnswers(answers)
-				.withDifficultyLevel(difficultyLevel)
+				.withSkillLevel(skillLevel)
 				.withMarks(marks)
 				.withTimeRequiredMins(timeRequired)
 				.build();

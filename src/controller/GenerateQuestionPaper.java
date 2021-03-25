@@ -28,7 +28,7 @@ import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -36,7 +36,7 @@ import view.utils.LogoMaker;
 import view.utils.StringFormatter;
 
 /**
- * Allows the user to generate a question paper with specified parameters such as subject and difficulty.
+ * Allows the user to generate a question paper with specified parameters such as subject and skill level.
  *
  * @author Sam Barba
  */
@@ -54,9 +54,9 @@ public class GenerateQuestionPaper {
 
 	private static TextField txtCourseCode = new TextField();
 
-	private static Slider sliderDifficultyLvl = new Slider();
+	private static Slider sliderSkillLvl = new Slider();
 
-	private static Label lblSelectedDifficultyLvl = new Label("Difficulty level: KNOWLEDGE");
+	private static Label lblSelectedSkillLvl = new Label("Skill level: KNOWLEDGE");
 
 	private static TextField txtMarks = new TextField();
 
@@ -75,40 +75,31 @@ public class GenerateQuestionPaper {
 		Label lblEnterTitle = new Label("Enter the paper title:");
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
-		Label lblSelectDifficulty = new Label("Select average question difficulty:");
+		Label lblSelectSkillLvl = new Label("Select average question skill level\n(based on Bloom's taxonomy):");
 		Label lblEnterMarks = new Label("Enter no. marks:");
 		Label lblEnterTimeReq = new Label("Enter time required (mins):");
 
 		Button btnGenerate = new ButtonBuilder().withWidth(100)
 			.withUserAction(UserAction.GENERATE)
 			.withActionEvent(e -> {
-				QuestionPaper generatedPaper = null;
-				try {
-					generatedPaper = prepareParamsAndGenerate();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-					SystemNotification.display(SystemNotificationType.ERROR,
-						Constants.UNEXPECTED_ERROR + ex.getClass().getName());
-				}
-				if (generatedPaper != null) {
-					QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
-					generated = true;
-					stage.close();
-				}
+				QuestionPaper generatedPaper = prepareParamsAndGenerate();
+				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
+				generated = true;
+				stage.close();
 			})
 			.build();
 
 		VBox vbox1 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
-			.withSpacing(5)
+			.withSpacing(10)
 			.withNodes(lblSelectSubject, choiceSubject, lblEnterTitle, txtTitle, lblEnterCourseTitle, txtCourseTitle,
 				lblEnterCourseCode, txtCourseCode)
 			.build();
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
-			.withSpacing(5)
-			.withNodes(lblSelectDifficulty, sliderDifficultyLvl, lblSelectedDifficultyLvl, lblEnterMarks, txtMarks,
-				lblEnterTimeReq, txtTimeRequired)
+			.withSpacing(10)
+			.withNodes(lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl, lblEnterMarks, txtMarks, lblEnterTimeReq,
+				txtTimeRequired)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -139,7 +130,7 @@ public class GenerateQuestionPaper {
 	 * 
 	 * @return whether or not paper has been generated successfully
 	 */
-	private static QuestionPaper prepareParamsAndGenerate() throws IOException {
+	private static QuestionPaper prepareParamsAndGenerate() {
 		String title = StringFormatter.formatTitle(txtTitle.getText());
 		String courseTitle = StringFormatter.formatTitle(txtCourseTitle.getText());
 		String courseCode = txtCourseCode.getText();
@@ -174,10 +165,18 @@ public class GenerateQuestionPaper {
 
 		int subjectId = SubjectService.getInstance()
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
-		DifficultyLevel difficultyLevel = DifficultyLevel.getFromInt((int) sliderDifficultyLvl.getValue());
+		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
 
-		QuestionPaper generatedPaper = QuestionPaperGenerator.getInstance()
-			.generatePaper(subjectId, title, courseTitle, courseCode, difficultyLevel, marks, timeReq);
+		/*
+		 * REMOVE THIS WHEN REMOVING FILE WRITING CODE
+		 */
+		QuestionPaper generatedPaper = null;
+		try {
+			generatedPaper = QuestionPaperGenerator.getInstance()
+				.generatePaper(subjectId, title, courseTitle, courseCode, skillLevel, marks, timeReq);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		return generatedPaper;
 	}
@@ -202,19 +201,19 @@ public class GenerateQuestionPaper {
 		choiceSubject.getSelectionModel().select(0);
 		choiceSubject.setPrefWidth(200);
 
-		List<DifficultyLevel> allDifficultyLvls = new ArrayList<>(EnumSet.allOf(DifficultyLevel.class));
-		sliderDifficultyLvl.setMin(1);
-		sliderDifficultyLvl.setMax(allDifficultyLvls.size());
-		sliderDifficultyLvl.setPrefWidth(200);
-		sliderDifficultyLvl.setMajorTickUnit(1);
-		sliderDifficultyLvl.setShowTickLabels(true);
-		sliderDifficultyLvl.setShowTickMarks(true);
-		sliderDifficultyLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
+		List<SkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(SkillLevel.class));
+		sliderSkillLvl.setMin(1);
+		sliderSkillLvl.setMax(allSkillLvls.size());
+		sliderSkillLvl.setPrefWidth(200);
+		sliderSkillLvl.setMajorTickUnit(1);
+		sliderSkillLvl.setShowTickLabels(true);
+		sliderSkillLvl.setShowTickMarks(true);
+		sliderSkillLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = newValue.intValue();
-			sliderDifficultyLvl.setValue(intVal); // snap to exact value
-			lblSelectedDifficultyLvl.setText("Difficulty level: " + allDifficultyLvls.get(intVal - 1).getStrVal());
+			sliderSkillLvl.setValue(intVal); // snap to exact value
+			lblSelectedSkillLvl.setText("Skill level: " + allSkillLvls.get(intVal - 1).getStrVal());
 		});
 
-		lblSelectedDifficultyLvl.setPrefWidth(240);
+		lblSelectedSkillLvl.setPrefWidth(240);
 	}
 }

@@ -3,11 +3,11 @@ package model.persisted;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 
 /**
- * Represents a question paper (the GA uses the subject ID, difficulty level, marks, and time required to calculate
- * paper fitness).
+ * Represents a question paper (the GA uses the subject ID, skill level, marks, and time required to calculate paper
+ * fitness).
  *
  * @author Sam Barba
  */
@@ -25,7 +25,7 @@ public class QuestionPaper {
 
 	private List<Integer> questionIds;
 
-	private DifficultyLevel difficultyLevel;
+	private SkillLevel skillLevel;
 
 	private int marks;
 
@@ -34,7 +34,7 @@ public class QuestionPaper {
 	private LocalDateTime dateCreated;
 
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, DifficultyLevel difficultyLevel, int marks, int timeRequiredMins,
+		List<Integer> questionIds, SkillLevel skillLevel, int marks, int timeRequiredMins,
 		LocalDateTime dateCreated) {
 
 		this.id = id;
@@ -43,7 +43,7 @@ public class QuestionPaper {
 		this.courseTitle = courseTitle;
 		this.courseCode = courseCode;
 		this.questionIds = questionIds;
-		this.difficultyLevel = difficultyLevel;
+		this.skillLevel = skillLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
 		this.dateCreated = dateCreated;
@@ -97,12 +97,12 @@ public class QuestionPaper {
 		this.questionIds = questionIds;
 	}
 
-	public DifficultyLevel getDifficultyLevel() {
-		return difficultyLevel;
+	public SkillLevel getSkillLevel() {
+		return skillLevel;
 	}
 
-	public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
+	public void setSkillLevel(SkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
 	}
 
 	public int getMarks() {

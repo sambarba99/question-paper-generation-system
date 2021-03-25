@@ -3,7 +3,7 @@ package model.persisted;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.utils.Constants;
 
 /**
@@ -21,7 +21,7 @@ public class Question {
 
 	private List<Answer> answers;
 
-	private DifficultyLevel difficultyLevel;
+	private SkillLevel skillLevel;
 
 	private int marks;
 
@@ -29,14 +29,14 @@ public class Question {
 
 	private LocalDateTime dateCreated;
 
-	public Question(int id, int subjectId, String statement, List<Answer> answers, DifficultyLevel difficultyLevel,
-		int marks, int timeRequiredMins, LocalDateTime dateCreated) {
+	public Question(int id, int subjectId, String statement, List<Answer> answers, SkillLevel skillLevel, int marks,
+		int timeRequiredMins, LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;
 		this.statement = statement;
 		this.answers = answers;
-		this.difficultyLevel = difficultyLevel;
+		this.skillLevel = skillLevel;
 		this.marks = marks;
 		this.timeRequiredMins = timeRequiredMins;
 		this.dateCreated = dateCreated;
@@ -74,12 +74,12 @@ public class Question {
 		this.answers = answers;
 	}
 
-	public DifficultyLevel getDifficultyLevel() {
-		return difficultyLevel;
+	public SkillLevel getSkillLevel() {
+		return skillLevel;
 	}
 
-	public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
+	public void setSkillLevel(SkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
 	}
 
 	public int getMarks() {
@@ -118,8 +118,8 @@ public class Question {
 		}
 
 		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
-			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "difficultyLevel="
-			+ difficultyLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins
-			+ Constants.NEWLINE + "dateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
+			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "skillLevel=" + skillLevel.getStrVal()
+			+ ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins + Constants.NEWLINE + "dateCreated="
+			+ Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

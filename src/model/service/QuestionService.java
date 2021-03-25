@@ -83,27 +83,25 @@ public class QuestionService {
 	 */
 	public int getHighestQuestionId() {
 		List<Question> allQuestions = getAllQuestions();
-		if (allQuestions.isEmpty()) {
-			return 0;
-		}
-		return allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId();
+		return allQuestions.isEmpty() ? 0
+			: allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId();
 	}
 
 	/**
-	 * Get all questions converted to DTOs for using in TableViews, with applied subject and difficulty level filters
-	 * (if any selected in QuestionManagement).
+	 * Get all questions converted to DTOs for using in TableViews, with applied subject and skill level filters (if any
+	 * selected in QuestionManagement).
 	 * 
-	 * @param difficultyLvls - difficulty level IDs to filter by
-	 * @param subjectIds     - subject IDs to filter by
+	 * @param skillLvls  - skill level IDs to filter by
+	 * @param subjectIds - subject IDs to filter by
 	 * @return (filtered) list of all questions as DTOs
 	 */
-	public List<QuestionDTO> getQuestionDTOsWithFilters(List<Integer> difficultyLvls, List<Integer> subjectIds) {
+	public List<QuestionDTO> getQuestionDTOsWithFilters(List<Integer> skillLvls, List<Integer> subjectIds) {
 		/*
-		 * If a list is empty, say difficultyLvls, then it means the user does not want to filter by difficulty. This is
-		 * why we have the difficultyLvls.isEmpty() condition in a logical disjunction (||).
+		 * If a list is empty, say skillLvls, then it means the user does not want to filter by skill level. This is why
+		 * we have the skillLvls.isEmpty() condition in a logical disjunction (||).
 		 */
 		return getAllQuestions().stream()
-			.filter(q -> difficultyLvls.isEmpty() || difficultyLvls.contains(q.getDifficultyLevel().getIntVal()))
+			.filter(q -> skillLvls.isEmpty() || skillLvls.contains(q.getSkillLevel().getIntVal()))
 			.filter(q -> subjectIds.isEmpty() || subjectIds.contains(q.getSubjectId()))
 			.map(this::convertToQuestionDTO)
 			.collect(Collectors.toList());
@@ -123,7 +121,7 @@ public class QuestionService {
 		questionDto.setId(question.getId());
 		questionDto.setSubjectTitle(subjectTitle);
 		questionDto.setStatement(question.getStatement());
-		questionDto.setDifficultyLevel(question.getDifficultyLevel().getDisplayStr());
+		questionDto.setSkillLevel(question.getSkillLevel().getDisplayStr());
 		questionDto.setMarks(question.getMarks());
 		questionDto.setTimeRequiredMins(question.getTimeRequiredMins());
 		questionDto.setDateCreated(Constants.DATE_FORMATTER.format(question.getDateCreated()));
@@ -156,8 +154,7 @@ public class QuestionService {
 
 		StringBuilder txtAreaStr = new StringBuilder();
 		txtAreaStr.append("Subject: " + subjectTitle);
-		txtAreaStr
-			.append(Constants.NEWLINE + "Bloom difficulty level: " + question.getDifficultyLevel().getDisplayStr());
+		txtAreaStr.append(Constants.NEWLINE + "Bloom skill level: " + question.getSkillLevel().getDisplayStr());
 		if (papersContainingQuestion.isEmpty()) {
 			txtAreaStr.append(Constants.NEWLINE + "There are no papers which contain this question.");
 		} else {

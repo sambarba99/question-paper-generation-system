@@ -6,7 +6,7 @@ import java.util.List;
 import model.persisted.Answer;
 import model.persisted.Question;
 
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 
 /**
  * This class utilises the builder pattern, and is used to build persisted Question objects.
@@ -23,7 +23,7 @@ public class QuestionBuilder {
 
 	private List<Answer> answers;
 
-	private DifficultyLevel difficultyLevel;
+	private SkillLevel skillLevel;
 
 	private int marks;
 
@@ -54,8 +54,8 @@ public class QuestionBuilder {
 		return this;
 	}
 
-	public QuestionBuilder withDifficultyLevel(DifficultyLevel difficultyLevel) {
-		this.difficultyLevel = difficultyLevel;
+	public QuestionBuilder withSkillLevel(SkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
 		return this;
 	}
 
@@ -75,6 +75,6 @@ public class QuestionBuilder {
 	}
 
 	public Question build() {
-		return new Question(id, subjectId, statement, answers, difficultyLevel, marks, timeRequiredMins, dateCreated);
+		return new Question(id, subjectId, statement, answers, skillLevel, marks, timeRequiredMins, dateCreated);
 	}
 }

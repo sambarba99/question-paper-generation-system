@@ -16,7 +16,7 @@ import model.builders.QuestionPaperBuilder;
 import model.persisted.QuestionPaper;
 
 import view.SystemNotification;
-import view.enums.DifficultyLevel;
+import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
@@ -27,7 +27,7 @@ import view.utils.Constants;
  */
 public class QuestionPaperDAO {
 
-	public static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
 
 	private static QuestionPaperDAO instance;
 
@@ -110,7 +110,7 @@ public class QuestionPaperDAO {
 					for (int i = 0; i < questionIdsStr.length; i++) {
 						questionIds.add(Integer.parseInt(questionIdsStr[i]));
 					}
-					DifficultyLevel difficultyLevel = DifficultyLevel.getFromStr(lineArr[6]);
+					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[6]);
 					int marks = Integer.parseInt(lineArr[7]);
 					int timeRequiredMins = Integer.parseInt(lineArr[8]);
 					LocalDateTime dateCreated = LocalDateTime
@@ -122,7 +122,7 @@ public class QuestionPaperDAO {
 						.withCourseTitle(courseTitle)
 						.withCourseCode(courseCode)
 						.withQuestionIds(questionIds)
-						.withDifficultyLevel(difficultyLevel)
+						.withSkillLevel(skillLevel)
 						.withMarks(marks)
 						.withTimeRequiredMins(timeRequiredMins)
 						.withDateCreated(dateCreated)
@@ -184,8 +184,8 @@ public class QuestionPaperDAO {
 		questionIds = questionIds.substring(0, questionIds.length() - 1); // remove last comma
 
 		/*
-		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, difficulty level, marks,
-		 * time required (mins), date created
+		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, skill level, marks, time
+		 * required (mins), date created
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(questionPaper.getId()) + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getSubjectId())
@@ -193,7 +193,7 @@ public class QuestionPaperDAO {
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseTitle()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseCode()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getDifficultyLevel().getStrVal()
+			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getSkillLevel().getStrVal()
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks())
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ Integer.toString(questionPaper.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.COMMA

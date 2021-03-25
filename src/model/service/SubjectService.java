@@ -70,10 +70,7 @@ public class SubjectService {
 	 */
 	public int getHighestSubjectId() {
 		List<Subject> allSubjects = getAllSubjects();
-		if (allSubjects.isEmpty()) {
-			return 0;
-		}
-		return allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId();
+		return allSubjects.isEmpty() ? 0 : allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId();
 	}
 
 	/**

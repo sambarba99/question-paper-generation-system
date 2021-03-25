@@ -29,7 +29,7 @@ import view.utils.LogoMaker;
  */
 public class ViewQuestionPaper {
 
-	public static final Logger LOGGER = Logger.getLogger(ViewQuestionPaper.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ViewQuestionPaper.class.getName());
 
 	private static Stage stage;
 
