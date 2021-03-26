@@ -1,82 +1,88 @@
 package model.questionpapergeneration;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import model.persisted.Question;
 
 /**
- * Represents an individual question paper. The gene of an individual is a list of questions (i.e. each question is a
- * chromosome).
+ * Represents an individual question paper. The chromosome of an individual is a list of questions (i.e. each question
+ * is a gene).
  *
  * @author Sam Barba
  */
 public class Individual {
 
-	private List<Question> gene;
+	private List<Question> genes;
 
 	private double fitness;
 
-	public Individual() {
-		this.gene = new ArrayList<>();
+	private int userSelectedSkillLvl;
+
+	private int userSelectedMarks;
+
+	private int userSelectedTimeReq;
+
+	public Individual(int userSelectedSkillLvl, int userSelectedMarks, int userSelectedTimeReq) {
+		this.userSelectedSkillLvl = userSelectedSkillLvl;
+		this.userSelectedMarks = userSelectedMarks;
+		this.userSelectedTimeReq = userSelectedTimeReq;
+		this.genes = new ArrayList<>();
 		this.fitness = 0;
 	}
 
-	public List<Question> getGene() {
-		return gene;
+	public List<Question> getGenes() {
+		return genes;
 	}
 
-	public void copyGene(List<Question> gene) {
-		this.gene = new ArrayList<>(gene);
+	public void copyGenes(List<Question> genes) {
+		this.genes = new ArrayList<>(genes); // shallow copy
+	}
+
+	public double getFitness() {
+		return fitness;
 	}
 
 	/**
 	 * Calculate the fitness of an individual paper.
-	 * 
-	 * @return fitness of the question paper individual
 	 */
-	public double calculateFitness() {
-		List<Question> questions = new ArrayList<>(gene);
-		/*
-		 * Sort in ascending order of marks, in order to calculate the skewness and 'increase coefficients'.
-		 */
-		questions.sort(Comparator.comparing(Question::getMarks));
-
-		List<Integer> marks = questions.stream().map(Question::getMarks).collect(Collectors.toList());
-		List<Integer> timesRequired = questions.stream()
-			.map(Question::getTimeRequiredMins)
-			.collect(Collectors.toList());
-		List<Integer> skillLvls = questions.stream()
+	public void calculateFitness() {
+		List<Integer> skillLvlValues = genes.stream()
 			.map(q -> q.getSkillLevel().getIntVal())
 			.collect(Collectors.toList());
+		List<Integer> markValues = genes.stream().map(Question::getMarks).collect(Collectors.toList());
+		List<Integer> timesReqValues = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
 
-		double marksSkew = skewnessCoefficient(marks);
+		int meanSkillLvl = (int) Math.round(skillLvlValues.stream().mapToDouble(s -> s).average().getAsDouble());
+		int totalMarks = markValues.stream().mapToInt(m -> m).reduce(0, Integer::sum);
+		int totalTimeReq = timesReqValues.stream().mapToInt(t -> t).reduce(0, Integer::sum);
 
-		double stDevMarks = standardDeviation(marks);
-		double stDevTime = standardDeviation(timesRequired);
-		double stDevSkill = standardDeviation(skillLvls);
+		// calculate differences between user-selected values and generated values
+		int skillLvlDiff = Math.abs(userSelectedSkillLvl - meanSkillLvl);
+		int marksDiff = Math.abs(userSelectedMarks - totalMarks);
+		int timeReqDiff = Math.abs(userSelectedTimeReq - totalTimeReq);
 
-		int increaseMarks = increaseCoefficient(marks);
-		int increaseTimeReq = increaseCoefficient(timesRequired);
-		int increaseSkillLvl = increaseCoefficient(skillLvls);
+		// calculate standard deviations for each attribute
+		double stDevSkill = standardDeviation(skillLvlValues);
+		double stDevMarks = standardDeviation(markValues);
+		double stDevTime = standardDeviation(timesReqValues);
+
+		double marksSkew = skewnessCoefficient(markValues);
 
 		/*
-		 * The closer the skewness of the marks is to 0, the better, as this represents symmetry in the distribution of
-		 * questions in the paper.
+		 * 1. The closer the mean skill level to the user-selected skill level, the better. Same with total marks and
+		 * total time required. I.e., the smaller the calculated differences above, the better.
 		 * 
-		 * The higher the standard deviations calculated above, the better, because we want a good range of
+		 * 2. The higher the standard deviations calculated above, the better, because we want a good range of
 		 * easy-to-difficult questions.
 		 * 
-		 * The higher the increase coefficient (above) of these values, the better, because we want the questions to get
-		 * harder through the paper.
+		 * 3. The smaller the 'skewness' of the marks, the better, as this represents symmetry in the distribution of
+		 * questions in the paper.
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		fitness = stDevMarks + stDevTime + stDevSkill + increaseMarks + increaseTimeReq + increaseSkillLvl - marksSkew;
-
-		return fitness;
+		fitness = stDevMarks + stDevTime + stDevSkill - skillLvlDiff - marksDiff - timeReqDiff - marksSkew;
 	}
 
 	/**
@@ -88,7 +94,7 @@ public class Individual {
 	 */
 	private double standardDeviation(List<Integer> values) {
 		double mean = values.stream().mapToDouble(v -> v).average().getAsDouble();
-		double sumSquares = values.stream().map(v -> v * v).reduce(0, Integer::sum);
+		double sumSquares = values.stream().mapToDouble(v -> v * v).reduce(0, Double::sum);
 
 		double stDevSquared = sumSquares / values.size() - (mean * mean);
 
@@ -107,27 +113,6 @@ public class Individual {
 		double stDev = standardDeviation(values);
 
 		return Math.abs((mean - mode) / stDev);
-	}
-
-	/**
-	 * Find how much the values in a list generally increase. A high result means the list generally increases; opposite
-	 * for a low result.
-	 * 
-	 * @param values - the list to examine
-	 * @return number representing how much the values generally increase
-	 */
-	private int increaseCoefficient(List<Integer> values) {
-		if (values.isEmpty() || values.size() == 1) {
-			return 0;
-		}
-
-		int count = 0;
-		for (int i = 0; i < values.size() - 2; i++) {
-			if (values.get(i + 1) > values.get(i)) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	/**

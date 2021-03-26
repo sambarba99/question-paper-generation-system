@@ -14,17 +14,17 @@ public class Constants {
 	/*
 	 * Paths were files are stored
 	 */
-	public static final String GENETIC_ALGORITHM_RESULTS_PATH = "C:\\Users\\Sam Barba\\Desktop\\results.csv";
-
 	public static final String USERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\users.csv";
 
 	public static final String QUESTIONS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\questions.csv";
 
-	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\question_papers.csv";
+	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\questionpapers.csv";
 
 	public static final String SUBJECTS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\subjects.csv";
 
 	public static final String EXPORTED_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\exported\\";
+
+	public static final String GENETIC_ALGORITHM_TEST_RESULTS_PATH = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\results.csv";
 
 	/*
 	 * Character constants
