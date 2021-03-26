@@ -20,13 +20,10 @@ public class Individual {
 
 	private int userSelectedSkillLvl;
 
-	private int userSelectedMarks;
-
 	private int userSelectedTimeReq;
 
-	public Individual(int userSelectedSkillLvl, int userSelectedMarks, int userSelectedTimeReq) {
+	public Individual(int userSelectedSkillLvl, int userSelectedTimeReq) {
 		this.userSelectedSkillLvl = userSelectedSkillLvl;
-		this.userSelectedMarks = userSelectedMarks;
 		this.userSelectedTimeReq = userSelectedTimeReq;
 		this.genes = new ArrayList<>();
 		this.fitness = 0;
@@ -55,12 +52,10 @@ public class Individual {
 		List<Integer> timesReqValues = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
 
 		int meanSkillLvl = (int) Math.round(skillLvlValues.stream().mapToDouble(s -> s).average().getAsDouble());
-		int totalMarks = markValues.stream().mapToInt(m -> m).reduce(0, Integer::sum);
 		int totalTimeReq = timesReqValues.stream().mapToInt(t -> t).reduce(0, Integer::sum);
 
 		// calculate differences between user-selected values and generated values
 		int skillLvlDiff = Math.abs(userSelectedSkillLvl - meanSkillLvl);
-		int marksDiff = Math.abs(userSelectedMarks - totalMarks);
 		int timeReqDiff = Math.abs(userSelectedTimeReq - totalTimeReq);
 
 		// calculate standard deviations for each attribute
@@ -68,11 +63,11 @@ public class Individual {
 		double stDevMarks = standardDeviation(markValues);
 		double stDevTime = standardDeviation(timesReqValues);
 
-		double marksSkew = skewnessCoefficient(markValues);
+		double marksSkew = skewCoefficient(markValues);
 
 		/*
-		 * 1. The closer the mean skill level to the user-selected skill level, the better. Same with total marks and
-		 * total time required. I.e., the smaller the calculated differences above, the better.
+		 * 1. The closer the mean skill level to the user-selected skill level, the better. Same with total time
+		 * required. I.e., the smaller the calculated differences above, the better.
 		 * 
 		 * 2. The higher the standard deviations calculated above, the better, because we want a good range of
 		 * easy-to-difficult questions.
@@ -82,7 +77,7 @@ public class Individual {
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		fitness = stDevMarks + stDevTime + stDevSkill - skillLvlDiff - marksDiff - timeReqDiff - marksSkew;
+		fitness = stDevMarks + stDevTime + stDevSkill - skillLvlDiff - timeReqDiff - marksSkew;
 	}
 
 	/**
@@ -107,7 +102,7 @@ public class Individual {
 	 * @param values - the list of values
 	 * @return the skewness coefficient
 	 */
-	private double skewnessCoefficient(List<Integer> values) {
+	private double skewCoefficient(List<Integer> values) {
 		double mean = values.stream().mapToDouble(v -> v).average().getAsDouble();
 		double mode = mode(values);
 		double stDev = standardDeviation(values);

@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -255,7 +256,8 @@ public class AddQuestion {
 	}
 
 	/**
-	 * Make answers for a question, given a list of possible answers and the position of the correct one.
+	 * Make answers for a question, given a list of possible answers and the position of the correct one. Shuffle at the
+	 * end.
 	 * 
 	 * @param answersStr       - the list of possible answers
 	 * @param correctAnswerPos - the position of the correct answer
@@ -271,6 +273,8 @@ public class AddQuestion {
 
 			answers.add(answer);
 		}
+		Collections.shuffle(answers);
+
 		return answers;
 	}
 }

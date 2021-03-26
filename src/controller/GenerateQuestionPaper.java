@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javafx.geometry.Pos;
@@ -58,9 +59,9 @@ public class GenerateQuestionPaper {
 
 	private static Label lblSelectedSkillLvl = new Label("Skill level: KNOWLEDGE");
 
-	private static TextField txtMarks = new TextField();
+	private static Slider sliderTimeReqMins = new Slider();
 
-	private static TextField txtTimeRequired = new TextField();
+	private static Label lblSelectedTimeReq = new Label("Approx. time required: 30 minutes");
 
 	/**
 	 * Return whether a paper has been generated successfully or not.
@@ -76,16 +77,17 @@ public class GenerateQuestionPaper {
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
 		Label lblSelectSkillLvl = new Label("Select average question skill level\n(based on Bloom's taxonomy):");
-		Label lblEnterMarks = new Label("Enter no. marks:");
-		Label lblEnterTimeReq = new Label("Enter time required (mins):");
+		Label lblSelectTimeReq = new Label("Select approx. time required (mins):");
 
-		Button btnGenerate = new ButtonBuilder().withWidth(100)
+		Button btnGenerate = new ButtonBuilder().withWidth(120)
 			.withUserAction(UserAction.GENERATE)
 			.withActionEvent(e -> {
-				QuestionPaper generatedPaper = prepareParamsAndGenerate();
-				QuestionPaperService.getInstance().addQuestionPaper(generatedPaper);
-				generated = true;
-				stage.close();
+				Optional<QuestionPaper> generatedPaper = prepareParamsAndGenerate();
+				if (generatedPaper.isPresent()) {
+					QuestionPaperService.getInstance().addQuestionPaper(generatedPaper.get());
+					generated = true;
+					stage.close();
+				}
 			})
 			.build();
 
@@ -98,8 +100,8 @@ public class GenerateQuestionPaper {
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl, lblEnterMarks, txtMarks, lblEnterTimeReq,
-				txtTimeRequired)
+			.withNodes(lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl, lblSelectTimeReq, sliderTimeReqMins,
+				lblSelectedTimeReq, btnGenerate)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -109,7 +111,7 @@ public class GenerateQuestionPaper {
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(30)
-			.withNodes(LogoMaker.makeLogo(300), hbox, btnGenerate)
+			.withNodes(LogoMaker.makeLogo(300), hbox)
 			.build();
 
 		setup();
@@ -130,7 +132,7 @@ public class GenerateQuestionPaper {
 	 * 
 	 * @return whether or not paper has been generated successfully
 	 */
-	private static QuestionPaper prepareParamsAndGenerate() {
+	private static Optional<QuestionPaper> prepareParamsAndGenerate() {
 		String title = StringFormatter.formatTitle(txtTitle.getText());
 		String courseTitle = StringFormatter.formatTitle(txtCourseTitle.getText());
 		String courseCode = txtCourseCode.getText();
@@ -138,42 +140,27 @@ public class GenerateQuestionPaper {
 		if (title.length() == 0 || courseTitle.length() == 0 || courseCode.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Please enter the title, course title and course code.");
-			return null;
+			return Optional.empty();
 		} else if (!title.matches(Constants.TITLE_REGEX) || !courseTitle.matches(Constants.TITLE_REGEX)
 			|| !courseCode.matches(Constants.TITLE_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Titles and codes must be only alphanumeric, and no repeating spaces.");
-			return null;
-		}
-
-		int marks = 0;
-		try {
-			marks = Integer.parseInt(txtMarks.getText());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of marks.");
-			return null;
-		}
-		int timeReq = 0;
-		try {
-			timeReq = Integer.parseInt(txtTimeRequired.getText());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR, "Invalid time required.");
-			return null;
+			return Optional.empty();
 		}
 
 		int subjectId = SubjectService.getInstance()
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
+
 		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
+		int timeReq = (int) sliderTimeReqMins.getValue();
 
 		/*
 		 * REMOVE THIS WHEN REMOVING FILE WRITING CODE
 		 */
-		QuestionPaper generatedPaper = null;
+		Optional<QuestionPaper> generatedPaper = Optional.empty();
 		try {
 			generatedPaper = QuestionPaperGenerator.getInstance()
-				.generatePaper(subjectId, title, courseTitle, courseCode, skillLevel, marks, timeReq);
+				.generatePaper(subjectId, title, courseTitle, courseCode, skillLevel, timeReq);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -188,8 +175,6 @@ public class GenerateQuestionPaper {
 		txtTitle.setText(Constants.EMPTY);
 		txtCourseTitle.setText(Constants.EMPTY);
 		txtCourseCode.setText(Constants.EMPTY);
-		txtMarks.setText(Constants.EMPTY);
-		txtTimeRequired.setText(Constants.EMPTY);
 
 		choiceSubject.getItems().clear();
 		choiceSubject.getItems()
@@ -213,7 +198,19 @@ public class GenerateQuestionPaper {
 			sliderSkillLvl.setValue(intVal); // snap to exact value
 			lblSelectedSkillLvl.setText("Skill level: " + allSkillLvls.get(intVal - 1).getStrVal());
 		});
-
 		lblSelectedSkillLvl.setPrefWidth(240);
+
+		sliderTimeReqMins.setMin(30);
+		sliderTimeReqMins.setMax(180);
+		sliderTimeReqMins.setPrefWidth(200);
+		sliderTimeReqMins.setMajorTickUnit(30);
+		sliderTimeReqMins.setShowTickLabels(true);
+		sliderTimeReqMins.setShowTickMarks(true);
+		sliderTimeReqMins.valueProperty().addListener((obs, oldValue, newValue) -> {
+			int intVal = (int) (30 * Math.round(newValue.doubleValue() / 30));
+			sliderTimeReqMins.setValue(intVal); // snap to exact value
+			lblSelectedTimeReq.setText("Approx. time required: " + intVal + " minutes");
+		});
+		lblSelectedTimeReq.setPrefWidth(240);
 	}
 }

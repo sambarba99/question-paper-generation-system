@@ -54,16 +54,15 @@ public class GAUtils {
 	 * @param popSize              - the population size
 	 * @param numGenes             - the number of genes in each individual's chromosome
 	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedMarks    - the user-selected marks of the paper
 	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
 	 * @return the array of individuals
 	 */
 	public Individual[] initialiseIndividualArray(int popSize, int numGenes, int userSelectedSkillLvl,
-		int userSelectedMarks, int userSelectedTimeReq) {
+		int userSelectedTimeReq) {
 
 		Individual[] individuals = new Individual[popSize];
 		for (int i = 0; i < popSize; i++) {
-			individuals[i] = new Individual(userSelectedSkillLvl, userSelectedMarks, userSelectedTimeReq);
+			individuals[i] = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
 		}
 		return individuals;
 	}
@@ -166,16 +165,15 @@ public class GAUtils {
 	 * @param offspring            - the array representing the offspring set
 	 * @param crossoverRate        - the crossover rate, ranging from 0 to 1 (inclusive)
 	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedMarks    - the user-selected marks of the paper
 	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
 	 */
-	public void crossover(Individual[] offspring, double crossoverRate, int userSelectedSkillLvl, int userSelectedMarks,
+	public void crossover(Individual[] offspring, double crossoverRate, int userSelectedSkillLvl,
 		int userSelectedTimeReq) {
 
 		for (int i = 0; i < offspring.length; i += 2) {
 			if (RAND.nextDouble() < crossoverRate && i < offspring.length - 1) {
 				Individual newOffspring = crossoverToCreateOffspring(offspring[i], offspring[i + 1],
-					userSelectedSkillLvl, userSelectedMarks, userSelectedTimeReq);
+					userSelectedSkillLvl, userSelectedTimeReq);
 
 				// replace only if fitter
 				if (newOffspring.getFitness() > offspring[i].getFitness()) {
@@ -192,19 +190,18 @@ public class GAUtils {
 	 * @param p1                   - the first parent
 	 * @param p2                   - the second parent
 	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedMarks    - the user-selected marks of the paper
 	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
 	 * @return the fittest offspring of the parents
 	 */
 	private Individual crossoverToCreateOffspring(Individual p1, Individual p2, int userSelectedSkillLvl,
-		int userSelectedMarks, int userSelectedTimeReq) {
+		int userSelectedTimeReq) {
 
 		int crossoverPoint = RAND.nextInt(p1.getGenes().size());
 
 		// TODO
 
-		Individual offspring1 = new Individual(userSelectedSkillLvl, userSelectedMarks, userSelectedTimeReq);
-		Individual offspring2 = new Individual(userSelectedSkillLvl, userSelectedMarks, userSelectedTimeReq);
+		Individual offspring1 = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
+		Individual offspring2 = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
 
 		offspring1.calculateFitness();
 		offspring2.calculateFitness();

@@ -19,7 +19,7 @@ public enum UserAction {
 	DELETE_USER("Delete user"),
 	EXIT_APPLICATION("Exit"),
 	EXPORT("Export to .txt"),
-	GENERATE("Generate"),
+	GENERATE("Generate!"),
 	GENERATE_QUESTION_PAPER("Generate question paper"),
 	LOG_IN("Log In"),
 	OPEN_ACADEMC_MATERIAL("Open Academic Material"),

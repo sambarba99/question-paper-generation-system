@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -35,12 +36,11 @@ public class QuestionPaperGenerator {
 	 * @param courseTitle      - the course title of the paper
 	 * @param courseCode       - the course code of the paper
 	 * @param skillLevel       - the mean skill level of the paper
-	 * @param marks            - the approximate no. marks the user wants for the paper
 	 * @param timeRequiredMins - the approximate time required the user wants for the paper
 	 * @return a generated question paper
 	 */
-	public QuestionPaper generatePaper(int subjectId, String title, String courseTitle, String courseCode,
-		SkillLevel skillLevel, int marks, int timeRequiredMins) throws IOException {
+	public Optional<QuestionPaper> generatePaper(int subjectId, String title, String courseTitle, String courseCode,
+		SkillLevel skillLevel, int timeRequiredMins) throws IOException {
 
 		LOGGER.info("Generating question paper...");
 
@@ -59,16 +59,16 @@ public class QuestionPaperGenerator {
 		int numGenes = gaUtils.calculateChromosomeSize(questions);
 
 		Individual[] population = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, numGenes,
-			skillLevel.getIntVal(), marks, timeRequiredMins);
+			skillLevel.getIntVal(), timeRequiredMins);
 		Individual[] offspring = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, numGenes, skillLevel.getIntVal(),
-			marks, timeRequiredMins);
+			timeRequiredMins);
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
 			// initial selection = true
 			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, true);
 
-			gaUtils.crossover(offspring, Constants.CROSSOVER_RATE, skillLevel.getIntVal(), marks, timeRequiredMins);
+			gaUtils.crossover(offspring, Constants.CROSSOVER_RATE, skillLevel.getIntVal(), timeRequiredMins);
 
 			gaUtils.mutation(offspring, numGenes, Constants.MUTATION_RATE, questions);
 
@@ -86,10 +86,10 @@ public class QuestionPaperGenerator {
 
 		Individual fittest = gaUtils.findFittest(population);
 		QuestionPaper questionPaper = makePaperOutOfIndividual(fittest, subjectId, title, courseTitle, courseCode,
-			skillLevel, marks, timeRequiredMins);
+			skillLevel, timeRequiredMins);
 
 		LOGGER.info("Question paper generated");
-		return questionPaper;
+		return Optional.of(questionPaper);
 	}
 
 	/**
@@ -102,12 +102,11 @@ public class QuestionPaperGenerator {
 	 * @param courseTitle      - the course title of the paper
 	 * @param courseCode       - the course code of the paper
 	 * @param skillLevel       - the skill level of the paper
-	 * @param marks            - the total marks of the paper
 	 * @param timeRequiredMins - the time required to complete the paper
 	 * @return the equivalent QuestionPaper object
 	 */
 	private QuestionPaper makePaperOutOfIndividual(Individual individual, int subjectId, String title,
-		String courseTitle, String courseCode, SkillLevel skillLevel, int marks, int timeRequiredMins) {
+		String courseTitle, String courseCode, SkillLevel skillLevel, int timeRequiredMins) {
 
 		int id = QuestionPaperService.getInstance().getHighestQuestionPaperId() + 1;
 
@@ -115,6 +114,8 @@ public class QuestionPaperGenerator {
 		individual.getGenes().sort(Comparator.comparing(Question::getMarks));
 
 		List<Integer> questionIds = individual.getGenes().stream().map(Question::getId).collect(Collectors.toList());
+
+		int marks = individual.getGenes().stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
 
 		return new QuestionPaperBuilder().withId(id)
 			.withSubjectId(subjectId)

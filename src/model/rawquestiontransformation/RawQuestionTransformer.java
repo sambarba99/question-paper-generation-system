@@ -3,6 +3,7 @@ package model.rawquestiontransformation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +188,7 @@ public class RawQuestionTransformer {
 				Answer answer = new AnswerBuilder().withValue(answerStr).withIsCorrect(correct).build();
 				answers.add(answer);
 			}
+			Collections.shuffle(answers);
 
 			/*
 			 * Find shortest question and longest question statement in order to determine skill level, time required,
