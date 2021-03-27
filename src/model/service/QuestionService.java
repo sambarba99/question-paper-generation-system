@@ -98,7 +98,7 @@ public class QuestionService {
 	public List<QuestionDTO> getQuestionDTOsWithFilters(List<Integer> skillLvls, List<Integer> subjectIds) {
 		/*
 		 * If a list is empty, say skillLvls, then it means the user does not want to filter by skill level. This is why
-		 * we have the skillLvls.isEmpty() condition in a logical disjunction (||).
+		 * the skillLvls.isEmpty() condition is in a logical disjunction (||).
 		 */
 		return getAllQuestions().stream()
 			.filter(q -> skillLvls.isEmpty() || skillLvls.contains(q.getSkillLevel().getIntVal()))

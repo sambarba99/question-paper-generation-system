@@ -197,7 +197,7 @@ public class QuestionDAO {
 	 */
 	private List<Answer> makeAnswers(List<String> answersStr, String correctAnswerLetter) {
 		/*
-		 * Since correct answer is A-D, we subtract these 2 ASCII values to get its position in the list of answers.
+		 * Since correct answer is A-D, the ASCII value of 'A' is subtracted to get its position in the list of answers.
 		 * E.g. If C is correct, then position in list = 67 - 65 = 2.
 		 */
 		int correctAnswerPos = (int) correctAnswerLetter.charAt(0) - Constants.ASCII_A;

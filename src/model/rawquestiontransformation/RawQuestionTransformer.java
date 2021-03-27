@@ -169,7 +169,7 @@ public class RawQuestionTransformer {
 		for (Entry<String, List<String>> entry : questionsAndAnswers.entrySet()) {
 			List<String> answersStr = entry.getValue();
 
-			while (answersStr.size() > ANSWERS_PER_QUESTION) { // we must delete a random wrong answer
+			while (answersStr.size() > ANSWERS_PER_QUESTION) { // a random wrong answer must be deleted
 				int randIndex = RAND.nextInt(answersStr.size());
 				while (answersStr.get(randIndex).charAt(0) == '1') { // ensure deletion of WRONG answer
 					randIndex = RAND.nextInt(answersStr.size());

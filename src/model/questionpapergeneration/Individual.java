@@ -33,18 +33,26 @@ public class Individual {
 		return genes;
 	}
 
-	public void copyGenes(List<Question> genes) {
+	public void setGenes(List<Question> genes) {
 		this.genes = new ArrayList<>(genes); // shallow copy
 	}
 
-	public double getFitness() {
-		return fitness;
+	/**
+	 * Check if chromosome contains a question (gene).
+	 * 
+	 * @param gene - the question to check
+	 * @return whether or not the question exists in the gene
+	 */
+	public boolean containsGene(Question gene) {
+		return genes.stream().anyMatch(q -> q.getId() == gene.getId());
 	}
 
 	/**
 	 * Calculate the fitness of an individual paper.
+	 * 
+	 * @return the fitness of the individual
 	 */
-	public void calculateFitness() {
+	public double calculateFitness() {
 		List<Integer> skillLvlValues = genes.stream()
 			.map(q -> q.getSkillLevel().getIntVal())
 			.collect(Collectors.toList());
@@ -54,7 +62,7 @@ public class Individual {
 		int meanSkillLvl = (int) Math.round(skillLvlValues.stream().mapToDouble(s -> s).average().getAsDouble());
 		int totalTimeReq = timesReqValues.stream().mapToInt(t -> t).reduce(0, Integer::sum);
 
-		// calculate differences between user-selected values and generated values
+		// calculate distance between user-selected values and generated values
 		int skillLvlDiff = Math.abs(userSelectedSkillLvl - meanSkillLvl);
 		int timeReqDiff = Math.abs(userSelectedTimeReq - totalTimeReq);
 
@@ -67,33 +75,38 @@ public class Individual {
 
 		/*
 		 * 1. The closer the mean skill level to the user-selected skill level, the better. Same with total time
-		 * required. I.e., the smaller the calculated differences above, the better.
+		 * required. I.e., the smaller the calculated distances above, the better.
 		 * 
-		 * 2. The higher the standard deviations calculated above, the better, because we want a good range of
-		 * easy-to-difficult questions.
+		 * 2. The higher the standard deviations calculated above, the better, because a good range is needed of
+		 * easier-to-harder questions.
 		 * 
 		 * 3. The smaller the 'skewness' of the marks, the better, as this represents symmetry in the distribution of
 		 * questions in the paper.
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		fitness = stDevMarks + stDevTime + stDevSkill - skillLvlDiff - timeReqDiff - marksSkew;
+		fitness = stDevSkill + stDevMarks + stDevTime - skillLvlDiff - timeReqDiff - marksSkew;
+
+		return fitness;
 	}
 
 	/**
 	 * Calculate standard deviation for a list of values (e.g. skill level or no. marks) which will help determine paper
-	 * fitness.
+	 * fitness. It is the square root of the variance, and the variance is the mean of the squared differences.
 	 * 
 	 * @param values - the list of values
 	 * @return the standard deviation of the values
 	 */
 	private double standardDeviation(List<Integer> values) {
+		double variance = 0;
 		double mean = values.stream().mapToDouble(v -> v).average().getAsDouble();
-		double sumSquares = values.stream().mapToDouble(v -> v * v).reduce(0, Double::sum);
 
-		double stDevSquared = sumSquares / values.size() - (mean * mean);
+		for (Integer v : values) {
+			variance += (v - mean) * (v - mean);
+		}
+		variance /= values.size();
 
-		return Math.sqrt(stDevSquared);
+		return Math.sqrt(variance);
 	}
 
 	/**

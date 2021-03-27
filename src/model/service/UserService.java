@@ -178,7 +178,8 @@ public class UserService {
 				}
 			} else {
 				/*
-				 * If we are here, the users file doesn't exist, so this user is the first one - so make them an admin.
+				 * If here, it means the users file doesn't exist, so this user is the first one - so make them an
+				 * admin.
 				 */
 				User user = new UserBuilder().withUsername(username)
 					.withPassword(pass)

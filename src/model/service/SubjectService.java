@@ -105,8 +105,8 @@ public class SubjectService {
 	 */
 	public int getSubjectIdFromDisplayStr(String subjectDisplayStr) {
 		/*
-		 * Here and in getSelectedSubjectIds() we are getting the final element because there can be multiple spaces in
-		 * the subject, e.g. "Mathematical Analysis (ID 4)". We then remove the closing parentheses.
+		 * Here and in getSelectedSubjectIds() final element is being retrieved, because there can be multiple spaces in
+		 * the subject, e.g. "Mathematical Analysis (ID 4)". The closing parentheses are then removed.
 		 */
 		String[] split = subjectDisplayStr.split(Constants.SPACE);
 		String subjectIdStr = split[split.length - 1];

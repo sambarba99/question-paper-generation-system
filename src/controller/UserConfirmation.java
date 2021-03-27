@@ -34,7 +34,7 @@ public class UserConfirmation {
 	private static boolean actionConfirmed;
 
 	/**
-	 * Display the object to delete (if we're confirming deletion), and return whether or not the action was confirmed.
+	 * Display the object to delete (if confirming deletion), and return whether or not the action was confirmed.
 	 * 
 	 * @param deleteObject - the type of object the user wishes to delete, if this class is called to use for deletion
 	 *                     confirmation

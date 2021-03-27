@@ -49,19 +49,20 @@ public class QuestionPaperGenerator {
 
 		GAUtils gaUtils = GAUtils.getInstance();
 
-		// get questions by user-selected subject, so we already identify 'fit' questions with this parameter
+		// get questions by user-selected subject, 'fit' questions are already identified with this parameter
 		List<Question> questions = QuestionService.getInstance()
 			.getAllQuestions()
 			.stream()
 			.filter(q -> q.getSubjectId() == subjectId)
 			.collect(Collectors.toList());
 
-		int numGenes = gaUtils.calculateChromosomeSize(questions);
+		int numGenes = gaUtils.calculateChromosomeSize(questions, skillLevel.getIntVal(), timeRequiredMins);
 
-		Individual[] population = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, numGenes,
-			skillLevel.getIntVal(), timeRequiredMins);
-		Individual[] offspring = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, numGenes, skillLevel.getIntVal(),
+		Individual[] population = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, skillLevel.getIntVal(),
 			timeRequiredMins);
+		Individual[] offspring = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, skillLevel.getIntVal(),
+			timeRequiredMins);
+
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
@@ -70,7 +71,7 @@ public class QuestionPaperGenerator {
 
 			gaUtils.crossover(offspring, Constants.CROSSOVER_RATE, skillLevel.getIntVal(), timeRequiredMins);
 
-			gaUtils.mutation(offspring, numGenes, Constants.MUTATION_RATE, questions);
+			gaUtils.mutation(offspring, Constants.MUTATION_RATE, questions);
 
 			// initial selection = false
 			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, false);

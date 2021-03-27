@@ -208,7 +208,7 @@ public class GenerateQuestionPaper {
 		sliderTimeReqMins.setShowTickMarks(true);
 		sliderTimeReqMins.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = (int) (30 * Math.round(newValue.doubleValue() / 30));
-			sliderTimeReqMins.setValue(intVal); // snap to exact value
+			sliderTimeReqMins.setValue(intVal); // snap to nearest 30 mins
 			lblSelectedTimeReq.setText("Approx. time required: " + intVal + " minutes");
 		});
 		lblSelectedTimeReq.setPrefWidth(240);
