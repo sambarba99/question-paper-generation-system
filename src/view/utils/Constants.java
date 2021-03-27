@@ -24,7 +24,7 @@ public class Constants {
 
 	public static final String EXPORTED_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\exported\\";
 
-	public static final String GENETIC_ALGORITHM_TEST_RESULTS_PATH = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\results.csv";
+	public static final String GENETIC_ALGORITHM_TEST_RESULTS = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\GA-test-results.csv";
 
 	/*
 	 * Character constants

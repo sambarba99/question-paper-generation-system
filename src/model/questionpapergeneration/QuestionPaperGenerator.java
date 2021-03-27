@@ -44,12 +44,12 @@ public class QuestionPaperGenerator {
 
 		LOGGER.info("Generating question paper...");
 
-		FileWriter csvWriter = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS_PATH);
+		FileWriter csvWriter = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
 		csvWriter.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
 
 		GAUtils gaUtils = GAUtils.getInstance();
 
-		// get questions by user-selected subject, 'fit' questions are already identified with this parameter
+		// get questions by user-selected subject; 'fit' questions are already identified with this parameter
 		List<Question> questions = QuestionService.getInstance()
 			.getAllQuestions()
 			.stream()
@@ -58,23 +58,21 @@ public class QuestionPaperGenerator {
 
 		int numGenes = gaUtils.calculateChromosomeSize(questions, skillLevel.getIntVal(), timeRequiredMins);
 
-		Individual[] population = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, skillLevel.getIntVal(),
-			timeRequiredMins);
-		Individual[] offspring = gaUtils.initialiseIndividualArray(Constants.POP_SIZE, skillLevel.getIntVal(),
-			timeRequiredMins);
+		Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);
+		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);
 
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
 			// initial selection = true
-			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, true);
+			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, true);
 
-			gaUtils.crossover(offspring, Constants.CROSSOVER_RATE, skillLevel.getIntVal(), timeRequiredMins);
+			gaUtils.crossover(offspring, skillLevel.getIntVal(), timeRequiredMins);
 
-			gaUtils.mutation(offspring, Constants.MUTATION_RATE, questions);
+			gaUtils.mutation(offspring, questions);
 
 			// initial selection = false
-			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, Constants.TOURNAMENT_SIZE, false);
+			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, false);
 
 			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
 			csvWriter.append(g + Constants.COMMA);
@@ -86,8 +84,8 @@ public class QuestionPaperGenerator {
 		csvWriter.close();
 
 		Individual fittest = gaUtils.findFittest(population);
-		QuestionPaper questionPaper = makePaperOutOfIndividual(fittest, subjectId, title, courseTitle, courseCode,
-			skillLevel, timeRequiredMins);
+		QuestionPaper questionPaper = makePaperOutOfFittest(fittest, subjectId, title, courseTitle, courseCode,
+			skillLevel);
 
 		LOGGER.info("Question paper generated");
 		return Optional.of(questionPaper);
@@ -97,26 +95,29 @@ public class QuestionPaperGenerator {
 	 * Create a QuestionPaper object in order to write it to the papers CSV file, out of an Individual and other
 	 * question paper parameters.
 	 * 
-	 * @param individual       - the individual to use, produced by the genetic algorithm
-	 * @param subjectId        - the subject ID of the paper
-	 * @param title            - the title of the paper
-	 * @param courseTitle      - the course title of the paper
-	 * @param courseCode       - the course code of the paper
-	 * @param skillLevel       - the skill level of the paper
-	 * @param timeRequiredMins - the time required to complete the paper
+	 * @param fittest     - the fittest individual to use, produced by the genetic algorithm
+	 * @param subjectId   - the subject ID of the paper
+	 * @param title       - the title of the paper
+	 * @param courseTitle - the course title of the paper
+	 * @param courseCode  - the course code of the paper
+	 * @param skillLevel  - the skill level of the paper
 	 * @return the equivalent QuestionPaper object
 	 */
-	private QuestionPaper makePaperOutOfIndividual(Individual individual, int subjectId, String title,
-		String courseTitle, String courseCode, SkillLevel skillLevel, int timeRequiredMins) {
+	private QuestionPaper makePaperOutOfFittest(Individual fittest, int subjectId, String title, String courseTitle,
+		String courseCode, SkillLevel skillLevel) {
 
 		int id = QuestionPaperService.getInstance().getHighestQuestionPaperId() + 1;
 
 		// sort questions in ascending order of marks, meaning harder questions appear towards the end
-		individual.getGenes().sort(Comparator.comparing(Question::getMarks));
+		fittest.getGenes().sort(Comparator.comparing(Question::getMarks));
 
-		List<Integer> questionIds = individual.getGenes().stream().map(Question::getId).collect(Collectors.toList());
+		List<Integer> questionIds = fittest.getGenes().stream().map(Question::getId).collect(Collectors.toList());
 
-		int marks = individual.getGenes().stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
+		int marks = fittest.getGenes().stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
+		int timeRequiredMins = fittest.getGenes()
+			.stream()
+			.mapToInt(Question::getTimeRequiredMins)
+			.reduce(0, Integer::sum);
 
 		return new QuestionPaperBuilder().withId(id)
 			.withSubjectId(subjectId)

@@ -148,11 +148,12 @@ public class QuestionPaperService {
 			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i)).get();
 
 			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + "Question " + (i + 1) + "/" + numQ + " ("
-				+ question.getMarks() + " marks). " + question.getStatement());
-			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + question.getAnswers().get(0).toString());
-			resultBld.append(Constants.NEWLINE + question.getAnswers().get(1).toString());
-			resultBld.append(Constants.NEWLINE + question.getAnswers().get(2).toString());
-			resultBld.append(Constants.NEWLINE + question.getAnswers().get(3).toString());
+				+ question.getMarks() + " marks). " + question.getStatement() + Constants.NEWLINE);
+
+			for (int j = 0; j < question.getAnswers().size(); j++) {
+				resultBld.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + j)) + ") "
+					+ question.getAnswers().get(j).getValue());
+			}
 		}
 
 		return resultBld.toString();

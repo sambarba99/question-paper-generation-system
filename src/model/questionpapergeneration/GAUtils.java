@@ -8,6 +8,8 @@ import java.util.Random;
 
 import model.persisted.Question;
 
+import view.utils.Constants;
+
 /**
  * This class is a singleton, the use of which is to perform evolutionary methods such as selection and mutation, when
  * generating question papers.
@@ -36,6 +38,14 @@ public class GAUtils {
 			.average()
 			.getAsDouble();
 
+		if ((int) meanTimeRequired == 0) {
+			/*
+			 * If no questions exist of the user-selected skill level, then take the mean across ALL existing skill
+			 * levels.
+			 */
+			meanTimeRequired = questions.stream().mapToDouble(Question::getTimeRequiredMins).average().getAsDouble();
+		}
+
 		/*
 		 * Determine the number of questions (genes) to have, given the mean time per question of the user-selected
 		 * skill level
@@ -53,14 +63,13 @@ public class GAUtils {
 	/**
 	 * Initialise an array of individuals, which can be used to represent the population or offspring.
 	 * 
-	 * @param popSize              - the population size
 	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
 	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
 	 * @return the array of individuals
 	 */
-	public Individual[] initialiseIndividualArray(int popSize, int userSelectedSkillLvl, int userSelectedTimeReq) {
-		Individual[] individuals = new Individual[popSize];
-		for (int i = 0; i < popSize; i++) {
+	public Individual[] initialiseIndividualArray(int userSelectedSkillLvl, int userSelectedTimeReq) {
+		Individual[] individuals = new Individual[Constants.POP_SIZE];
+		for (int i = 0; i < Constants.POP_SIZE; i++) {
 			individuals[i] = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
 		}
 		return individuals;
@@ -74,12 +83,13 @@ public class GAUtils {
 	 * @param questions  - list of questions to use when selecting random genes
 	 */
 	public void randomisePopulationGenes(Individual[] population, int numGenes, List<Question> questions) {
-		for (int i = 0; i < population.length; i++) {
+		for (int i = 0; i < Constants.POP_SIZE; i++) {
 			List<Question> questionsCopy = new ArrayList<>(questions);
+
 			for (int j = 0; j < numGenes; j++) {
 				int idx = RAND.nextInt(questionsCopy.size());
-				population[i].getGenes().add(questionsCopy.get(idx));
-				questionsCopy.remove(idx); // avoid repeated questions in an Individual's chromosome
+				// avoid repeated questions in an Individual's chromosome, so question is deleted after use
+				population[i].getGenes().add(questionsCopy.remove(idx));
 			}
 		}
 	}
@@ -90,22 +100,18 @@ public class GAUtils {
 	 * @param population       - the array of individuals in the current population
 	 * @param offspring        - the array of individuals in the current offspring set
 	 * @param selectionType    - the type of selection to use, i.e. tournament or roulette wheel
-	 * @param tournamentSize   - number of individuals in a tournament (if this selection is used), the fittest of which
-	 *                         will be selected to copy genes from
 	 * @param initialSelection - whether or not this is the first selection process (determines if either the offspring
 	 *                         set is generated, or the next population)
 	 */
 	public void selection(Individual[] population, Individual[] offspring, SelectionType selectionType,
-		int tournamentSize, boolean initialSelection) {
-
-		int popSize = population.length;
+		boolean initialSelection) {
 
 		switch (selectionType) {
 			case ROULETTE_WHEEL:
 				// populate roulette wheel based on each individual's fitness
 				List<Individual> rouletteWheel = new ArrayList<>();
 
-				for (int i = 0; i < popSize; i++) {
+				for (int i = 0; i < Constants.POP_SIZE; i++) {
 					int numTimesToAdd = initialSelection
 						? (int) Math.abs(Math.round(population[i].calculateFitness() * 100))
 						: (int) Math.abs(Math.round(offspring[i].calculateFitness() * 100));
@@ -121,8 +127,9 @@ public class GAUtils {
 				}
 
 				// select random individuals from wheel
-				for (int i = 0; i < popSize; i++) {
+				for (int i = 0; i < Constants.POP_SIZE; i++) {
 					Individual randIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
+
 					if (initialSelection) {
 						offspring[i].setGenes(randIndividual.getGenes());
 					} else {
@@ -131,13 +138,14 @@ public class GAUtils {
 				}
 				break;
 			case TOURNAMENT:
-				for (int i = 0; i < popSize; i++) {
+				for (int i = 0; i < Constants.POP_SIZE; i++) {
 					List<Individual> tournamentIndividuals = new ArrayList<>();
-					for (int n = 0; n < tournamentSize; n++) {
+
+					for (int n = 0; n < Constants.TOURNAMENT_SIZE; n++) {
 						if (initialSelection) {
-							tournamentIndividuals.add(population[RAND.nextInt(popSize)]);
+							tournamentIndividuals.add(population[RAND.nextInt(Constants.POP_SIZE)]);
 						} else {
-							tournamentIndividuals.add(offspring[RAND.nextInt(popSize)]);
+							tournamentIndividuals.add(offspring[RAND.nextInt(Constants.POP_SIZE)]);
 						}
 					}
 
@@ -158,18 +166,15 @@ public class GAUtils {
 	}
 
 	/**
-	 * Perform crossover on the offspring set at random, depending on the crossover rate.
+	 * Perform crossover on pairs of individuals in the offspring set at random, depending on the crossover rate.
 	 * 
 	 * @param offspring            - the array representing the offspring set
-	 * @param crossoverRate        - the crossover rate, ranging from 0 to 1 (inclusive)
 	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
 	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
 	 */
-	public void crossover(Individual[] offspring, double crossoverRate, int userSelectedSkillLvl,
-		int userSelectedTimeReq) {
-
-		for (int i = 0; i < offspring.length; i += 2) {
-			if (RAND.nextDouble() < crossoverRate && i < offspring.length - 1) {
+	public void crossover(Individual[] offspring, int userSelectedSkillLvl, int userSelectedTimeReq) {
+		for (int i = 0; i < Constants.POP_SIZE; i += 2) {
+			if (RAND.nextDouble() < Constants.CROSSOVER_RATE && i < Constants.POP_SIZE - 1) {
 				/*
 				 * In each iteration, 2 possible offspring are found by calling recombineGenesToMakeOffspring twice, but
 				 * switching the parents around. The fittest of the 2 is then kept.
@@ -215,18 +220,23 @@ public class GAUtils {
 
 		Question selectedGene;
 
+		int idx = 0;
 		while (offspring.getGenes().size() < p1.getGenes().size()) {
-			for (int i = 0; i < p1.getGenes().size(); i++) {
-				if (RAND.nextDouble() < probUseP1genes) {
-					selectedGene = p1.getGenes().get(i);
-				} else {
-					selectedGene = p2.getGenes().get(i);
-				}
+			if (RAND.nextDouble() < probUseP1genes) {
+				selectedGene = p1.getGenes().get(idx);
+			} else {
+				selectedGene = p2.getGenes().get(idx);
+			}
 
-				// ensure no repeated questions
-				if (!offspring.containsGene(selectedGene)) {
-					offspring.getGenes().add(selectedGene);
-				}
+			// ensure no repeated questions
+			if (!offspring.containsGene(selectedGene)) {
+				offspring.getGenes().add(selectedGene);
+				idx++;
+			}
+
+			// if reached list bounds, loop back to start of parent's chromosome
+			if (idx == p1.getGenes().size()) {
+				idx = 0;
 			}
 		}
 
@@ -236,18 +246,17 @@ public class GAUtils {
 	/**
 	 * Perform mutation on the offspring.
 	 * 
-	 * @param offspring    - the array representing the offspring set
-	 * @param mutationRate - the mutation rate, ranging from 0 to 1 (inclusive)
-	 * @param questions    - the set of questions to choose from, ensuring question isn't already in Individual
+	 * @param offspring - the array representing the offspring set
+	 * @param questions - the set of questions to choose from, ensuring question isn't already in Individual
 	 */
-	public void mutation(Individual[] offspring, double mutationRate, List<Question> questions) {
+	public void mutation(Individual[] offspring, List<Question> questions) {
 		int numGenes = offspring[0].getGenes().size();
 
-		for (int i = 0; i < offspring.length; i++) {
+		for (int i = 0; i < Constants.POP_SIZE; i++) {
 			List<Question> questionsCopy = new ArrayList<>(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				if (RAND.nextDouble() < mutationRate) {
+				if (RAND.nextDouble() < Constants.MUTATION_RATE) {
 					int questionIdx = RAND.nextInt(questionsCopy.size());
 					Question randGene = questions.get(questionIdx);
 
@@ -278,7 +287,7 @@ public class GAUtils {
 		double highest = population[0].calculateFitness();
 		double lowest = highest;
 
-		for (int i = 0; i < population.length; i++) {
+		for (int i = 0; i < Constants.POP_SIZE; i++) {
 			double f = population[i].calculateFitness();
 			sum += f;
 			if (f > highest) {
@@ -289,7 +298,7 @@ public class GAUtils {
 			}
 		}
 
-		double mean = sum / population.length;
+		double mean = sum / Constants.POP_SIZE;
 
 		return Arrays.asList(mean, highest, lowest);
 	}
