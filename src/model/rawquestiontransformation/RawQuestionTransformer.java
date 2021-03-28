@@ -53,8 +53,7 @@ public class RawQuestionTransformer {
 
 	private static final Logger LOGGER = Logger.getLogger(RawQuestionTransformer.class.getName());
 
-	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "HistoryEurope", "HistoryUS",
-		"HistoryWorld", "Marketing", "Psychology" };
+	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "History", "Marketing", "Psychology" };
 
 	private static final String INPUT_DIRECTORY = "C:\\#rawquestions\\";
 

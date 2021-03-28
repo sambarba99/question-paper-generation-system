@@ -149,6 +149,7 @@ public class AdminPanel {
 		colPrivilege.setPrefWidth(150);
 		colDateCreated.setPrefWidth(150);
 
+		tblUsers.getColumns().clear();
 		tblUsers.getColumns().addAll(colUsername, colPrivilege, colDateCreated);
 		tblUsers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblUsers.setPrefSize(452, 300);

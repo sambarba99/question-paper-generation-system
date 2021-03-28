@@ -282,6 +282,7 @@ public class AcademicMaterialManagement {
 		colNumQuestions.setPrefWidth(120);
 		colSubjectDateCreated.setPrefWidth(150);
 
+		tblSubjects.getColumns().clear();
 		tblSubjects.getColumns().addAll(colSubjectId, colSubjectTitle, colNumQuestions, colSubjectDateCreated);
 		tblSubjects.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tblSubjects.setPrefSize(522, 365);
@@ -308,6 +309,7 @@ public class AcademicMaterialManagement {
 		colPaperCourse.setPrefWidth(200);
 		colPaperDateCreated.setPrefWidth(150);
 
+		tblQuestionPapers.getColumns().clear();
 		tblQuestionPapers.getColumns()
 			.addAll(colPaperId, colPaperTitle, colPaperSubject, colPaperCourse, colPaperDateCreated);
 		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);

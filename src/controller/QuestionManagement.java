@@ -179,6 +179,7 @@ public class QuestionManagement {
 		colTimeRequired.setPrefWidth(180);
 		colDateCreated.setPrefWidth(150);
 
+		tblQuestions.getColumns().clear();
 		tblQuestions.getColumns()
 			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colTimeRequired, colDateCreated);
 		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
