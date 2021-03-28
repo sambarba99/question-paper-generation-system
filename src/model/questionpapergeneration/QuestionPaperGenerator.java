@@ -64,15 +64,17 @@ public class QuestionPaperGenerator {
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
-			// initial selection = true
-			gaUtils.selection(population, offspring, true);
+			gaUtils.selection(population, offspring);
 
 			gaUtils.crossover(offspring, skillLevel.getIntVal(), timeRequiredMins);
 
 			gaUtils.mutation(offspring, questions);
 
-			// initial selection = false
-			gaUtils.selection(population, offspring, false);
+			/*
+			 * In this final selection step, the next population is defined using the new offspring, so 'population' and
+			 * 'offspring' are switched round when calling the function.
+			 */
+			gaUtils.selection(offspring, population);
 
 			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
 			csvWriter.append(g + Constants.COMMA);

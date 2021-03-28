@@ -61,7 +61,7 @@ public class GenerateQuestionPaper {
 
 	private static Slider sliderTimeReqMins = new Slider();
 
-	private static Label lblSelectedTimeReq = new Label("Approx. time required: 30 minutes");
+	private static Label lblSelectedTimeReq = new Label("Approx. time required: 60 minutes");
 
 	/**
 	 * Return whether a paper has been generated successfully or not.
@@ -201,13 +201,13 @@ public class GenerateQuestionPaper {
 		});
 		lblSelectedSkillLvl.setPrefWidth(240);
 
-		sliderTimeReqMins.setMin(30);
+		sliderTimeReqMins.setMin(60);
 		sliderTimeReqMins.setMax(180);
 		sliderTimeReqMins.setPrefWidth(200);
 		sliderTimeReqMins.setMajorTickUnit(15);
 		sliderTimeReqMins.setShowTickLabels(true);
 		sliderTimeReqMins.setShowTickMarks(true);
-		sliderTimeReqMins.setValue(30);
+		sliderTimeReqMins.setValue(60);
 		sliderTimeReqMins.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = (int) (15 * Math.round(newValue.doubleValue() / 15));
 			sliderTimeReqMins.setValue(intVal); // snap to nearest 15 mins

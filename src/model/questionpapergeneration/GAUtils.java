@@ -98,68 +98,44 @@ public class GAUtils {
 	/**
 	 * Perform selection either to generate the offspring, or the next population.
 	 * 
-	 * @param population       - the array of individuals in the current population
-	 * @param offspring        - the array of individuals in the current offspring set
-	 * @param initialSelection - whether or not this is the first selection process (determines if either the offspring
-	 *                         set is generated, or the next population)
+	 * @param population - the array of individuals in the current population
+	 * @param offspring  - the array of individuals in the current offspring set
 	 */
-	public void selection(Individual[] population, Individual[] offspring, boolean initialSelection) {
+	public void selection(Individual[] population, Individual[] offspring) {
 		switch (Constants.SELECTION_TYPE) {
 			case ROULETTE_WHEEL:
 				// populate roulette wheel based on each individual's fitness
 				List<Individual> rouletteWheel = new ArrayList<>();
 
 				for (int i = 0; i < Constants.POP_SIZE; i++) {
-					int numTimesToAdd = initialSelection
-						? (int) Math.abs(Math.round(population[i].calculateFitness() * 100))
-						: (int) Math.abs(Math.round(offspring[i].calculateFitness() * 100));
+					int numTimesToAdd = (int) Math.abs(Math.round(population[i].calculateFitness() * 100));
 
 					// the fitter the individual, the more it gets added, so the higher the chance of selection
 					for (int n = 0; n < numTimesToAdd; n++) {
-						if (initialSelection) {
-							rouletteWheel.add(population[i]);
-						} else {
-							rouletteWheel.add(offspring[i]);
-						}
+						rouletteWheel.add(population[i]);
 					}
 				}
 
 				// select random individuals from wheel
 				for (int i = 0; i < Constants.POP_SIZE; i++) {
 					Individual randIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
-
-					if (initialSelection) {
-						offspring[i].setGenes(randIndividual.getGenes());
-					} else {
-						population[i].setGenes(randIndividual.getGenes());
-					}
+					offspring[i].setGenes(randIndividual.getGenes());
 				}
 				break;
-			case TOURNAMENT:
+			default: // TOURNAMENT
 				for (int i = 0; i < Constants.POP_SIZE; i++) {
 					List<Individual> tournamentIndividuals = new ArrayList<>();
 
 					for (int n = 0; n < Constants.TOURNAMENT_SIZE; n++) {
-						if (initialSelection) {
-							tournamentIndividuals.add(population[RAND.nextInt(Constants.POP_SIZE)]);
-						} else {
-							tournamentIndividuals.add(offspring[RAND.nextInt(Constants.POP_SIZE)]);
-						}
+						tournamentIndividuals.add(population[RAND.nextInt(Constants.POP_SIZE)]);
 					}
 
 					Individual tournamentFittest = tournamentIndividuals.stream()
 						.max(Comparator.comparing(Individual::calculateFitness))
 						.get();
 
-					if (initialSelection) {
-						offspring[i].setGenes(tournamentFittest.getGenes());
-					} else {
-						population[i].setGenes(tournamentFittest.getGenes());
-					}
+					offspring[i].setGenes(tournamentFittest.getGenes());
 				}
-				break;
-			default:
-				return;
 		}
 	}
 

@@ -222,7 +222,7 @@ public class AcademicMaterialManagement {
 				} else if (GenerateQuestionPaper.generatePaper()) {
 					refreshQuestionPapersTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS,
-						"Paper generated! You can now view/export it.");
+						"Generated best possible paper! You can now view/export it.");
 				}
 				break;
 			case VIEW_QUESTION_PAPER:
