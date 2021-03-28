@@ -63,16 +63,16 @@ public class Individual {
 		List<Integer> skillLvls = genes.stream().map(q -> q.getSkillLevel().getIntVal()).collect(Collectors.toList());
 		List<Integer> timesReq = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
 
-		int meanSkillLvl = (int) Math.round(skillLvls.stream().mapToDouble(s -> s).average().getAsDouble());
-		int totalTimeReq = timesReq.stream().mapToInt(t -> t).reduce(0, Integer::sum);
+		double meanSkillLvl = skillLvls.stream().mapToDouble(s -> s).average().getAsDouble();
+		double totalTimeReq = timesReq.stream().mapToDouble(t -> t).reduce(0, Double::sum);
 
 		// calculate standard deviations for each attribute
 		double stDevSkill = standardDeviation(skillLvls);
 		double stDevTime = standardDeviation(timesReq);
 
 		// calculate distance between user-selected values and generated values
-		int skillLvlDist = Math.abs(userSelectedSkillLvl - meanSkillLvl);
-		int timeReqDist = Math.abs(userSelectedTimeReq - totalTimeReq);
+		double skillLvlDist = Math.abs(userSelectedSkillLvl - meanSkillLvl);
+		double timeReqDist = Math.abs(userSelectedTimeReq - totalTimeReq);
 
 		/*
 		 * 1. The higher the standard deviations calculated above, the better, because a good range is needed of

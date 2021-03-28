@@ -195,8 +195,8 @@ public class GAUtils {
 
 	/**
 	 * Perform a modified uniform crossover on parents p1 and p2 (modified because: repeated questions in the offspring
-	 * must be avoided; and because the selection of genes from the fitter parent is biased, in order to ensure more
-	 * selection from their genotype).
+	 * must try to be avoided; and because the selection of genes from the fitter parent is biased, in order to ensure
+	 * more selection from their genotype).
 	 * 
 	 * @param p1                   - the first parent
 	 * @param p2                   - the second parent
@@ -205,26 +205,16 @@ public class GAUtils {
 	 * @return a uniform crossover-generated offspring
 	 */
 	private Individual recombineGenes(Individual p1, Individual p2, int userSelectedSkillLvl, int userSelectedTimeReq) {
-		double p1fit = p1.calculateFitness();
-		double p2fit = p2.calculateFitness();
-
 		// sort in order to reduce chance of duplicate genes in offspring
 		p1.getGenes().sort(Comparator.comparing(Question::getMarks));
 		p2.getGenes().sort(Comparator.comparing(Question::getMarks));
 
-		double selectionBias;
-		if (p1fit > p2fit) {
-			selectionBias = 0.8;
-		} else if (p1fit < p2fit) {
-			selectionBias = 0.2;
-		} else {
-			selectionBias = 0.5;
-		}
+		double probChooseP1 = calculateP1selectionBias(p1, p2);
 
 		Individual offspring = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
 
 		for (int i = 0; i < p1.getGenes().size(); i++) {
-			if (RAND.nextDouble() <= selectionBias) {
+			if (RAND.nextDouble() <= probChooseP1) {
 				offspring.getGenes().add(p1.getGenes().get(i));
 			} else {
 				offspring.getGenes().add(p2.getGenes().get(i));
@@ -232,6 +222,40 @@ public class GAUtils {
 		}
 
 		return offspring;
+	}
+
+	/**
+	 * Calculate probability of selecting p1 instead of p2 to use in recombination. The fitter p1, the more likely it is
+	 * to be chosen; likewise for p2.
+	 * 
+	 * E.g. p1fit = -7, p2fit = -12
+	 * 
+	 * probChooseP1 = 1 - (1 / (-7 - -12)) = 0.8
+	 * 
+	 * E.g. p1fit = -20, p2fit = -15
+	 * 
+	 * probChooseP1 = 1 / (-15 - -20) = 0.2
+	 */
+	private double calculateP1selectionBias(Individual p1, Individual p2) {
+		double p1fit = p1.calculateFitness();
+		double p2fit = p2.calculateFitness();
+
+		double probChooseP1;
+
+		if (p1fit > p2fit) {
+			probChooseP1 = 1 - (1 / (p1fit - p2fit));
+		} else if (p1fit < p2fit) {
+			probChooseP1 = 1 / (p2fit - p1fit);
+		} else { // same fitness
+			return 0.5;
+		}
+
+		if (probChooseP1 > 1 || probChooseP1 < 0) {
+			// means that difference in fitnesses is very small, so can return 0.5
+			return 0.5;
+		} else {
+			return probChooseP1;
+		}
 	}
 
 	/**

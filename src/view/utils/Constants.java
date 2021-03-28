@@ -66,13 +66,13 @@ public class Constants {
 	 */
 	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
-	public static final int POP_SIZE = 250;
+	public static final int POP_SIZE = 200;
 
 	public static final double MUTATION_RATE = 0.02;
 
 	public static final double CROSSOVER_RATE = 0.8;
 
-	public static final int GENERATIONS = 100;
+	public static final int GENERATIONS = 200;
 
 	public static final int TOURNAMENT_SIZE = 4;
 
