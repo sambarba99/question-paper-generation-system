@@ -50,14 +50,9 @@ public class GAUtils {
 		 * Determine the number of questions (genes) to have, given the mean time per question of the user-selected
 		 * skill level
 		 */
-		double numQsGivenTimeReq = (double) userSelectedTimeReq / meanTimeRequired;
+		int numGenes = (int) Math.round(userSelectedTimeReq / meanTimeRequired);
 
-		int numQsRounded = (int) Math.round(numQsGivenTimeReq);
-		if (numQsRounded > questions.size()) {
-			numQsRounded -= (questions.size() - numQsRounded);
-		}
-
-		return numQsRounded;
+		return numGenes > questions.size() ? questions.size() : numGenes;
 	}
 
 	/**
@@ -244,17 +239,25 @@ public class GAUtils {
 		int numGenes = offspring[0].getGenes().size();
 
 		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			List<Question> questionsCopy = new ArrayList<>(questions);
+			if (offspring[i].containsAllPossibleGenes(questions)) {
+				/*
+				 * Cannot mutate because there would be a duplicate gene, so move on to next offspring
+				 */
+				continue;
+			}
+
+			List<Question> questionsCopy = new ArrayList<>();
+			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
 				if (RAND.nextDouble() < Constants.MUTATION_RATE) {
 					int questionIdx = RAND.nextInt(questionsCopy.size());
-					Question randGene = questions.get(questionIdx);
+					Question randGene = questionsCopy.get(questionIdx);
 
 					// ensure offspring to mutate doesn't already contain question
 					while (offspring[i].containsGene(randGene)) {
 						questionIdx = RAND.nextInt(questionsCopy.size());
-						randGene = questions.get(questionIdx);
+						randGene = questionsCopy.get(questionIdx);
 					}
 
 					int idx = RAND.nextInt(numGenes);

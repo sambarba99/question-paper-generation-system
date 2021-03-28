@@ -49,7 +49,8 @@ public class UserConfirmation {
 		if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
 			lbl.setText("Are you sure you wish to delete this " + deleteObject + "?");
 		} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-			lbl.setText("Are you sure you wish to exit the application?\nAny changes have been saved.");
+			lbl.setText(
+				"Are you sure you wish to exit the application?" + Constants.NEWLINE + "Any changes have been saved.");
 		}
 
 		Button btnYes = new ButtonBuilder().withWidth(70).withUserAction(UserAction.CONFIRM_YES).withActionEvent(e -> {

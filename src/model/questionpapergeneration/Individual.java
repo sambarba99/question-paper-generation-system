@@ -106,8 +106,8 @@ public class Individual {
 	}
 
 	/**
-	 * Calculate standard deviation for a list of values (e.g. skill level or no. marks) which will help determine paper
-	 * fitness. It is the square root of the variance, and the variance is the mean of the squared differences.
+	 * Calculate standard deviation for a list of values (e.g. list of skill levels) which will help determine paper
+	 * fitness. It is the square root of the variance (which itself is the mean of the squared differences).
 	 * 
 	 * @param values - the list of values
 	 * @return the standard deviation of the values
@@ -122,5 +122,17 @@ public class Individual {
 		variance /= values.size();
 
 		return Math.sqrt(variance);
+	}
+
+	/**
+	 * Find if the chromosome contains all possible questions (genes).
+	 * 
+	 * @param questions - the set of questions to check
+	 * @return if all questions in the set are also in the chromosome
+	 */
+	public boolean containsAllPossibleGenes(List<Question> questions) {
+		List<Integer> geneIds = genes.stream().map(Question::getId).collect(Collectors.toList());
+		List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
+		return geneIds.containsAll(questionIds);
 	}
 }

@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -30,9 +31,12 @@ public class SystemNotification {
 	public static void display(SystemNotificationType notificationType, String notification) {
 		stage = new Stage();
 
+		Label lbl = new Label(notification);
+		lbl.setTextAlignment(TextAlignment.CENTER);
+
 		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
-			.withNodes(new Label(notification))
+			.withNodes(lbl)
 			.build();
 
 		Scene scene = new Scene(hboxMain, 600, 150);

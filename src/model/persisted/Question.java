@@ -118,8 +118,8 @@ public class Question {
 		}
 
 		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
-			+ "'," + Constants.NEWLINE + "answers=\n" + answersBld.toString() + "skillLevel=" + skillLevel.getStrVal()
-			+ ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins + Constants.NEWLINE + "dateCreated="
-			+ Constants.DATE_FORMATTER.format(dateCreated);
+			+ "'," + Constants.NEWLINE + "answers=" + Constants.NEWLINE + answersBld.toString() + "skillLevel="
+			+ skillLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins + Constants.NEWLINE
+			+ "dateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

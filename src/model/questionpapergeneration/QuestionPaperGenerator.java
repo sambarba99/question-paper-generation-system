@@ -13,8 +13,11 @@ import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.service.QuestionPaperService;
 import model.service.QuestionService;
+import model.service.SubjectService;
 
+import view.SystemNotification;
 import view.enums.SkillLevel;
+import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
 /**
@@ -56,7 +59,19 @@ public class QuestionPaperGenerator {
 			.filter(q -> q.getSubjectId() == subjectId)
 			.collect(Collectors.toList());
 
+		if (questions.size() < Constants.MIN_QUESTIONS_PER_SUBJECT) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				"Insufficient questions for this subject:" + Constants.NEWLINE
+					+ SubjectService.getInstance().getSubjectById(subjectId).get().getTitle() + " (ID " + subjectId
+					+ ")" + Constants.NEWLINE + "Subjects require at least " + Constants.MIN_QUESTIONS_PER_SUBJECT
+					+ " questions to generate a paper.");
+
+			return Optional.empty();
+		}
+
 		int numGenes = gaUtils.calculateChromosomeSize(questions, skillLevel.getIntVal(), timeRequiredMins);
+
+		LOGGER.info("No. questions: " + numGenes);
 
 		Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);
 		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);

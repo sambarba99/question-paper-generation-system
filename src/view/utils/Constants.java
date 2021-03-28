@@ -64,6 +64,8 @@ public class Constants {
 	/*
 	 * Constants for the Genetic Algorithm
 	 */
+	public static final int MIN_QUESTIONS_PER_SUBJECT = 2;
+
 	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
 	public static final int POP_SIZE = 200;
