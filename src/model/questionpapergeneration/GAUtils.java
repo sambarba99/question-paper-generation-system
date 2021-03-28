@@ -84,12 +84,13 @@ public class GAUtils {
 	 */
 	public void randomisePopulationGenes(Individual[] population, int numGenes, List<Question> questions) {
 		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			List<Question> questionsCopy = new ArrayList<>(questions);
+			List<Question> questionsCopy = new ArrayList<>();
+			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				int idx = RAND.nextInt(questionsCopy.size());
 				// avoid repeated questions in an Individual's chromosome, so question is deleted after use
-				population[i].getGenes().add(questionsCopy.remove(idx));
+				Question randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
+				population[i].getGenes().add(randGene);
 			}
 		}
 	}
@@ -99,14 +100,11 @@ public class GAUtils {
 	 * 
 	 * @param population       - the array of individuals in the current population
 	 * @param offspring        - the array of individuals in the current offspring set
-	 * @param selectionType    - the type of selection to use, i.e. tournament or roulette wheel
 	 * @param initialSelection - whether or not this is the first selection process (determines if either the offspring
 	 *                         set is generated, or the next population)
 	 */
-	public void selection(Individual[] population, Individual[] offspring, SelectionType selectionType,
-		boolean initialSelection) {
-
-		switch (selectionType) {
+	public void selection(Individual[] population, Individual[] offspring, boolean initialSelection) {
+		switch (Constants.SELECTION_TYPE) {
 			case ROULETTE_WHEEL:
 				// populate roulette wheel based on each individual's fitness
 				List<Individual> rouletteWheel = new ArrayList<>();
@@ -210,33 +208,26 @@ public class GAUtils {
 		double p1fit = p1.calculateFitness();
 		double p2fit = p2.calculateFitness();
 
-		/*
-		 * Add bias to selection of p1's genes: if p1 is fitter, more genes will be selected from it; otherwise, more
-		 * from p2.
-		 */
-		double probUseP1genes = p1fit / (p1fit + p2fit);
+		// sort in order to reduce chance of duplicate genes in offspring
+		p1.getGenes().sort(Comparator.comparing(Question::getMarks));
+		p2.getGenes().sort(Comparator.comparing(Question::getMarks));
+
+		double selectionBias;
+		if (p1fit > p2fit) {
+			selectionBias = 0.8;
+		} else if (p1fit < p2fit) {
+			selectionBias = 0.2;
+		} else {
+			selectionBias = 0.5;
+		}
 
 		Individual offspring = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
 
-		Question selectedGene;
-
-		int idx = 0;
-		while (offspring.getGenes().size() < p1.getGenes().size()) {
-			if (RAND.nextDouble() < probUseP1genes) {
-				selectedGene = p1.getGenes().get(idx);
+		for (int i = 0; i < p1.getGenes().size(); i++) {
+			if (RAND.nextDouble() <= selectionBias) {
+				offspring.getGenes().add(p1.getGenes().get(i));
 			} else {
-				selectedGene = p2.getGenes().get(idx);
-			}
-
-			// ensure no repeated questions
-			if (!offspring.containsGene(selectedGene)) {
-				offspring.getGenes().add(selectedGene);
-				idx++;
-			}
-
-			// if reached list bounds, loop back to start of parent's chromosome
-			if (idx == p1.getGenes().size()) {
-				idx = 0;
+				offspring.getGenes().add(p2.getGenes().get(i));
 			}
 		}
 

@@ -76,7 +76,7 @@ public class GenerateQuestionPaper {
 		Label lblEnterTitle = new Label("Enter the paper title:");
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
-		Label lblSelectSkillLvl = new Label("Select average question skill level\n(based on Bloom's taxonomy):");
+		Label lblSelectSkillLvl = new Label("Select approx. paper skill level\n(based on Bloom's taxonomy):");
 		Label lblSelectTimeReq = new Label("Select approx. time required (mins):");
 
 		Button btnGenerate = new ButtonBuilder().withWidth(120)
@@ -193,6 +193,7 @@ public class GenerateQuestionPaper {
 		sliderSkillLvl.setMajorTickUnit(1);
 		sliderSkillLvl.setShowTickLabels(true);
 		sliderSkillLvl.setShowTickMarks(true);
+		sliderSkillLvl.setValue(1);
 		sliderSkillLvl.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = newValue.intValue();
 			sliderSkillLvl.setValue(intVal); // snap to exact value
@@ -203,12 +204,13 @@ public class GenerateQuestionPaper {
 		sliderTimeReqMins.setMin(30);
 		sliderTimeReqMins.setMax(180);
 		sliderTimeReqMins.setPrefWidth(200);
-		sliderTimeReqMins.setMajorTickUnit(30);
+		sliderTimeReqMins.setMajorTickUnit(15);
 		sliderTimeReqMins.setShowTickLabels(true);
 		sliderTimeReqMins.setShowTickMarks(true);
+		sliderTimeReqMins.setValue(30);
 		sliderTimeReqMins.valueProperty().addListener((obs, oldValue, newValue) -> {
-			int intVal = (int) (30 * Math.round(newValue.doubleValue() / 30));
-			sliderTimeReqMins.setValue(intVal); // snap to nearest 30 mins
+			int intVal = (int) (15 * Math.round(newValue.doubleValue() / 15));
+			sliderTimeReqMins.setValue(intVal); // snap to nearest 15 mins
 			lblSelectedTimeReq.setText("Approx. time required: " + intVal + " minutes");
 		});
 		lblSelectedTimeReq.setPrefWidth(240);

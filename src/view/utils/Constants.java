@@ -66,7 +66,7 @@ public class Constants {
 	 */
 	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
-	public static final int POP_SIZE = 100;
+	public static final int POP_SIZE = 250;
 
 	public static final double MUTATION_RATE = 0.02;
 

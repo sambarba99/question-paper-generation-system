@@ -138,7 +138,7 @@ public class QuestionPaperService {
 		resultBld.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
 			+ questionPaper.getCourseCode() + ")");
 		resultBld.append(
-			Constants.NEWLINE + "Average Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
+			Constants.NEWLINE + "Approx. Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
 		resultBld.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
 		resultBld.append(Constants.NEWLINE + "Time required: " + questionPaper.getTimeRequiredMins() + " minutes");
 

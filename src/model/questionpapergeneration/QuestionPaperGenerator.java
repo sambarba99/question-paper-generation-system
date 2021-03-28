@@ -65,14 +65,14 @@ public class QuestionPaperGenerator {
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
 			// initial selection = true
-			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, true);
+			gaUtils.selection(population, offspring, true);
 
 			gaUtils.crossover(offspring, skillLevel.getIntVal(), timeRequiredMins);
 
 			gaUtils.mutation(offspring, questions);
 
 			// initial selection = false
-			gaUtils.selection(population, offspring, Constants.SELECTION_TYPE, false);
+			gaUtils.selection(population, offspring, false);
 
 			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
 			csvWriter.append(g + Constants.COMMA);

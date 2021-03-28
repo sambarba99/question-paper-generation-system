@@ -8,7 +8,8 @@ import model.persisted.Question;
 
 /**
  * Represents an individual question paper. The chromosome of an individual is a list of questions (i.e. each question
- * is a gene).
+ * is a gene). Fitness is calculated by comparing the chromosome to: the user-selected skill level of the paper; and the
+ * selected time required for the paper - all done utilising a statistical method (see calculateFitness).
  *
  * @author Sam Barba
  */
@@ -34,7 +35,8 @@ public class Individual {
 	}
 
 	public void setGenes(List<Question> genes) {
-		this.genes = new ArrayList<>(genes); // shallow copy
+		this.genes.clear();
+		this.genes.addAll(genes);
 	}
 
 	/**
@@ -53,41 +55,54 @@ public class Individual {
 	 * @return the fitness of the individual
 	 */
 	public double calculateFitness() {
-		List<Integer> skillLvlValues = genes.stream()
-			.map(q -> q.getSkillLevel().getIntVal())
-			.collect(Collectors.toList());
-		List<Integer> markValues = genes.stream().map(Question::getMarks).collect(Collectors.toList());
-		List<Integer> timesReqValues = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
+		if (hasDuplicates()) {
+			fitness = -Double.MAX_VALUE;
+			return fitness;
+		}
 
-		int meanSkillLvl = (int) Math.round(skillLvlValues.stream().mapToDouble(s -> s).average().getAsDouble());
-		int totalTimeReq = timesReqValues.stream().mapToInt(t -> t).reduce(0, Integer::sum);
+		List<Integer> skillLvls = genes.stream().map(q -> q.getSkillLevel().getIntVal()).collect(Collectors.toList());
+		List<Integer> timesReq = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
 
-		// calculate distance between user-selected values and generated values
-		int skillLvlDiff = Math.abs(userSelectedSkillLvl - meanSkillLvl);
-		int timeReqDiff = Math.abs(userSelectedTimeReq - totalTimeReq);
+		int meanSkillLvl = (int) Math.round(skillLvls.stream().mapToDouble(s -> s).average().getAsDouble());
+		int totalTimeReq = timesReq.stream().mapToInt(t -> t).reduce(0, Integer::sum);
 
 		// calculate standard deviations for each attribute
-		double stDevSkill = standardDeviation(skillLvlValues);
-		double stDevMarks = standardDeviation(markValues);
-		double stDevTime = standardDeviation(timesReqValues);
+		double stDevSkill = standardDeviation(skillLvls);
+		double stDevTime = standardDeviation(timesReq);
 
-		double marksSkew = skewCoefficient(markValues);
+		// calculate distance between user-selected values and generated values
+		int skillLvlDist = Math.abs(userSelectedSkillLvl - meanSkillLvl);
+		int timeReqDist = Math.abs(userSelectedTimeReq - totalTimeReq);
 
 		/*
-		 * 1. The closer the mean skill level to the user-selected skill level, the better. Same with total time
-		 * required. I.e., the smaller the calculated distances above, the better.
-		 * 
-		 * 2. The higher the standard deviations calculated above, the better, because a good range is needed of
+		 * 1. The higher the standard deviations calculated above, the better, because a good range is needed of
 		 * easier-to-harder questions.
 		 * 
-		 * 3. The smaller the 'skewness' of the marks, the better, as this represents symmetry in the distribution of
-		 * questions in the paper.
+		 * 2. The closer the mean skill level to the user-selected skill level, the better. Same with total time
+		 * required. I.e., the smaller the calculated distances above (skillLvlDist and timeReqDist), the better.
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		fitness = stDevSkill + stDevMarks + stDevTime - skillLvlDiff - timeReqDiff - marksSkew;
+		fitness = stDevSkill + stDevTime - skillLvlDist - timeReqDist;
 
 		return fitness;
+	}
+
+	/**
+	 * Find whether chromosome has duplicate genes (questions).
+	 * 
+	 * @return whether or not duplicates exist
+	 */
+	private boolean hasDuplicates() {
+		List<Integer> questionIds = new ArrayList<>();
+
+		for (Question q : genes) {
+			if (questionIds.contains(q.getId())) {
+				return true;
+			}
+			questionIds.add(q.getId());
+		}
+		return false;
 	}
 
 	/**
@@ -107,45 +122,5 @@ public class Individual {
 		variance /= values.size();
 
 		return Math.sqrt(variance);
-	}
-
-	/**
-	 * Find the coefficient of skewness of a list of values, being: (mean - mode) / (standard deviation of values).
-	 * 
-	 * @param values - the list of values
-	 * @return the skewness coefficient
-	 */
-	private double skewCoefficient(List<Integer> values) {
-		double mean = values.stream().mapToDouble(v -> v).average().getAsDouble();
-		double mode = mode(values);
-		double stDev = standardDeviation(values);
-
-		return Math.abs((mean - mode) / stDev);
-	}
-
-	/**
-	 * Find the mode of a list of values.
-	 * 
-	 * @param values - the list to examine
-	 * @return mode - the mode of the list
-	 */
-	private int mode(List<Integer> values) {
-		int max = values.stream().mapToInt(v -> v).max().getAsInt();
-		int[] count = new int[max + 1];
-
-		for (Integer v : values) {
-			count[v]++;
-		}
-
-		int mode = 0;
-		int modeCount = count[0];
-		for (int i = 1; i < count.length; i++) {
-			if (count[i] > modeCount) {
-				modeCount = count[i];
-				mode = i;
-			}
-		}
-
-		return mode;
 	}
 }
