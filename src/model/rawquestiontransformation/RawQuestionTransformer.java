@@ -63,9 +63,9 @@ public class RawQuestionTransformer {
 
 	private static final int MAX_SKILL_LVL = SkillLevel.values().length;
 
-	private static final int MIN_TIME_REQUIRED = 1;
+	private static final int MIN_MINUTES_REQUIRED = 1;
 
-	private static final int MAX_TIME_REQUIRED = 15;
+	private static final int MAX_MINUTES_REQUIRED = 15;
 
 	private static final int MIN_MARKS = 1;
 
@@ -190,8 +190,8 @@ public class RawQuestionTransformer {
 			Collections.shuffle(answers);
 
 			/*
-			 * Find shortest question and longest question statement in order to determine skill level, time required,
-			 * and marks
+			 * Find shortest question and longest question statement in order to determine skill level, minutes
+			 * required, and marks
 			 */
 			int minLength = Integer.MAX_VALUE, maxLength = 0;
 			for (String questionKey : questionsAndAnswers.keySet()) {
@@ -205,14 +205,15 @@ public class RawQuestionTransformer {
 			}
 
 			/*
-			 * Determine skill level, time required, and marks, by mapping question statement length to specified range
-			 * e.g. between 1 and 10 for marks
+			 * Determine skill level, minutes required, and marks, by mapping question statement length to specified
+			 * range e.g. between 1 and 10 for marks
 			 */
 			String questionStatement = entry.getKey();
 			int len = questionStatement.length();
 			int skillLevelInt = (int) Math.round(map(len, minLength, maxLength, MIN_SKILL_LVL, MAX_SKILL_LVL));
 			SkillLevel skillLevel = SkillLevel.getFromInt(skillLevelInt);
-			int timeRequired = (int) Math.round(map(len, minLength, maxLength, MIN_TIME_REQUIRED, MAX_TIME_REQUIRED));
+			int minsRequired = (int) Math
+				.round(map(len, minLength, maxLength, MIN_MINUTES_REQUIRED, MAX_MINUTES_REQUIRED));
 			int marks = (int) Math.round(map(len, minLength, maxLength, MIN_MARKS, MAX_MARKS));
 
 			Question question = new QuestionBuilder().withId(questionId)
@@ -221,7 +222,7 @@ public class RawQuestionTransformer {
 				.withAnswers(answers)
 				.withSkillLevel(skillLevel)
 				.withMarks(marks)
-				.withTimeRequiredMins(timeRequired)
+				.withMinutesRequired(minsRequired)
 				.build();
 
 			questions.add(question);

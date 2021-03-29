@@ -27,7 +27,7 @@ public class QuestionBuilder {
 
 	private int marks;
 
-	private int timeRequiredMins;
+	private int minutesRequired;
 
 	private LocalDateTime dateCreated;
 
@@ -64,8 +64,8 @@ public class QuestionBuilder {
 		return this;
 	}
 
-	public QuestionBuilder withTimeRequiredMins(int timeRequiredMins) {
-		this.timeRequiredMins = timeRequiredMins;
+	public QuestionBuilder withMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
 		return this;
 	}
 
@@ -75,6 +75,6 @@ public class QuestionBuilder {
 	}
 
 	public Question build() {
-		return new Question(id, subjectId, statement, answers, skillLevel, marks, timeRequiredMins, dateCreated);
+		return new Question(id, subjectId, statement, answers, skillLevel, marks, minutesRequired, dateCreated);
 	}
 }

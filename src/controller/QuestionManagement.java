@@ -160,7 +160,7 @@ public class QuestionManagement {
 		TableColumn<QuestionDTO, String> colStatement = new TableColumn<>("Statement");
 		TableColumn<QuestionDTO, String> colSkillLevel = new TableColumn<>("Skill level");
 		TableColumn<QuestionDTO, Integer> colMarks = new TableColumn<>("Marks");
-		TableColumn<QuestionDTO, Integer> colTimeRequired = new TableColumn<>("Time required (mins)");
+		TableColumn<QuestionDTO, Integer> colMinsRequired = new TableColumn<>("Minutes required");
 		TableColumn<QuestionDTO, String> colDateCreated = new TableColumn<>("Date created");
 
 		colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -168,7 +168,7 @@ public class QuestionManagement {
 		colStatement.setCellValueFactory(new PropertyValueFactory<>("statement"));
 		colSkillLevel.setCellValueFactory(new PropertyValueFactory<>("skillLevel"));
 		colMarks.setCellValueFactory(new PropertyValueFactory<>("marks"));
-		colTimeRequired.setCellValueFactory(new PropertyValueFactory<>("timeRequiredMins"));
+		colMinsRequired.setCellValueFactory(new PropertyValueFactory<>("minutesRequired"));
 		colDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
 
 		colId.setPrefWidth(50);
@@ -176,12 +176,12 @@ public class QuestionManagement {
 		colStatement.setPrefWidth(250);
 		colSkillLevel.setPrefWidth(200);
 		colMarks.setPrefWidth(70);
-		colTimeRequired.setPrefWidth(180);
+		colMinsRequired.setPrefWidth(180);
 		colDateCreated.setPrefWidth(150);
 
 		tblQuestions.getColumns().clear();
 		tblQuestions.getColumns()
-			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colTimeRequired, colDateCreated);
+			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colMinsRequired, colDateCreated);
 		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();

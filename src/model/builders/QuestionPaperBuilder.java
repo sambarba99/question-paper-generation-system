@@ -30,7 +30,7 @@ public class QuestionPaperBuilder {
 
 	private int marks;
 
-	private int timeRequiredMins;
+	private int minutesRequired;
 
 	private LocalDateTime dateCreated;
 
@@ -77,8 +77,8 @@ public class QuestionPaperBuilder {
 		return this;
 	}
 
-	public QuestionPaperBuilder withTimeRequiredMins(int timeRequiredMins) {
-		this.timeRequiredMins = timeRequiredMins;
+	public QuestionPaperBuilder withMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
 		return this;
 	}
 
@@ -89,6 +89,6 @@ public class QuestionPaperBuilder {
 
 	public QuestionPaper build() {
 		return new QuestionPaper(id, subjectId, title, courseTitle, courseCode, questionIds, skillLevel, marks,
-			timeRequiredMins, dateCreated);
+			minutesRequired, dateCreated);
 	}
 }

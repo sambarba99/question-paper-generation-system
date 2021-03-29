@@ -123,7 +123,7 @@ public class QuestionService {
 		questionDto.setStatement(question.getStatement());
 		questionDto.setSkillLevel(question.getSkillLevel().getDisplayStr());
 		questionDto.setMarks(question.getMarks());
-		questionDto.setTimeRequiredMins(question.getTimeRequiredMins());
+		questionDto.setMinutesRequired(question.getMinutesRequired());
 		questionDto.setDateCreated(Constants.DATE_FORMATTER.format(question.getDateCreated()));
 
 		return questionDto;

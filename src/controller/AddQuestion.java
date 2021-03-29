@@ -70,7 +70,7 @@ public class AddQuestion {
 
 	private static TextField txtMarks = new TextField();
 
-	private static TextField txtTimeRequired = new TextField();
+	private static TextField txtMinutesRequired = new TextField();
 
 	/**
 	 * Display nodes for adding a question.
@@ -88,7 +88,7 @@ public class AddQuestion {
 		Label lblSelectCorrect = new Label("Select correct answer:");
 		Label lblSelectSkillLvl = new Label("Select skill level\n(based on Bloom's taxonomy):");
 		Label lblEnterMarks = new Label("Enter no. marks:");
-		Label lblEnterTimeReq = new Label("Enter time required (mins):");
+		Label lblEnterMinsReq = new Label("Enter minutes required:");
 
 		Button btnAddQuestion = new ButtonBuilder().withWidth(100).withUserAction(UserAction.ADD).withActionEvent(e -> {
 			if (validateAndAddQuestion()) {
@@ -108,7 +108,7 @@ public class AddQuestion {
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
 			.withNodes(lblSelectCorrect, choiceCorrectAnsLetter, lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl,
-				lblEnterMarks, txtMarks, lblEnterTimeReq, txtTimeRequired, btnAddQuestion)
+				lblEnterMarks, txtMarks, lblEnterMinsReq, txtMinutesRequired, btnAddQuestion)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.CENTER)
@@ -173,12 +173,12 @@ public class AddQuestion {
 			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of marks.");
 			return false;
 		}
-		int timeReq = 0;
+		int minsRequired = 0;
 		try {
-			timeReq = Integer.parseInt(txtTimeRequired.getText());
+			minsRequired = Integer.parseInt(txtMinutesRequired.getText());
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR, "Invalid time required.");
+			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of minutes required.");
 			return false;
 		}
 		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
@@ -194,7 +194,7 @@ public class AddQuestion {
 			.withAnswers(makeAnswers(Arrays.asList(ansA, ansB, ansC, ansD), correctAnswerPos))
 			.withSkillLevel(skillLevel)
 			.withMarks(marks)
-			.withTimeRequiredMins(timeReq)
+			.withMinutesRequired(minsRequired)
 			.build();
 
 		QuestionService.getInstance().addQuestion(question);
@@ -252,7 +252,7 @@ public class AddQuestion {
 		choiceCorrectAnsLetter.getSelectionModel().select(0);
 		sliderSkillLvl.setValue(1);
 		txtMarks.setText(Constants.EMPTY);
-		txtTimeRequired.setText(Constants.EMPTY);
+		txtMinutesRequired.setText(Constants.EMPTY);
 	}
 
 	/**

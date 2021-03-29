@@ -109,7 +109,7 @@ public class QuestionDAO {
 					String correctAnswerLetter = lineArr[7];
 					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[8]);
 					int marks = Integer.parseInt(lineArr[9]);
-					int timeRequiredMins = Integer.parseInt(lineArr[10]);
+					int minutesRequired = Integer.parseInt(lineArr[10]);
 					LocalDateTime dateCreated = LocalDateTime
 						.parse(lineArr[11].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
@@ -119,7 +119,7 @@ public class QuestionDAO {
 						.withAnswers(makeAnswers(strAnswers, correctAnswerLetter))
 						.withSkillLevel(skillLevel)
 						.withMarks(marks)
-						.withTimeRequiredMins(timeRequiredMins)
+						.withMinutesRequired(minutesRequired)
 						.withDateCreated(dateCreated)
 						.build();
 
@@ -165,7 +165,7 @@ public class QuestionDAO {
 
 		/*
 		 * 1 line contains: ID, subject ID, statement, answers A-D, correct answer letter (A/B/C/D), skill level, marks,
-		 * time required (mins), date created
+		 * minutes required, date created
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(question.getId()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Integer.toString(question.getSubjectId()) + Constants.QUOT_MARK + Constants.COMMA
@@ -177,7 +177,7 @@ public class QuestionDAO {
 			+ Constants.QUOT_MARK + correctAnswerLetter + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ question.getSkillLevel().getStrVal() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ Integer.toString(question.getMarks()) + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ Integer.toString(question.getTimeRequiredMins()) + Constants.QUOT_MARK + Constants.COMMA
+			+ Integer.toString(question.getMinutesRequired()) + Constants.QUOT_MARK + Constants.COMMA
 			+ Constants.QUOT_MARK + Constants.DATE_FORMATTER.format(question.getDateCreated()) + Constants.QUOT_MARK
 			+ Constants.NEWLINE;
 

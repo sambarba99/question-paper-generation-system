@@ -6,8 +6,7 @@ import java.util.List;
 import view.enums.SkillLevel;
 
 /**
- * Represents a question paper (the GA uses the subject ID, skill level, marks, and time required to calculate paper
- * fitness).
+ * Represents a question paper.
  *
  * @author Sam Barba
  */
@@ -29,12 +28,12 @@ public class QuestionPaper {
 
 	private int marks;
 
-	private int timeRequiredMins;
+	private int minutesRequired;
 
 	private LocalDateTime dateCreated;
 
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, SkillLevel skillLevel, int marks, int timeRequiredMins, LocalDateTime dateCreated) {
+		List<Integer> questionIds, SkillLevel skillLevel, int marks, int minutesRequired, LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;
@@ -44,7 +43,7 @@ public class QuestionPaper {
 		this.questionIds = questionIds;
 		this.skillLevel = skillLevel;
 		this.marks = marks;
-		this.timeRequiredMins = timeRequiredMins;
+		this.minutesRequired = minutesRequired;
 		this.dateCreated = dateCreated;
 	}
 
@@ -112,12 +111,12 @@ public class QuestionPaper {
 		this.marks = marks;
 	}
 
-	public int getTimeRequiredMins() {
-		return timeRequiredMins;
+	public int getMinutesRequired() {
+		return minutesRequired;
 	}
 
-	public void setTimeRequiredMins(int timeRequiredMins) {
-		this.timeRequiredMins = timeRequiredMins;
+	public void setMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
 	}
 
 	public LocalDateTime getDateCreated() {

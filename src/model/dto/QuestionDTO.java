@@ -17,7 +17,7 @@ public class QuestionDTO {
 
 	private int marks;
 
-	private int timeRequiredMins;
+	private int minutesRequired;
 
 	private String dateCreated;
 
@@ -64,12 +64,12 @@ public class QuestionDTO {
 		this.marks = marks;
 	}
 
-	public int getTimeRequiredMins() {
-		return timeRequiredMins;
+	public int getMinutesRequired() {
+		return minutesRequired;
 	}
 
-	public void setTimeRequiredMins(int timeRequiredMins) {
-		this.timeRequiredMins = timeRequiredMins;
+	public void setMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
 	}
 
 	public String getDateCreated() {

@@ -26,46 +26,45 @@ public class GAUtils {
 	 * Determine the optimal number of questions (genes) in a question paper, given list of possible questions to use,
 	 * and user-defined paper parameters.
 	 * 
-	 * @param questions            - list of possible questions to include in paper
-	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the final paper
-	 * @param userSelectedTimeReq  - the user-selected approx. time required (mins) for the final paper
+	 * @param questions         - list of possible questions to include in paper
+	 * @param paperSkillLvl     - the user-selected (mean) skill level of the final paper
+	 * @param paperMinsRequired - the user-selected approx. duration (mins) for the final paper
 	 * @return calculated number of questions
 	 */
-	public int calculateChromosomeSize(List<Question> questions, int userSelectedSkillLvl, int userSelectedTimeReq) {
-		double meanTimeRequired = questions.stream()
-			.filter(q -> q.getSkillLevel().getIntVal() == userSelectedSkillLvl)
-			.mapToDouble(Question::getTimeRequiredMins)
+	public int calculateChromosomeLength(List<Question> questions, int paperSkillLvl, int paperMinsRequired) {
+		double meanMinsRequired = questions.stream()
+			.filter(q -> q.getSkillLevel().getIntVal() == paperSkillLvl)
+			.mapToDouble(Question::getMinutesRequired)
 			.average()
 			.getAsDouble();
 
-		if ((int) meanTimeRequired == 0) {
+		if ((int) meanMinsRequired == 0) {
 			/*
-			 * If no questions exist of the user-selected skill level, then take the mean across ALL existing skill
-			 * levels.
+			 * If no questions exist of the user-selected paper skill level, then take the mean across ALL existing
+			 * skill levels.
 			 */
-			meanTimeRequired = questions.stream().mapToDouble(Question::getTimeRequiredMins).average().getAsDouble();
+			meanMinsRequired = questions.stream().mapToDouble(Question::getMinutesRequired).average().getAsDouble();
 		}
 
 		/*
-		 * Determine the number of questions (genes) to have, given the mean time per question of the user-selected
-		 * skill level
+		 * Determine the number of questions (genes) to have, given the mean minutes per question.
 		 */
-		int numGenes = (int) Math.round(userSelectedTimeReq / meanTimeRequired);
+		int numQuestions = (int) Math.floor((double) paperMinsRequired / meanMinsRequired);
 
-		return numGenes > questions.size() ? questions.size() : numGenes;
+		return numQuestions > questions.size() ? questions.size() : numQuestions;
 	}
 
 	/**
 	 * Initialise an array of individuals, which can be used to represent the population or offspring.
 	 * 
-	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
+	 * @param paperSkillLvl     - the user-selected (mean) skill level of the paper
+	 * @param paperMinsRequired - the user-selected minutes required for the paper
 	 * @return the array of individuals
 	 */
-	public Individual[] initialiseIndividualArray(int userSelectedSkillLvl, int userSelectedTimeReq) {
+	public Individual[] initialiseIndividualArray(int paperSkillLvl, int paperMinsRequired) {
 		Individual[] individuals = new Individual[Constants.POP_SIZE];
 		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			individuals[i] = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
+			individuals[i] = new Individual(paperSkillLvl, paperMinsRequired);
 		}
 		return individuals;
 	}
@@ -137,22 +136,22 @@ public class GAUtils {
 	/**
 	 * Perform crossover on pairs of individuals in the offspring set at random, depending on the crossover rate.
 	 * 
-	 * @param offspring            - the array representing the offspring set
-	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
+	 * @param offspring         - the array representing the offspring set
+	 * @param paperSkillLvl     - the user-selected (mean) skill level of the paper
+	 * @param paperMinsRequired - the user-selected minutes required for the paper
 	 */
-	public void crossover(Individual[] offspring, int userSelectedSkillLvl, int userSelectedTimeReq) {
+	public void crossover(Individual[] offspring, int paperSkillLvl, int paperMinsRequired) {
 		for (int i = 0; i < Constants.POP_SIZE; i += 2) {
 			if (RAND.nextDouble() < Constants.CROSSOVER_RATE && i < Constants.POP_SIZE - 1) {
 				/*
 				 * In each iteration, 2 possible offspring are found by calling recombineGenesToMakeOffspring twice, but
 				 * switching the parents around. The fittest of the 2 is then kept.
 				 */
-				Individual newOffspring1 = recombineGenes(offspring[i], offspring[i + 1], userSelectedSkillLvl,
-					userSelectedTimeReq);
+				Individual newOffspring1 = recombineGenes(offspring[i], offspring[i + 1], paperSkillLvl,
+					paperMinsRequired);
 
-				Individual newOffspring2 = recombineGenes(offspring[i + 1], offspring[i], userSelectedSkillLvl,
-					userSelectedTimeReq);
+				Individual newOffspring2 = recombineGenes(offspring[i + 1], offspring[i], paperSkillLvl,
+					paperMinsRequired);
 
 				// replace with fittest of the 2 new offspring, only if fitter than current offspring
 				Individual fittestOf2 = findFittest(new Individual[] { newOffspring1, newOffspring2 });
@@ -169,20 +168,20 @@ public class GAUtils {
 	 * must try to be avoided; and because the selection of genes from the fitter parent is biased, in order to ensure
 	 * more selection from their genotype).
 	 * 
-	 * @param p1                   - the first parent
-	 * @param p2                   - the second parent
-	 * @param userSelectedSkillLvl - the user-selected (mean) skill level of the paper
-	 * @param userSelectedTimeReq  - the user-selected time required (mins) for the paper
+	 * @param p1                - the first parent
+	 * @param p2                - the second parent
+	 * @param paperSkillLvl     - the user-selected (mean) skill level of the paper
+	 * @param paperMinsRequired - the user-selected minutes required for the paper
 	 * @return a uniform crossover-generated offspring
 	 */
-	private Individual recombineGenes(Individual p1, Individual p2, int userSelectedSkillLvl, int userSelectedTimeReq) {
+	private Individual recombineGenes(Individual p1, Individual p2, int paperSkillLvl, int paperMinsRequired) {
 		// sort in order to reduce chance of duplicate genes in offspring
 		p1.getGenes().sort(Comparator.comparing(Question::getMarks));
 		p2.getGenes().sort(Comparator.comparing(Question::getMarks));
 
 		double probChooseP1 = calculateP1selectionBias(p1, p2);
 
-		Individual offspring = new Individual(userSelectedSkillLvl, userSelectedTimeReq);
+		Individual offspring = new Individual(paperSkillLvl, paperMinsRequired);
 
 		for (int i = 0; i < p1.getGenes().size(); i++) {
 			if (RAND.nextDouble() <= probChooseP1) {

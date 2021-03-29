@@ -25,12 +25,12 @@ public class Question {
 
 	private int marks;
 
-	private int timeRequiredMins;
+	private int minutesRequired;
 
 	private LocalDateTime dateCreated;
 
 	public Question(int id, int subjectId, String statement, List<Answer> answers, SkillLevel skillLevel, int marks,
-		int timeRequiredMins, LocalDateTime dateCreated) {
+		int minutesRequired, LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;
@@ -38,7 +38,7 @@ public class Question {
 		this.answers = answers;
 		this.skillLevel = skillLevel;
 		this.marks = marks;
-		this.timeRequiredMins = timeRequiredMins;
+		this.minutesRequired = minutesRequired;
 		this.dateCreated = dateCreated;
 	}
 
@@ -90,12 +90,12 @@ public class Question {
 		this.marks = marks;
 	}
 
-	public int getTimeRequiredMins() {
-		return timeRequiredMins;
+	public int getMinutesRequired() {
+		return minutesRequired;
 	}
 
-	public void setTimeRequiredMins(int timeRequiredMins) {
-		this.timeRequiredMins = timeRequiredMins;
+	public void setMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
 	}
 
 	public LocalDateTime getDateCreated() {
@@ -119,7 +119,7 @@ public class Question {
 
 		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
 			+ "'," + Constants.NEWLINE + "answers=" + Constants.NEWLINE + answersBld.toString() + "skillLevel="
-			+ skillLevel.getStrVal() + ", marks=" + marks + ", timeRequiredMins=" + timeRequiredMins + Constants.NEWLINE
+			+ skillLevel.getStrVal() + ", marks=" + marks + ", minutesRequired=" + minutesRequired + Constants.NEWLINE
 			+ "dateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

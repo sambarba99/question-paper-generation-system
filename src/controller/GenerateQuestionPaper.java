@@ -59,9 +59,9 @@ public class GenerateQuestionPaper {
 
 	private static Label lblSelectedSkillLvl = new Label("Skill level: KNOWLEDGE");
 
-	private static Slider sliderTimeReqMins = new Slider();
+	private static Slider sliderMinutesRequired = new Slider();
 
-	private static Label lblSelectedTimeReq = new Label("Approx. time required: 60 minutes");
+	private static Label lblSelectedMinsRequired = new Label("Approx. time required: 60 minutes");
 
 	/**
 	 * Return whether a paper has been generated successfully or not.
@@ -77,7 +77,7 @@ public class GenerateQuestionPaper {
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
 		Label lblSelectSkillLvl = new Label("Select approx. paper skill level\n(based on Bloom's taxonomy):");
-		Label lblSelectTimeReq = new Label("Select approx. time required (mins):");
+		Label lblSelectMinsRequired = new Label("Select approx. minutes required:");
 
 		Button btnGenerate = new ButtonBuilder().withWidth(120)
 			.withUserAction(UserAction.GENERATE)
@@ -100,8 +100,8 @@ public class GenerateQuestionPaper {
 		VBox vbox2 = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.TOP_LEFT)
 			.withSpacing(10)
-			.withNodes(lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl, lblSelectTimeReq, sliderTimeReqMins,
-				lblSelectedTimeReq, btnGenerate)
+			.withNodes(lblSelectSkillLvl, sliderSkillLvl, lblSelectedSkillLvl, lblSelectMinsRequired,
+				sliderMinutesRequired, lblSelectedMinsRequired, btnGenerate)
 			.build();
 		HBox hbox = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
 			.withAlignment(Pos.TOP_CENTER)
@@ -152,7 +152,7 @@ public class GenerateQuestionPaper {
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 
 		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
-		int timeReq = (int) sliderTimeReqMins.getValue();
+		int minsRequired = (int) sliderMinutesRequired.getValue();
 
 		/*
 		 * REMOVE THIS WHEN REMOVING FILE WRITING CODE
@@ -160,7 +160,7 @@ public class GenerateQuestionPaper {
 		Optional<QuestionPaper> generatedPaper = Optional.empty();
 		try {
 			generatedPaper = QuestionPaperGenerator.getInstance()
-				.generatePaper(subjectId, title, courseTitle, courseCode, skillLevel, timeReq);
+				.generatePaper(subjectId, title, courseTitle, courseCode, skillLevel, minsRequired);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -201,18 +201,18 @@ public class GenerateQuestionPaper {
 		});
 		lblSelectedSkillLvl.setPrefWidth(240);
 
-		sliderTimeReqMins.setMin(60);
-		sliderTimeReqMins.setMax(180);
-		sliderTimeReqMins.setPrefWidth(200);
-		sliderTimeReqMins.setMajorTickUnit(15);
-		sliderTimeReqMins.setShowTickLabels(true);
-		sliderTimeReqMins.setShowTickMarks(true);
-		sliderTimeReqMins.setValue(60);
-		sliderTimeReqMins.valueProperty().addListener((obs, oldValue, newValue) -> {
+		sliderMinutesRequired.setMin(60);
+		sliderMinutesRequired.setMax(180);
+		sliderMinutesRequired.setPrefWidth(200);
+		sliderMinutesRequired.setMajorTickUnit(15);
+		sliderMinutesRequired.setShowTickLabels(true);
+		sliderMinutesRequired.setShowTickMarks(true);
+		sliderMinutesRequired.setValue(60);
+		sliderMinutesRequired.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = (int) (15 * Math.round(newValue.doubleValue() / 15));
-			sliderTimeReqMins.setValue(intVal); // snap to nearest 15 mins
-			lblSelectedTimeReq.setText("Approx. time required: " + intVal + " minutes");
+			sliderMinutesRequired.setValue(intVal); // snap to nearest 15 mins
+			lblSelectedMinsRequired.setText("Approx. time required: " + intVal + " minutes");
 		});
-		lblSelectedTimeReq.setPrefWidth(240);
+		lblSelectedMinsRequired.setPrefWidth(240);
 	}
 }

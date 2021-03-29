@@ -9,7 +9,7 @@ import model.persisted.Question;
 /**
  * Represents an individual question paper. The chromosome of an individual is a list of questions (i.e. each question
  * is a gene). Fitness is calculated by comparing the chromosome to: the user-selected skill level of the paper; and the
- * selected time required for the paper - all done utilising a statistical method (see calculateFitness).
+ * selected minutes required for the paper - all done utilising a statistical method (see calculateFitness).
  *
  * @author Sam Barba
  */
@@ -17,17 +17,14 @@ public class Individual {
 
 	private List<Question> genes;
 
-	private double fitness;
+	private int paperSkillLvl;
 
-	private int userSelectedSkillLvl;
+	private int paperMinsRequired;
 
-	private int userSelectedTimeReq;
-
-	public Individual(int userSelectedSkillLvl, int userSelectedTimeReq) {
-		this.userSelectedSkillLvl = userSelectedSkillLvl;
-		this.userSelectedTimeReq = userSelectedTimeReq;
+	public Individual(int paperSkillLvl, int paperMinsRequired) {
+		this.paperSkillLvl = paperSkillLvl;
+		this.paperMinsRequired = paperMinsRequired;
 		this.genes = new ArrayList<>();
-		this.fitness = 0;
 	}
 
 	public List<Question> getGenes() {
@@ -56,36 +53,33 @@ public class Individual {
 	 */
 	public double calculateFitness() {
 		if (hasDuplicates()) {
-			fitness = -Double.MAX_VALUE;
-			return fitness;
+			return -Double.MAX_VALUE;
 		}
 
 		List<Integer> skillLvls = genes.stream().map(q -> q.getSkillLevel().getIntVal()).collect(Collectors.toList());
-		List<Integer> timesReq = genes.stream().map(Question::getTimeRequiredMins).collect(Collectors.toList());
+		List<Integer> minsRequired = genes.stream().map(Question::getMinutesRequired).collect(Collectors.toList());
 
 		double meanSkillLvl = skillLvls.stream().mapToDouble(s -> s).average().getAsDouble();
-		double totalTimeReq = timesReq.stream().mapToDouble(t -> t).reduce(0, Double::sum);
+		double totalMinsRequired = minsRequired.stream().mapToDouble(t -> t).reduce(0, Double::sum);
 
 		// calculate standard deviations for each attribute
-		double stDevSkill = standardDeviation(skillLvls);
-		double stDevTime = standardDeviation(timesReq);
+		double stDevSkillLvls = standardDeviation(skillLvls);
+		double stDevMinsRequied = standardDeviation(minsRequired);
 
 		// calculate distance between user-selected values and generated values
-		double skillLvlDist = Math.abs(userSelectedSkillLvl - meanSkillLvl);
-		double timeReqDist = Math.abs(userSelectedTimeReq - totalTimeReq);
+		double skillLvlDist = Math.abs(paperSkillLvl - meanSkillLvl);
+		double minsRequiredDist = Math.abs(paperMinsRequired - totalMinsRequired);
 
 		/*
 		 * 1. The higher the standard deviations calculated above, the better, because a good range is needed of
 		 * easier-to-harder questions.
 		 * 
-		 * 2. The closer the mean skill level to the user-selected skill level, the better. Same with total time
-		 * required. I.e., the smaller the calculated distances above (skillLvlDist and timeReqDist), the better.
+		 * 2. The closer the mean skill level to the user-selected skill level, the better. Same with total minutes
+		 * required. I.e., the smaller the calculated distances above (skillLvlDist and minsRequiredDist), the better.
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		fitness = stDevSkill + stDevTime - skillLvlDist - timeReqDist;
-
-		return fitness;
+		return stDevSkillLvls + stDevMinsRequied - skillLvlDist - minsRequiredDist;
 	}
 
 	/**

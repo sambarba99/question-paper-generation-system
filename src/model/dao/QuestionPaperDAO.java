@@ -112,7 +112,7 @@ public class QuestionPaperDAO {
 					}
 					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[6]);
 					int marks = Integer.parseInt(lineArr[7]);
-					int timeRequiredMins = Integer.parseInt(lineArr[8]);
+					int minutesRequired = Integer.parseInt(lineArr[8]);
 					LocalDateTime dateCreated = LocalDateTime
 						.parse(lineArr[9].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
@@ -124,7 +124,7 @@ public class QuestionPaperDAO {
 						.withQuestionIds(questionIds)
 						.withSkillLevel(skillLevel)
 						.withMarks(marks)
-						.withTimeRequiredMins(timeRequiredMins)
+						.withMinutesRequired(minutesRequired)
 						.withDateCreated(dateCreated)
 						.build();
 
@@ -184,8 +184,8 @@ public class QuestionPaperDAO {
 		questionIds = questionIds.substring(0, questionIds.length() - 1); // remove last comma
 
 		/*
-		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, skill level, marks, time
-		 * required (mins), date created
+		 * 1 line contains: ID, subject ID, title, course title, course code, question IDs, skill level, marks, minutes
+		 * required, date created
 		 */
 		String line = Constants.QUOT_MARK + Integer.toString(questionPaper.getId()) + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getSubjectId())
@@ -195,7 +195,7 @@ public class QuestionPaperDAO {
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + questionPaper.getSkillLevel().getStrVal() + Constants.QUOT_MARK
 			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks()) + Constants.QUOT_MARK
-			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getTimeRequiredMins())
+			+ Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMinutesRequired())
 			+ Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
 			+ Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 

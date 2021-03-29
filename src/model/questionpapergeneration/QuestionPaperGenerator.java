@@ -34,16 +34,16 @@ public class QuestionPaperGenerator {
 	/**
 	 * Generate a question paper with the GA, then create the persisted object with the user-specified parameters.
 	 * 
-	 * @param subjectId        - the subject ID of the paper
-	 * @param title            - the title of the paper
-	 * @param courseTitle      - the course title of the paper
-	 * @param courseCode       - the course code of the paper
-	 * @param skillLevel       - the mean skill level of the paper
-	 * @param timeRequiredMins - the approximate time required the user wants for the paper
+	 * @param subjectId    - the subject ID of the paper
+	 * @param title        - the title of the paper
+	 * @param courseTitle  - the course title of the paper
+	 * @param courseCode   - the course code of the paper
+	 * @param skillLevel   - the mean skill level of the paper
+	 * @param minsRequired - the approximate minutes required the user wants for the paper
 	 * @return a generated question paper
 	 */
 	public Optional<QuestionPaper> generatePaper(int subjectId, String title, String courseTitle, String courseCode,
-		SkillLevel skillLevel, int timeRequiredMins) throws IOException {
+		SkillLevel skillLevel, int minsRequired) throws IOException {
 
 		LOGGER.info("Generating question paper...");
 
@@ -69,19 +69,19 @@ public class QuestionPaperGenerator {
 			return Optional.empty();
 		}
 
-		int numGenes = gaUtils.calculateChromosomeSize(questions, skillLevel.getIntVal(), timeRequiredMins);
+		int numGenes = gaUtils.calculateChromosomeLength(questions, skillLevel.getIntVal(), minsRequired);
 
 		LOGGER.info("No. questions: " + numGenes);
 
-		Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);
-		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), timeRequiredMins);
+		Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
+		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
 
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
 			gaUtils.selection(population, offspring);
 
-			gaUtils.crossover(offspring, skillLevel.getIntVal(), timeRequiredMins);
+			gaUtils.crossover(offspring, skillLevel.getIntVal(), minsRequired);
 
 			gaUtils.mutation(offspring, questions);
 
@@ -131,10 +131,7 @@ public class QuestionPaperGenerator {
 		List<Integer> questionIds = fittest.getGenes().stream().map(Question::getId).collect(Collectors.toList());
 
 		int marks = fittest.getGenes().stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
-		int timeRequiredMins = fittest.getGenes()
-			.stream()
-			.mapToInt(Question::getTimeRequiredMins)
-			.reduce(0, Integer::sum);
+		int minsRequired = fittest.getGenes().stream().mapToInt(Question::getMinutesRequired).reduce(0, Integer::sum);
 
 		return new QuestionPaperBuilder().withId(id)
 			.withSubjectId(subjectId)
@@ -144,7 +141,7 @@ public class QuestionPaperGenerator {
 			.withQuestionIds(questionIds)
 			.withSkillLevel(skillLevel)
 			.withMarks(marks)
-			.withTimeRequiredMins(timeRequiredMins)
+			.withMinutesRequired(minsRequired)
 			.build();
 	}
 
