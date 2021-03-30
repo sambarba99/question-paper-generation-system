@@ -124,7 +124,6 @@ public class UserDAO {
 				users.add(user);
 			}
 			input.close();
-			LOGGER.info("Retrieved all " + users.size() + " users");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			SystemNotification.display(SystemNotificationType.ERROR,

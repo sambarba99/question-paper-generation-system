@@ -126,7 +126,6 @@ public class QuestionDAO {
 					questions.add(question);
 				}
 				input.close();
-				LOGGER.info("Retrieved all " + questions.size() + " questions");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -143,7 +142,6 @@ public class QuestionDAO {
 	 * @return question with specified ID
 	 */
 	public Optional<Question> getQuestionById(int id) {
-		LOGGER.info("Retrieving question by ID " + id);
 		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst();
 	}
 

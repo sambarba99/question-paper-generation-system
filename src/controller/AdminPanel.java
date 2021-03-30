@@ -36,8 +36,6 @@ public class AdminPanel {
 
 	private static Stage stage;
 
-	private static List<UserDTO> userDTOs;
-
 	private static TableView tblUsers = new TableView();
 
 	/**
@@ -162,7 +160,7 @@ public class AdminPanel {
 	 * Refresh TableView of users.
 	 */
 	private static void refreshUsersTbl() {
-		userDTOs = UserService.getInstance().getAllUserDTOs();
+		List<UserDTO> userDTOs = UserService.getInstance().getAllUserDTOs();
 		tblUsers.getItems().clear();
 		tblUsers.getItems().addAll(userDTOs);
 	}

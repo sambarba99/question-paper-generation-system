@@ -110,7 +110,6 @@ public class SubjectDAO {
 					subjects.add(subject);
 				}
 				input.close();
-				LOGGER.info("Retrieved all " + subjects.size() + " subjects");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -127,7 +126,6 @@ public class SubjectDAO {
 	 * @return subject with specified ID
 	 */
 	public Optional<Subject> getSubjectById(int id) {
-		LOGGER.info("Retrieving subject by ID " + id);
 		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst();
 	}
 

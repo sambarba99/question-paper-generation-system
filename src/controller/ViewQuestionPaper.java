@@ -1,7 +1,5 @@
 package controller;
 
-import java.util.logging.Logger;
-
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,8 +27,6 @@ import view.utils.LogoMaker;
  */
 public class ViewQuestionPaper {
 
-	private static final Logger LOGGER = Logger.getLogger(ViewQuestionPaper.class.getName());
-
 	private static Stage stage;
 
 	/**
@@ -47,7 +43,6 @@ public class ViewQuestionPaper {
 
 		Button btnExport = new ButtonBuilder().withWidth(120).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
 			// use Constants.EXPORTED_PAPERS_FILE_PATH;
-			LOGGER.info("Exporting papers is unimplemented");
 			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
 		}).build();
 

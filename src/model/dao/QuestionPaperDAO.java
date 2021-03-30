@@ -131,7 +131,6 @@ public class QuestionPaperDAO {
 					questionPapers.add(questionPaper);
 				}
 				input.close();
-				LOGGER.info("Retrieved all " + questionPapers.size() + " question papers");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -148,7 +147,6 @@ public class QuestionPaperDAO {
 	 * @return the question paper with the specified ID
 	 */
 	public Optional<QuestionPaper> getQuestionPaperById(int id) {
-		LOGGER.info("Retrieving question paper by ID " + id);
 		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst();
 	}
 
@@ -159,7 +157,6 @@ public class QuestionPaperDAO {
 	 * @return list of papers containing question with specified ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
-		LOGGER.info("Retrieving question papers by question ID " + questionId);
 		return getAllQuestionPapers().stream()
 			.filter(qp -> qp.getQuestionIds().contains(questionId))
 			.collect(Collectors.toList());
@@ -204,8 +201,6 @@ public class QuestionPaperDAO {
 		} else { // write
 			csvWriter.write(line);
 		}
-
-		LOGGER.info("Added data of question paper ID " + questionPaper.getId() + " to file");
 	}
 
 	public synchronized static QuestionPaperDAO getInstance() {

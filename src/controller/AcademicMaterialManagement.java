@@ -45,10 +45,6 @@ public class AcademicMaterialManagement {
 
 	private static Stage stage;
 
-	private static List<SubjectDTO> subjectDTOs;
-
-	private static List<QuestionPaperDTO> questionPaperDTOs;
-
 	private static TableView tblSubjects = new TableView();
 
 	private static TableView tblQuestionPapers = new TableView();
@@ -330,7 +326,7 @@ public class AcademicMaterialManagement {
 	 * Refresh TableView of subjects.
 	 */
 	private static void refreshSubjectsTbl() {
-		subjectDTOs = SubjectService.getInstance().getAllSubjectDTOs();
+		List<SubjectDTO> subjectDTOs = SubjectService.getInstance().getAllSubjectDTOs();
 		tblSubjects.getItems().clear();
 		tblSubjects.getItems().addAll(subjectDTOs);
 	}
@@ -339,7 +335,8 @@ public class AcademicMaterialManagement {
 	 * Refresh TableView of question papers.
 	 */
 	private static void refreshQuestionPapersTbl() {
-		questionPaperDTOs = QuestionPaperService.getInstance().getQuestionPaperDTOsWithSubjectFilter(subjectIdFilters);
+		List<QuestionPaperDTO> questionPaperDTOs = QuestionPaperService.getInstance()
+			.getQuestionPaperDTOsWithSubjectFilter(subjectIdFilters);
 		tblQuestionPapers.getItems().clear();
 		tblQuestionPapers.getItems().addAll(questionPaperDTOs);
 	}

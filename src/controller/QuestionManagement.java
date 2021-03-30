@@ -48,8 +48,6 @@ public class QuestionManagement {
 
 	private static Stage stage;
 
-	private static List<QuestionDTO> questionDTOs;
-
 	private static Label lblSelectQuestion = new Label();
 
 	private static TableView tblQuestions = new TableView();
@@ -269,7 +267,8 @@ public class QuestionManagement {
 			.map(cb -> SkillLevel.getIntFromDisplayStr(cb.getText()))
 			.collect(Collectors.toList());
 
-		questionDTOs = QuestionService.getInstance().getQuestionDTOsWithFilters(skillLvlFilters, subjectIdFilters);
+		List<QuestionDTO> questionDTOs = QuestionService.getInstance()
+			.getQuestionDTOsWithFilters(skillLvlFilters, subjectIdFilters);
 		tblQuestions.getItems().clear();
 		tblQuestions.getItems().addAll(questionDTOs);
 

@@ -1,7 +1,5 @@
 package controller;
 
-import java.util.logging.Logger;
-
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,8 +25,6 @@ import view.utils.Constants;
  */
 public class UserConfirmation {
 
-	private static final Logger LOGGER = Logger.getLogger(UserConfirmation.class.getName());
-
 	private static Stage stage;
 
 	private static boolean actionConfirmed;
@@ -53,21 +49,13 @@ public class UserConfirmation {
 
 		Button btnYes = new ButtonBuilder().withWidth(70).withUserAction(UserAction.CONFIRM_YES).withActionEvent(e -> {
 			actionConfirmed = true;
-			if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
-				LOGGER.info("Deletion confirmed by user");
-			} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-				LOGGER.info("Application exit confirmed by user");
+			if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
 				Platform.exit();
 			}
 			stage.close();
 		}).build();
 
 		Button btnNo = new ButtonBuilder().withWidth(70).withUserAction(UserAction.CONFIRM_NO).withActionEvent(e -> {
-			if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
-				LOGGER.info("Deletion not confirmed by user");
-			} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-				LOGGER.info("Application exit not confirmed by user");
-			}
 			stage.close();
 		}).build();
 
