@@ -23,8 +23,8 @@ public class StringFormatter {
 
 		String[] words = title.trim().split(Constants.SPACE);
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < words.length; i++) {
-			result.append(capitalise(words[i]) + Constants.SPACE);
+		for (String word : words) {
+			result.append(capitalise(word) + Constants.SPACE);
 		}
 		return result.toString().trim(); // remove last space
 	}

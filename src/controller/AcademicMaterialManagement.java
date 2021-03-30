@@ -183,6 +183,7 @@ public class AcademicMaterialManagement {
 					SubjectDTO subjectDto = (SubjectDTO) tblSubjects.getSelectionModel().getSelectedItem();
 					SubjectService.getInstance().deleteSubjectById(subjectDto.getId());
 					refreshSubjectsTbl();
+					refreshQuestionPapersTbl();
 					SystemNotification.display(SystemNotificationType.SUCCESS,
 						"Subject '" + subjectDto.getTitle() + "' deleted.");
 				}

@@ -35,8 +35,8 @@ public class SecurityUtils {
 	 */
 	private String convertToHex(byte[] data) {
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < data.length; i++) {
-			result.append(Integer.toString((data[i] & 255) + 256, 16).substring(1));
+		for (Byte b : data) {
+			result.append(Integer.toString((b & 255) + 256, 16).substring(1));
 		}
 		return result.toString();
 	}

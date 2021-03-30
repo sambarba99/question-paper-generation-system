@@ -105,24 +105,26 @@ public class GAUtils {
 				// populate roulette wheel based on each individual's fitness
 				List<Individual> rouletteWheel = new ArrayList<>();
 
-				for (int i = 0; i < Constants.POP_SIZE; i++) {
-					int numTimesToAdd = (int) Math.abs(Math.round(population[i].calculateFitness() * 100));
+				for (Individual individual : population) {
+					int numTimesToAdd = (int) Math.abs(Math.round(individual.calculateFitness() * 100));
 
 					// the fitter the individual, the more it gets added, so the higher the chance of selection
 					for (int n = 0; n < numTimesToAdd; n++) {
-						rouletteWheel.add(population[i]);
+						rouletteWheel.add(individual);
 					}
 				}
 
 				// select random individuals from wheel
-				for (int i = 0; i < Constants.POP_SIZE; i++) {
-					Individual randIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
-					offspring[i].setGenes(randIndividual.getGenes());
+				for (Individual individual : offspring) {
+					Individual rouletteIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
+					individual.setGenes(rouletteIndividual.getGenes());
 				}
 				break;
 			default: // TOURNAMENT
-				for (int i = 0; i < Constants.POP_SIZE; i++) {
-					List<Individual> tournamentIndividuals = new ArrayList<>();
+				List<Individual> tournamentIndividuals = new ArrayList<>();
+
+				for (Individual individual : offspring) {
+					tournamentIndividuals.clear();
 
 					for (int n = 0; n < Constants.TOURNAMENT_SIZE; n++) {
 						tournamentIndividuals.add(population[RAND.nextInt(Constants.POP_SIZE)]);
@@ -132,7 +134,7 @@ public class GAUtils {
 						.max(Comparator.comparing(Individual::calculateFitness))
 						.get();
 
-					offspring[i].setGenes(tournamentFittest.getGenes());
+					individual.setGenes(tournamentFittest.getGenes());
 				}
 		}
 	}
@@ -250,8 +252,8 @@ public class GAUtils {
 	public void mutation(Individual[] offspring, List<Question> questions) {
 		int numGenes = offspring[0].getGenes().size();
 
-		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			if (offspring[i].containsAllPossibleGenes(questions)) {
+		for (Individual individual : offspring) {
+			if (individual.containsAllPossibleGenes(questions)) {
 				/*
 				 * Cannot mutate because there would be a duplicate gene, so move on to next offspring
 				 */
@@ -262,19 +264,18 @@ public class GAUtils {
 			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				if (RAND.nextDouble() < Constants.MUTATION_RATE && !offspring[i].containsAllPossibleGenes(questions)) {
+				if (RAND.nextDouble() < Constants.MUTATION_RATE && !individual.containsAllPossibleGenes(questions)) {
 					/*
 					 * Ensure offspring to mutate doesn't already contain gene, so remove random question instead of
 					 * using questionsCopy.get
 					 */
 					Question randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
 
-					while (offspring[i].containsGene(randGene)) {
+					while (individual.containsGene(randGene)) {
 						randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
 					}
 
-					int idx = RAND.nextInt(numGenes);
-					offspring[i].getGenes().set(idx, randGene);
+					individual.getGenes().set(j, randGene);
 				}
 			}
 		}
@@ -287,22 +288,14 @@ public class GAUtils {
 	 * @return list representing a CSV row, containing the mean, highest and lowest fitness of the generation
 	 */
 	public List<Double> getTableFitnesses(Individual[] population) {
-		double sum = 0;
-		double highest = population[0].calculateFitness();
-		double lowest = highest;
+		double mean = Arrays.stream(population).mapToDouble(Individual::calculateFitness).average().getAsDouble();
 
-		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			double f = population[i].calculateFitness();
-			sum += f;
-			if (f > highest) {
-				highest = f;
-			}
-			if (f < lowest) {
-				lowest = f;
-			}
-		}
+		double highest = findFittest(population).calculateFitness();
 
-		double mean = sum / Constants.POP_SIZE;
+		double lowest = Arrays.stream(population)
+			.min(Comparator.comparing(Individual::calculateFitness))
+			.get()
+			.calculateFitness();
 
 		return Arrays.asList(mean, highest, lowest);
 	}

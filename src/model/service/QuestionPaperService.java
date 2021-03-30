@@ -123,12 +123,12 @@ public class QuestionPaperService {
 	}
 
 	/**
-	 * Get a formatted question paper string for question paper TextArea object.
+	 * Get a formatted question paper string for question paper TextArea object, or to export to '.txt'.
 	 * 
 	 * @param questionPaper - the paper to format
 	 * @return question paper as a string
 	 */
-	public String getTxtAreaQuestionPaperStr(QuestionPaper questionPaper) {
+	public String getQuestionPaperDisplayStr(QuestionPaper questionPaper) {
 		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(questionPaper.getSubjectId());
 		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
 
@@ -145,14 +145,21 @@ public class QuestionPaperService {
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		int numQ = questionIds.size();
 		for (int i = 0; i < questionIds.size(); i++) {
-			Question question = QuestionService.getInstance().getQuestionById(questionIds.get(i)).get();
+			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + "Question " + (i + 1) + "/" + numQ);
 
-			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + "Question " + (i + 1) + "/" + numQ + " ("
-				+ question.getMarks() + " marks). " + question.getStatement() + Constants.NEWLINE);
+			Optional<Question> questionOpt = QuestionService.getInstance().getQuestionById(questionIds.get(i));
 
-			for (int j = 0; j < question.getAnswers().size(); j++) {
-				resultBld.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + j)) + ") "
-					+ question.getAnswers().get(j).getValue());
+			if (questionOpt.isPresent()) {
+				Question question = questionOpt.get();
+				resultBld
+					.append(" (" + question.getMarks() + " marks). " + question.getStatement() + Constants.NEWLINE);
+
+				for (int j = 0; j < question.getAnswers().size(); j++) {
+					resultBld.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + j)) + ") "
+						+ question.getAnswers().get(j).getValue());
+				}
+			} else {
+				resultBld.append(Constants.NEWLINE + Constants.QUESTION_DELETED);
 			}
 		}
 

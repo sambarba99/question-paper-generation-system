@@ -83,13 +83,13 @@ public class RawQuestionTransformer {
 	public static void transformAndSaveRawQuestions() {
 		LOGGER.info("Transforming and saving raw questions...");
 
-		for (int i = 0; i < INPUT_SUBJECTS.length; i++) {
-			LOGGER.info("Saving " + INPUT_SUBJECTS[i] + " questions...");
+		for (String subjectTitle : INPUT_SUBJECTS) {
+			LOGGER.info("Saving " + subjectTitle + " questions...");
 
 			SubjectService.getInstance()
-				.addSubject(new SubjectBuilder().withId(subjectId).withTitle(INPUT_SUBJECTS[i]).build());
+				.addSubject(new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build());
 
-			String inputFilePath = INPUT_DIRECTORY + INPUT_SUBJECTS[i] + INPUT_EXT;
+			String inputFilePath = INPUT_DIRECTORY + subjectTitle + INPUT_EXT;
 
 			List<String> rawLines = new ArrayList<>();
 			try {
@@ -175,8 +175,7 @@ public class RawQuestionTransformer {
 
 			// create answers for the current question key in map
 			List<Answer> answers = new ArrayList<>();
-			for (int i = 0; i < ANSWERS_PER_QUESTION; i++) {
-				String answerStr = answersStr.get(i);
+			for (String answerStr : answersStr) {
 				boolean correct = answerStr.charAt(0) == '1';
 				answerStr = answerStr.substring(2); // remove leading 0/1 and space
 				answerStr = Character.toString(answerStr.charAt(0)).toUpperCase() + answerStr.substring(1); // capitalise

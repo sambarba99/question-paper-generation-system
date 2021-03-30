@@ -92,7 +92,9 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
-	public static final String SUBJECT_DELETED = "Subject deleted";
+	public static final String QUESTION_DELETED = "This question has been deleted!";
+
+	public static final String SUBJECT_DELETED = "Subject deleted!";
 
 	public static final String UNEXPECTED_ERROR = "Unexpected error: ";
 

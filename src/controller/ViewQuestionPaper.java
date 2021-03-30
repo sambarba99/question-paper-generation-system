@@ -41,7 +41,7 @@ public class ViewQuestionPaper {
 
 		TextArea txtAreaPaper = new TextArea();
 		txtAreaPaper.setEditable(false);
-		txtAreaPaper.setText(QuestionPaperService.getInstance().getTxtAreaQuestionPaperStr(questionPaper));
+		txtAreaPaper.setText(QuestionPaperService.getInstance().getQuestionPaperDisplayStr(questionPaper));
 		txtAreaPaper.setMinSize(600, 600);
 		txtAreaPaper.setMaxSize(600, 600);
 

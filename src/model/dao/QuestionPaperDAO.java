@@ -107,8 +107,8 @@ public class QuestionPaperDAO {
 					String courseCode = lineArr[4];
 					String[] questionIdsStr = lineArr[5].split(Constants.COMMA);
 					List<Integer> questionIds = new ArrayList<>();
-					for (int i = 0; i < questionIdsStr.length; i++) {
-						questionIds.add(Integer.parseInt(questionIdsStr[i]));
+					for (String questionIdStr : questionIdsStr) {
+						questionIds.add(Integer.parseInt(questionIdStr));
 					}
 					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[6]);
 					int marks = Integer.parseInt(lineArr[7]);
