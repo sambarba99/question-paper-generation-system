@@ -36,29 +36,27 @@ public class UserConfirmation {
 	/**
 	 * Display the object to delete (if confirming deletion), and return whether or not the action was confirmed.
 	 * 
-	 * @param deleteObject - the type of object the user wishes to delete, if this class is called to use for deletion
-	 *                     confirmation
-	 * @return whether or not the item has been deleted, or whether the user wants to exit
+	 * @return whether or not the action has been confirmed by the user
 	 */
-	public static boolean confirm(SystemNotificationType notificationType, String deleteObject) {
+	public static boolean confirm(SystemNotificationType notificationType) {
 		stage = new Stage();
 		actionConfirmed = false;
 
 		Label lbl = new Label();
 		lbl.setTextAlignment(TextAlignment.CENTER);
+
 		if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
-			lbl.setText("Are you sure you wish to delete this " + deleteObject + "?");
+			lbl.setText(Constants.SURE_TO_DELETE);
 		} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-			lbl.setText(
-				"Are you sure you wish to exit the application?" + Constants.NEWLINE + "Any changes have been saved.");
+			lbl.setText(Constants.SURE_TO_EXIT);
 		}
 
 		Button btnYes = new ButtonBuilder().withWidth(70).withUserAction(UserAction.CONFIRM_YES).withActionEvent(e -> {
 			actionConfirmed = true;
 			if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
-				LOGGER.info(deleteObject + " deletion confirmed");
+				LOGGER.info("Deletion confirmed by user");
 			} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-				LOGGER.info("Application exit confirmed");
+				LOGGER.info("Application exit confirmed by user");
 				Platform.exit();
 			}
 			stage.close();
@@ -66,9 +64,9 @@ public class UserConfirmation {
 
 		Button btnNo = new ButtonBuilder().withWidth(70).withUserAction(UserAction.CONFIRM_NO).withActionEvent(e -> {
 			if (SystemNotificationType.CONFIRM_DELETION.equals(notificationType)) {
-				LOGGER.info(deleteObject + " deletion not confirmed");
+				LOGGER.info("Deletion not confirmed by user");
 			} else if (SystemNotificationType.CONFIRM_EXIT_APPLICATION.equals(notificationType)) {
-				LOGGER.info("Application exit not confirmed");
+				LOGGER.info("Application exit not confirmed by user");
 			}
 			stage.close();
 		}).build();

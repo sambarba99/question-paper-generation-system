@@ -59,7 +59,7 @@ public class ButtonBuilder {
 		btn.setTranslateX(translateX);
 		btn.setTranslateY(translateY);
 		btn.setOnAction(e -> {
-			UserConfirmation.confirm(SystemNotificationType.CONFIRM_EXIT_APPLICATION, null);
+			UserConfirmation.confirm(SystemNotificationType.CONFIRM_EXIT_APPLICATION);
 		});
 		btn.getStyleClass().add("btn-exit");
 		return btn;

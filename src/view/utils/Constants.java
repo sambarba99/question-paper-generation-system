@@ -92,6 +92,12 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
+
+	public static final String SURE_TO_DELETE = "Are you sure you wish to delete the selected item(s)?";
+
+	public static final String SURE_TO_EXIT = "Are you sure you wish to exit the application?" + NEWLINE
+		+ "Any changes have been saved.";
+
 	public static final String QUESTION_DELETED = "This question has been deleted!";
 
 	public static final String SUBJECT_DELETED = "Subject deleted!";

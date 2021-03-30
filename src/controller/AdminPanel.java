@@ -125,7 +125,7 @@ public class AdminPanel {
 
 			if (username.equals(currentUser.getUsername())) {
 				SystemNotification.display(SystemNotificationType.ERROR, "You can't delete yourself!");
-			} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "user")) {
+			} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
 				UserService.getInstance().deleteUserByUsername(username);
 				refreshUsersTbl();
 				SystemNotification.display(SystemNotificationType.SUCCESS, "User '" + username + "' deleted.");

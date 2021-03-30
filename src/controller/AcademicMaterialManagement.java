@@ -177,15 +177,15 @@ public class AcademicMaterialManagement {
 				}
 				break;
 			case DELETE_SUBJECT:
-				if (tblSubjects.getSelectionModel().getSelectedItems().size() != 1) {
-					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 subject.");
-				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "subject")) {
-					SubjectDTO subjectDto = (SubjectDTO) tblSubjects.getSelectionModel().getSelectedItem();
-					SubjectService.getInstance().deleteSubjectById(subjectDto.getId());
+				ObservableList<SubjectDTO> subjectDtos = tblSubjects.getSelectionModel().getSelectedItems();
+
+				if (subjectDtos.isEmpty()) {
+					SystemNotification.display(SystemNotificationType.ERROR, "Please select at least 1 subject.");
+				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
+					subjectDtos.forEach(s -> SubjectService.getInstance().deleteSubjectById(s.getId()));
 					refreshSubjectsTbl();
 					refreshQuestionPapersTbl();
-					SystemNotification.display(SystemNotificationType.SUCCESS,
-						"Subject '" + subjectDto.getTitle() + "' deleted.");
+					SystemNotification.display(SystemNotificationType.SUCCESS, "Selected subjects deleted.");
 				}
 				break;
 			case TOGGLE_FILTER_PAPERS:
@@ -243,14 +243,16 @@ public class AcademicMaterialManagement {
 				}
 				break;
 			case DELETE_QUESTION_PAPER:
-				if (tblQuestionPapers.getSelectionModel().getSelectedItems().size() != 1) {
-					SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 paper.");
-				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "question paper")) {
-					QuestionPaperDTO questionPaperDto = (QuestionPaperDTO) tblQuestionPapers.getSelectionModel()
-						.getSelectedItem();
-					QuestionPaperService.getInstance().deleteQuestionPaperById(questionPaperDto.getId());
+				ObservableList<QuestionPaperDTO> questionPaperDtos = tblQuestionPapers.getSelectionModel()
+					.getSelectedItems();
+
+				if (questionPaperDtos.isEmpty()) {
+					SystemNotification.display(SystemNotificationType.ERROR, "Please select at least 1 paper.");
+				} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
+					questionPaperDtos
+						.forEach(q -> QuestionPaperService.getInstance().deleteQuestionPaperById(q.getId()));
 					refreshQuestionPapersTbl();
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Question paper deleted.");
+					SystemNotification.display(SystemNotificationType.SUCCESS, "Selected papers deleted.");
 				}
 				break;
 			case UPDATE_PASSWORD:
@@ -313,7 +315,7 @@ public class AcademicMaterialManagement {
 		tblQuestionPapers.getColumns().clear();
 		tblQuestionPapers.getColumns()
 			.addAll(colPaperId, colPaperTitle, colPaperSubject, colPaperCourse, colPaperDateCreated);
-		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tblQuestionPapers.setPrefSize(800, 365);
 		tblQuestionPapers.setEditable(false);
 

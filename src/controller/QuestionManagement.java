@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
@@ -74,7 +75,7 @@ public class QuestionManagement {
 
 		Label lblSelectFilters = new Label("Select filters to apply?");
 
-		Button btnAddQuestion = new ButtonBuilder().withWidth(150)
+		Button btnAddQuestion = new ButtonBuilder().withWidth(160)
 			.withUserAction(UserAction.ADD_NEW_QUESTION)
 			.withActionEvent(e -> {
 				// if added a new question, refresh questions TableView
@@ -84,10 +85,10 @@ public class QuestionManagement {
 				}
 			})
 			.build();
-		Button btnDelQuestion = new ButtonBuilder().withWidth(150)
+		Button btnDelQuestion = new ButtonBuilder().withWidth(160)
 			.withUserAction(UserAction.DELETE_QUESTION)
 			.withActionEvent(e -> {
-				deleteQuestion();
+				deleteSelectedQuestions();
 			})
 			.build();
 
@@ -135,16 +136,17 @@ public class QuestionManagement {
 	}
 
 	/**
-	 * Delete selected question with confirmation.
+	 * Delete selected questions with confirmation.
 	 */
-	private static void deleteQuestion() {
-		if (tblQuestions.getSelectionModel().getSelectedItems().size() != 1) {
-			SystemNotification.display(SystemNotificationType.ERROR, "Please select 1 question.");
-		} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION, "question")) {
-			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
-			QuestionService.getInstance().deleteQuestionById(questionDto.getId());
+	private static void deleteSelectedQuestions() {
+		ObservableList<QuestionDTO> questionDtos = tblQuestions.getSelectionModel().getSelectedItems();
+
+		if (questionDtos.isEmpty()) {
+			SystemNotification.display(SystemNotificationType.ERROR, "Please select at least 1 question.");
+		} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
+			questionDtos.forEach(q -> QuestionService.getInstance().deleteQuestionById(q.getId()));
 			refreshQuestionsTbl();
-			SystemNotification.display(SystemNotificationType.SUCCESS, "Question deleted.");
+			SystemNotification.display(SystemNotificationType.SUCCESS, "Selected questions deleted.");
 		}
 	}
 
@@ -182,7 +184,7 @@ public class QuestionManagement {
 		tblQuestions.getColumns().clear();
 		tblQuestions.getColumns()
 			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colMinsRequired, colDateCreated);
-		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
 			if (questionDto != null) {
