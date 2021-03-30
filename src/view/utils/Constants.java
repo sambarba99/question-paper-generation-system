@@ -70,7 +70,7 @@ public class Constants {
 
 	public static final int POP_SIZE = 200;
 
-	public static final double MUTATION_RATE = 0.02;
+	public static final double MUTATION_RATE = 0.05;
 
 	public static final double CROSSOVER_RATE = 0.8;
 

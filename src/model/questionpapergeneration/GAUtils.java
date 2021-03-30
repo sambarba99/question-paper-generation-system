@@ -3,7 +3,9 @@ package model.questionpapergeneration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import model.persisted.Question;
@@ -77,14 +79,16 @@ public class GAUtils {
 	 * @param questions  - list of questions to use when selecting random genes
 	 */
 	public void randomisePopulationGenes(Individual[] population, int numGenes, List<Question> questions) {
-		for (int i = 0; i < Constants.POP_SIZE; i++) {
-			List<Question> questionsCopy = new ArrayList<>();
+		List<Question> questionsCopy = new ArrayList<>();
+
+		for (Individual individual : population) {
+			questionsCopy.clear();
 			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				// avoid repeated questions in an Individual's chromosome, so question is deleted after use
+				// question is deleted after use, to avoid repeated genes in a chromosome
 				Question randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
-				population[i].getGenes().add(randGene);
+				individual.getGenes().add(randGene);
 			}
 		}
 	}
@@ -154,10 +158,10 @@ public class GAUtils {
 					paperMinsRequired);
 
 				// replace with fittest of the 2 new offspring, only if fitter than current offspring
-				Individual fittestOf2 = findFittest(new Individual[] { newOffspring1, newOffspring2 });
+				Individual fittestOffspring = findFittest(new Individual[] { newOffspring1, newOffspring2 });
 
-				if (fittestOf2.calculateFitness() > offspring[i].calculateFitness()) {
-					offspring[i].setGenes(fittestOf2.getGenes());
+				if (fittestOffspring.calculateFitness() > offspring[i].calculateFitness()) {
+					offspring[i].setGenes(fittestOffspring.getGenes());
 				}
 			}
 		}
@@ -175,21 +179,30 @@ public class GAUtils {
 	 * @return a uniform crossover-generated offspring
 	 */
 	private Individual recombineGenes(Individual p1, Individual p2, int paperSkillLvl, int paperMinsRequired) {
-		// sort in order to reduce chance of duplicate genes in offspring
-		p1.getGenes().sort(Comparator.comparing(Question::getMarks));
-		p2.getGenes().sort(Comparator.comparing(Question::getMarks));
-
+		/*
+		 * The higher the selection bias for parent 1, the more genes from them to add to the offspring's chromosome.
+		 */
 		double probChooseP1 = calculateP1selectionBias(p1, p2);
+		int numGenesFromP1 = (int) Math.round(probChooseP1 * p1.getGenes().size());
+
+		Map<Integer, Question> p1genes = new HashMap<>();
+		Map<Integer, Question> p2genes = new HashMap<>();
+
+		for (int i = 0; i < numGenesFromP1; i++) {
+			Question p1gene = p1.getGenes().get(i);
+			p1genes.put(p1gene.getId(), p1gene);
+		}
+
+		for (Question p2gene : p2.getGenes()) {
+			if (p1genes.size() + p2genes.size() < p1.getGenes().size() && !p1genes.containsKey(p2gene.getId())) {
+				p2genes.put(p2gene.getId(), p2gene);
+			}
+		}
 
 		Individual offspring = new Individual(paperSkillLvl, paperMinsRequired);
 
-		for (int i = 0; i < p1.getGenes().size(); i++) {
-			if (RAND.nextDouble() <= probChooseP1) {
-				offspring.getGenes().add(p1.getGenes().get(i));
-			} else {
-				offspring.getGenes().add(p2.getGenes().get(i));
-			}
-		}
+		offspring.getGenes().addAll(p1genes.values());
+		offspring.getGenes().addAll(p2genes.values());
 
 		return offspring;
 	}
@@ -249,21 +262,19 @@ public class GAUtils {
 			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				if (RAND.nextDouble() < Constants.MUTATION_RATE) {
-					int questionIdx = RAND.nextInt(questionsCopy.size());
-					Question randGene = questionsCopy.get(questionIdx);
+				if (RAND.nextDouble() < Constants.MUTATION_RATE && !offspring[i].containsAllPossibleGenes(questions)) {
+					/*
+					 * Ensure offspring to mutate doesn't already contain gene, so remove random question instead of
+					 * using questionsCopy.get
+					 */
+					Question randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
 
-					// ensure offspring to mutate doesn't already contain question
 					while (offspring[i].containsGene(randGene)) {
-						questionIdx = RAND.nextInt(questionsCopy.size());
-						randGene = questionsCopy.get(questionIdx);
+						randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
 					}
 
 					int idx = RAND.nextInt(numGenes);
 					offspring[i].getGenes().set(idx, randGene);
-
-					// remove to deny selection of the same question in future of inner for-loop
-					questionsCopy.remove(questionIdx);
 				}
 			}
 		}

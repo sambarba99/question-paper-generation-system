@@ -52,10 +52,6 @@ public class Individual {
 	 * @return the fitness of the individual
 	 */
 	public double calculateFitness() {
-		if (hasDuplicates()) {
-			return -Double.MAX_VALUE;
-		}
-
 		List<Integer> skillLvls = genes.stream().map(q -> q.getSkillLevel().getIntVal()).collect(Collectors.toList());
 		List<Integer> minsRequired = genes.stream().map(Question::getMinutesRequired).collect(Collectors.toList());
 
@@ -80,23 +76,6 @@ public class Individual {
 		 * Hence, the fitness can be calculated as follows:
 		 */
 		return stDevSkillLvls + stDevMinsRequied - skillLvlDist - minsRequiredDist;
-	}
-
-	/**
-	 * Find whether chromosome has duplicate genes (questions).
-	 * 
-	 * @return whether or not duplicates exist
-	 */
-	private boolean hasDuplicates() {
-		List<Integer> questionIds = new ArrayList<>();
-
-		for (Question q : genes) {
-			if (questionIds.contains(q.getId())) {
-				return true;
-			}
-			questionIds.add(q.getId());
-		}
-		return false;
 	}
 
 	/**
