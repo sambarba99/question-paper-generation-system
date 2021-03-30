@@ -74,7 +74,7 @@ public class Constants {
 
 	public static final double CROSSOVER_RATE = 0.8;
 
-	public static final int GENERATIONS = 200;
+	public static final int GENERATIONS = 125;
 
 	public static final int TOURNAMENT_SIZE = 4;
 

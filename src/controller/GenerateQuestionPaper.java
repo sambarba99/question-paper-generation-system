@@ -61,7 +61,7 @@ public class GenerateQuestionPaper {
 
 	private static Slider sliderMinutesRequired = new Slider();
 
-	private static Label lblSelectedMinsRequired = new Label("Approx. time required: 60 minutes");
+	private static Label lblSelectedMinsRequired = new Label("Approx. duration: 60 minutes");
 
 	/**
 	 * Return whether a paper has been generated successfully or not.
@@ -77,7 +77,7 @@ public class GenerateQuestionPaper {
 		Label lblEnterCourseTitle = new Label("Enter the course title:");
 		Label lblEnterCourseCode = new Label("Enter the course code:");
 		Label lblSelectSkillLvl = new Label("Select approx. paper skill level\n(based on Bloom's taxonomy):");
-		Label lblSelectMinsRequired = new Label("Select approx. minutes required:");
+		Label lblSelectMinsRequired = new Label("Select approx. duration (mins):");
 
 		Button btnGenerate = new ButtonBuilder().withWidth(120)
 			.withUserAction(UserAction.GENERATE)
@@ -211,7 +211,7 @@ public class GenerateQuestionPaper {
 		sliderMinutesRequired.valueProperty().addListener((obs, oldValue, newValue) -> {
 			int intVal = (int) (15 * Math.round(newValue.doubleValue() / 15));
 			sliderMinutesRequired.setValue(intVal); // snap to nearest 15 mins
-			lblSelectedMinsRequired.setText("Approx. time required: " + intVal + " minutes");
+			lblSelectedMinsRequired.setText("Approx. duration: " + intVal + " minutes");
 		});
 		lblSelectedMinsRequired.setPrefWidth(240);
 	}

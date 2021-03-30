@@ -140,7 +140,7 @@ public class QuestionPaperService {
 		resultBld.append(
 			Constants.NEWLINE + "Approx. Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
 		resultBld.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
-		resultBld.append(Constants.NEWLINE + "Time required: " + questionPaper.getMinutesRequired() + " mins");
+		resultBld.append(Constants.NEWLINE + "Approx. duration: " + questionPaper.getMinutesRequired() + " mins");
 
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		int numQ = questionIds.size();

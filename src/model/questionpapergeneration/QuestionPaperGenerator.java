@@ -79,6 +79,8 @@ public class QuestionPaperGenerator {
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
+			LOGGER.info("Generation: " + g + " / " + Constants.GENERATIONS);
+
 			gaUtils.selection(population, offspring);
 
 			gaUtils.crossover(offspring, skillLevel.getIntVal(), minsRequired);

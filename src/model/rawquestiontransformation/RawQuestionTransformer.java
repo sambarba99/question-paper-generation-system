@@ -44,16 +44,13 @@ import view.utils.Constants;
  * The answers must be turned into A-D (deleting one of the incorrect ones if > 4 answers), and recording the correct
  * option, which is found by checking if it starts with a 0 or 1.
  *
- * Subjects of downloaded questions from online are: Economics, Government, HistoryEurope, HistoryUS, HistoryWorld,
- * Marketing, Psychology
- * 
  * @author Sam Barba
  */
 public class RawQuestionTransformer {
 
 	private static final Logger LOGGER = Logger.getLogger(RawQuestionTransformer.class.getName());
 
-	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "History", "Marketing", "Psychology" };
+	private static final String[] INPUT_SUBJECTS = { "Economics", "Government", "Marketing", "Psychology" };
 
 	private static final String INPUT_DIRECTORY = "C:\\#rawquestions\\";
 
