@@ -1,5 +1,7 @@
 package model.service;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -164,6 +166,42 @@ public class QuestionPaperService {
 		}
 
 		return resultBld.toString();
+	}
+
+	/**
+	 * Save a question paper as a text file.
+	 * 
+	 * @param questionPaper - the paper to export
+	 * @param directory     - the destination directory
+	 * @return whether or not the operation was successful
+	 */
+	public boolean exportToTxt(QuestionPaper questionPaper, String directory) {
+		try {
+			String[] dateTimeCreated = Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()).split(" ");
+			String date = dateTimeCreated[0].replace("/", "-");
+
+			String fileName = directory + "\\" + questionPaper.getId() + "-"
+				+ questionPaper.getTitle().replace(" ", "-") + "-" + date + Constants.TXT_EXT;
+
+			File txtFile = new File(fileName);
+			if (!txtFile.exists()) {
+				txtFile.getParentFile().mkdirs();
+				txtFile.createNewFile();
+
+				FileWriter writer = new FileWriter(txtFile, false); // append = false
+				writer.write(getQuestionPaperDisplayStr(questionPaper));
+				writer.flush();
+				writer.close();
+				return true;
+			} else {
+				SystemNotification.display(SystemNotificationType.ERROR, "Paper already exists at selected directory");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + e.getClass().getName());
+		}
+		return false;
 	}
 
 	public synchronized static QuestionPaperService getInstance() {

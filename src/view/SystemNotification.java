@@ -26,12 +26,12 @@ public class SystemNotification {
 	 * Display a system notification.
 	 * 
 	 * @param notificationType - the type of system notification
-	 * @param notification     - the message to display
+	 * @param msg              - the message to display
 	 */
-	public static void display(SystemNotificationType notificationType, String notification) {
+	public static void display(SystemNotificationType notificationType, String msg) {
 		stage = new Stage();
 
-		Label lbl = new Label(notification);
+		Label lbl = new Label(msg);
 		lbl.setTextAlignment(TextAlignment.CENTER);
 
 		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)

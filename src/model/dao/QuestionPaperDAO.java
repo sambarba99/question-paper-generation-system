@@ -44,10 +44,10 @@ public class QuestionPaperDAO {
 				csvFile.createNewFile();
 			}
 
-			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			addQuestionPaperDataToFile(questionPaper, csvWriter, true);
-			csvWriter.flush();
-			csvWriter.close();
+			FileWriter writer = new FileWriter(csvFile, true); // append = true
+			addQuestionPaperDataToFile(questionPaper, writer, true);
+			writer.flush();
+			writer.close();
 			LOGGER.info("Question paper '" + questionPaper.getTitle() + "' added");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,15 +65,15 @@ public class QuestionPaperDAO {
 		try {
 			List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
 			File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
+			FileWriter writer = new FileWriter(csvFile, false); // append = false
 
 			for (QuestionPaper questionPaper : allQuestionPapers) {
 				if (questionPaper.getId() != id) {
-					addQuestionPaperDataToFile(questionPaper, csvWriter, false);
+					addQuestionPaperDataToFile(questionPaper, writer, false);
 				}
 			}
-			csvWriter.flush();
-			csvWriter.close();
+			writer.flush();
+			writer.close();
 			LOGGER.info("Question paper with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -166,10 +166,10 @@ public class QuestionPaperDAO {
 	 * Add question paper data to the question papers CSV file.
 	 * 
 	 * @param questionPaper - the question paper to add
-	 * @param csvWriter     - the file writer
+	 * @param writer        - the file writer
 	 * @param append        - whether to append or write to the file
 	 */
-	private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter csvWriter, boolean append)
+	private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter writer, boolean append)
 		throws IOException {
 
 		StringBuilder questionIdsBld = new StringBuilder();
@@ -197,9 +197,9 @@ public class QuestionPaperDAO {
 			+ Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
-			csvWriter.append(line);
+			writer.append(line);
 		} else { // write
-			csvWriter.write(line);
+			writer.write(line);
 		}
 	}
 

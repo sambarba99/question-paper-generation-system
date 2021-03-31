@@ -1,10 +1,16 @@
 package controller;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -29,6 +35,8 @@ public class ViewQuestionPaper {
 
 	private static Stage stage;
 
+	private static String destinationDir;
+
 	/**
 	 * Display a question paper.
 	 */
@@ -41,18 +49,48 @@ public class ViewQuestionPaper {
 		txtAreaPaper.setMinSize(600, 600);
 		txtAreaPaper.setMaxSize(600, 600);
 
+		/*
+		 * Set default export directory to Downloads folder
+		 */
+		destinationDir = System.getProperty("user.home") + "\\Downloads";
+
+		Label lblDestinationDir = new Label("Export to:" + Constants.NEWLINE + destinationDir);
+		lblDestinationDir.setTextAlignment(TextAlignment.CENTER);
+
 		Button btnExport = new ButtonBuilder().withWidth(120).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
-			// use Constants.EXPORTED_PAPERS_FILE_PATH;
-			SystemNotification.display(SystemNotificationType.NEUTRAL, "Unimplemented");
+			boolean success = QuestionPaperService.getInstance().exportToTxt(questionPaper, destinationDir);
+			if (success) {
+				SystemNotification.display(SystemNotificationType.SUCCESS,
+					"Paper successfully exported to" + Constants.NEWLINE + destinationDir);
+			}
 		}).build();
 
+		Button btnChooseExportDest = new ButtonBuilder().withWidth(220)
+			.withUserAction(UserAction.CHOOSE_EXPORT_DESTINATION)
+			.withActionEvent(e -> {
+				DirectoryChooser dc = new DirectoryChooser();
+				dc.setInitialDirectory(new File(destinationDir));
+				File selectedDir = dc.showDialog(stage);
+
+				if (selectedDir != null) {
+					destinationDir = selectedDir.getAbsolutePath();
+					lblDestinationDir.setText("Export to:" + Constants.NEWLINE + destinationDir);
+				}
+			})
+			.build();
+
+		HBox hboxBtns = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
+			.withAlignment(Pos.CENTER)
+			.withSpacing(10)
+			.withNodes(btnExport, btnChooseExportDest)
+			.build();
 		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
 			.withAlignment(Pos.CENTER)
 			.withSpacing(20)
-			.withNodes(LogoMaker.makeLogo(300), txtAreaPaper, btnExport)
+			.withNodes(LogoMaker.makeLogo(300), txtAreaPaper, lblDestinationDir, hboxBtns)
 			.build();
 
-		Scene scene = new Scene(vboxMain, 700, 850);
+		Scene scene = new Scene(vboxMain, 700, 900);
 		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
 		stage.setScene(scene);
 		stage.setTitle("View Question Paper");

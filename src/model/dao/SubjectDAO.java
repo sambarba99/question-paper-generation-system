@@ -42,10 +42,10 @@ public class SubjectDAO {
 				csvFile.createNewFile();
 			}
 
-			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			addSubjectDataToFile(subject, csvWriter, true);
-			csvWriter.flush();
-			csvWriter.close();
+			FileWriter writer = new FileWriter(csvFile, true); // append = true
+			addSubjectDataToFile(subject, writer, true);
+			writer.flush();
+			writer.close();
 			LOGGER.info("Subject '" + subject.getTitle() + "' added");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,15 +63,15 @@ public class SubjectDAO {
 		try {
 			List<Subject> allSubjects = getAllSubjects();
 			File csvFile = new File(Constants.SUBJECTS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
+			FileWriter writer = new FileWriter(csvFile, false); // append = false
 
 			for (Subject subject : allSubjects) {
 				if (subject.getId() != id) {
-					addSubjectDataToFile(subject, csvWriter, false);
+					addSubjectDataToFile(subject, writer, false);
 				}
 			}
-			csvWriter.flush();
-			csvWriter.close();
+			writer.flush();
+			writer.close();
 			LOGGER.info("Subject with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -132,11 +132,11 @@ public class SubjectDAO {
 	/**
 	 * Add subject data to the subjects CSV file.
 	 * 
-	 * @param subject   - the subject to add
-	 * @param csvWriter - the file writer
-	 * @param append    - whether to append or write to the file
+	 * @param subject - the subject to add
+	 * @param writer  - the file writer
+	 * @param append  - whether to append or write to the file
 	 */
-	private void addSubjectDataToFile(Subject subject, FileWriter csvWriter, boolean append) throws IOException {
+	private void addSubjectDataToFile(Subject subject, FileWriter writer, boolean append) throws IOException {
 		/*
 		 * 1 line contains: ID, title, date created
 		 */
@@ -145,9 +145,9 @@ public class SubjectDAO {
 			+ Constants.DATE_FORMATTER.format(subject.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
-			csvWriter.append(line);
+			writer.append(line);
 		} else { // write
-			csvWriter.write(line);
+			writer.write(line);
 		}
 	}
 

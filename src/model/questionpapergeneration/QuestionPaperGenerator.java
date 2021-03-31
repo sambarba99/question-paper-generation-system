@@ -47,8 +47,8 @@ public class QuestionPaperGenerator {
 
 		LOGGER.info("Generating question paper...");
 
-		FileWriter csvWriter = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
-		csvWriter.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
+		FileWriter writer = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
+		writer.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
 
 		GAUtils gaUtils = GAUtils.getInstance();
 
@@ -94,13 +94,13 @@ public class QuestionPaperGenerator {
 			gaUtils.selection(offspring, population);
 
 			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
-			csvWriter.append(g + Constants.COMMA);
-			csvWriter.append(Double.toString(meanHiLo.get(0)) + Constants.COMMA);
-			csvWriter.append(Double.toString(meanHiLo.get(1)) + Constants.COMMA);
-			csvWriter.append(Double.toString(meanHiLo.get(2)) + Constants.NEWLINE);
+			writer.append(g + Constants.COMMA);
+			writer.append(Double.toString(meanHiLo.get(0)) + Constants.COMMA);
+			writer.append(Double.toString(meanHiLo.get(1)) + Constants.COMMA);
+			writer.append(Double.toString(meanHiLo.get(2)) + Constants.NEWLINE);
 		}
-		csvWriter.flush();
-		csvWriter.close();
+		writer.flush();
+		writer.close();
 
 		Individual fittest = gaUtils.findFittest(population);
 		QuestionPaper questionPaper = makePaperOutOfFittest(fittest, subjectId, title, courseTitle, courseCode,

@@ -54,8 +54,6 @@ public class RawQuestionTransformer {
 
 	private static final String INPUT_DIRECTORY = "C:\\#rawquestions\\";
 
-	private static final String INPUT_EXT = ".txt";
-
 	private static final int MIN_SKILL_LVL = 1;
 
 	private static final int MAX_SKILL_LVL = SkillLevel.values().length;
@@ -89,7 +87,7 @@ public class RawQuestionTransformer {
 			SubjectService.getInstance()
 				.addSubject(new SubjectBuilder().withId(subjectId).withTitle(subjectTitle).build());
 
-			String inputFilePath = INPUT_DIRECTORY + subjectTitle + INPUT_EXT;
+			String inputFilePath = INPUT_DIRECTORY + subjectTitle + Constants.TXT_EXT;
 
 			List<String> rawLines = new ArrayList<>();
 			try {

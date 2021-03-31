@@ -46,10 +46,10 @@ public class QuestionDAO {
 				csvFile.createNewFile();
 			}
 
-			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			addQuestionDataToFile(question, csvWriter, true);
-			csvWriter.flush();
-			csvWriter.close();
+			FileWriter writer = new FileWriter(csvFile, true); // append = true
+			addQuestionDataToFile(question, writer, true);
+			writer.flush();
+			writer.close();
 			LOGGER.info("Question with ID " + question.getId() + " added");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,15 +67,15 @@ public class QuestionDAO {
 		try {
 			List<Question> allQuestions = getAllQuestions();
 			File csvFile = new File(Constants.QUESTIONS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
+			FileWriter writer = new FileWriter(csvFile, false); // append = false
 
 			for (Question question : allQuestions) {
 				if (question.getId() != id) {
-					addQuestionDataToFile(question, csvWriter, false);
+					addQuestionDataToFile(question, writer, false);
 				}
 			}
-			csvWriter.flush();
-			csvWriter.close();
+			writer.flush();
+			writer.close();
 			LOGGER.info("Question with ID " + id + " deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -148,11 +148,11 @@ public class QuestionDAO {
 	/**
 	 * Add question data to the questions CSV file.
 	 * 
-	 * @param question  - the question to add
-	 * @param csvWriter - the file writer
-	 * @param append    - whether to append or write to the file
+	 * @param question - the question to add
+	 * @param writer   - the file writer
+	 * @param append   - whether to append or write to the file
 	 */
-	private void addQuestionDataToFile(Question question, FileWriter csvWriter, boolean append) throws IOException {
+	private void addQuestionDataToFile(Question question, FileWriter writer, boolean append) throws IOException {
 		String correctAnswerLetter = "";
 		for (int i = 0; i < question.getAnswers().size(); i++) {
 			if (question.getAnswers().get(i).isCorrect()) {
@@ -180,9 +180,9 @@ public class QuestionDAO {
 			+ Constants.NEWLINE;
 
 		if (append) {
-			csvWriter.append(line);
+			writer.append(line);
 		} else { // write
-			csvWriter.write(line);
+			writer.write(line);
 		}
 	}
 

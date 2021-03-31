@@ -42,10 +42,10 @@ public class UserDAO {
 				csvFile.createNewFile();
 			}
 
-			FileWriter csvWriter = new FileWriter(csvFile, true); // append = true
-			addUserDataToFile(user, csvWriter, true);
-			csvWriter.flush();
-			csvWriter.close();
+			FileWriter writer = new FileWriter(csvFile, true); // append = true
+			addUserDataToFile(user, writer, true);
+			writer.flush();
+			writer.close();
 			LOGGER.info("User '" + user.getUsername() + "' added");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,15 +76,15 @@ public class UserDAO {
 		try {
 			List<User> allUsers = getAllUsers();
 			File csvFile = new File(Constants.USERS_FILE_PATH);
-			FileWriter csvWriter = new FileWriter(csvFile, false); // append = false
+			FileWriter writer = new FileWriter(csvFile, false); // append = false
 
 			for (User user : allUsers) {
 				if (!user.getUsername().equals(username)) {
-					addUserDataToFile(user, csvWriter, false);
+					addUserDataToFile(user, writer, false);
 				}
 			}
-			csvWriter.flush();
-			csvWriter.close();
+			writer.flush();
+			writer.close();
 			LOGGER.info("User '" + username + "' deleted");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,11 +135,11 @@ public class UserDAO {
 	/**
 	 * Add user data to the users CSV file.
 	 * 
-	 * @param user      - the user to add
-	 * @param csvWriter - the file writer
-	 * @param append    - whether to append or write to the file
+	 * @param user   - the user to add
+	 * @param writer - the file writer
+	 * @param append - whether to append or write to the file
 	 */
-	private void addUserDataToFile(User user, FileWriter csvWriter, boolean append) throws IOException {
+	private void addUserDataToFile(User user, FileWriter writer, boolean append) throws IOException {
 		/*
 		 * 1 line contains: unique username (ID), encrypted password, privilege level, date created
 		 */
@@ -149,9 +149,9 @@ public class UserDAO {
 			+ Constants.DATE_FORMATTER.format(user.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
 		if (append) {
-			csvWriter.append(line);
+			writer.append(line);
 		} else { // write
-			csvWriter.write(line);
+			writer.write(line);
 		}
 	}
 

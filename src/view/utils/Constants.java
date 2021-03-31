@@ -12,7 +12,7 @@ import model.questionpapergeneration.SelectionType;
 public class Constants {
 
 	/*
-	 * Paths were files are stored
+	 * File path constants
 	 */
 	public static final String USERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\users.csv";
 
@@ -22,9 +22,9 @@ public class Constants {
 
 	public static final String SUBJECTS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\subjects.csv";
 
-	public static final String EXPORTED_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\exported\\";
-
 	public static final String GENETIC_ALGORITHM_TEST_RESULTS = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\GA-test-results.csv";
+
+	public static final String TXT_EXT = ".txt";
 
 	/*
 	 * Character constants
@@ -92,7 +92,6 @@ public class Constants {
 	/*
 	 * Misc constants
 	 */
-
 	public static final String SURE_TO_DELETE = "Are you sure you wish to delete the selected item(s)?";
 
 	public static final String SURE_TO_EXIT = "Are you sure you wish to exit the application?" + NEWLINE
