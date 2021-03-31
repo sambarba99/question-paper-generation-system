@@ -86,7 +86,7 @@ public class GAUtils {
 			questionsCopy.addAll(questions);
 
 			for (int j = 0; j < numGenes; j++) {
-				// question is deleted after use, to avoid repeated genes in a chromosome
+				// question is deleted after use, to avoid repeating genes (.remove instead of .get)
 				Question randGene = questionsCopy.remove(RAND.nextInt(questionsCopy.size()));
 				individual.getGenes().add(randGene);
 			}
@@ -150,8 +150,8 @@ public class GAUtils {
 		for (int i = 0; i < Constants.POP_SIZE; i += 2) {
 			if (RAND.nextDouble() < Constants.CROSSOVER_RATE && i < Constants.POP_SIZE - 1) {
 				/*
-				 * In each iteration, 2 possible offspring are found by calling recombineGenesToMakeOffspring twice, but
-				 * switching the parents around. The fittest of the 2 is then kept.
+				 * In each iteration, 2 possible offspring are found by calling recombineGenes twice, but switching the
+				 * parents around. The fittest of the 2 is then kept.
 				 */
 				Individual newOffspring1 = recombineGenes(offspring[i], offspring[i + 1], paperSkillLvl,
 					paperMinsRequired);
@@ -170,15 +170,15 @@ public class GAUtils {
 	}
 
 	/**
-	 * Perform a modified uniform crossover on parents p1 and p2 (modified because: repeated questions in the offspring
-	 * must try to be avoided; and because the selection of genes from the fitter parent is biased, in order to ensure
-	 * more selection from their genotype).
+	 * Perform a modified uniform crossover on parents p1 and p2 (modified because: repeated genes (questions) in the
+	 * offspring chromosome are avoided; and because the selection of genes from the fitter parent is biased, in order
+	 * to ensure more selection from their genotype).
 	 * 
 	 * @param p1                - the first parent
 	 * @param p2                - the second parent
 	 * @param paperSkillLvl     - the user-selected (mean) skill level of the paper
 	 * @param paperMinsRequired - the user-selected minutes required for the paper
-	 * @return a uniform crossover-generated offspring
+	 * @return a new offspring
 	 */
 	private Individual recombineGenes(Individual p1, Individual p2, int paperSkillLvl, int paperMinsRequired) {
 		/*
@@ -196,13 +196,13 @@ public class GAUtils {
 		}
 
 		for (Question p2gene : p2.getGenes()) {
+			// ensure chromosome size is correct, and no repeated genes
 			if (p1genes.size() + p2genes.size() < p1.getGenes().size() && !p1genes.containsKey(p2gene.getId())) {
 				p2genes.put(p2gene.getId(), p2gene);
 			}
 		}
 
 		Individual offspring = new Individual(paperSkillLvl, paperMinsRequired);
-
 		offspring.getGenes().addAll(p1genes.values());
 		offspring.getGenes().addAll(p2genes.values());
 
@@ -244,7 +244,9 @@ public class GAUtils {
 	}
 
 	/**
-	 * Perform mutation on the offspring.
+	 * Perform mutation on the offspring. The mutation type is a 'random reset' (an extension of the bit flip method)
+	 * wherein a random value from the set of permissible values is assigned to a gene, randomly selected via the
+	 * mutation rate.
 	 * 
 	 * @param offspring - the array representing the offspring set
 	 * @param questions - the set of questions to choose from, ensuring question isn't already in Individual
@@ -254,9 +256,7 @@ public class GAUtils {
 
 		for (Individual individual : offspring) {
 			if (individual.containsAllPossibleGenes(questions)) {
-				/*
-				 * Cannot mutate because there would be a duplicate gene, so move on to next offspring
-				 */
+				// cannot mutate because there would be a duplicate gene, so move on to next offspring
 				continue;
 			}
 
