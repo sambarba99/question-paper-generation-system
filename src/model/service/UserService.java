@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import model.builders.UserBuilder;
@@ -123,6 +122,7 @@ public class UserService {
 	 */
 	public User checkUserExists(User checkUser)
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+
 		for (User user : getAllUsers()) {
 			if (user.getUsername().equals(checkUser.getUsername())
 				&& user.getPassword().equals(SecurityUtils.getInstance().sha512(checkUser.getPassword()))) {
@@ -138,22 +138,8 @@ public class UserService {
 	 * @param username - the username to check
 	 * @return whether or not it exists
 	 */
-	public boolean checkUsernameAlreadyExists(String username)
-		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
-		File csvFile = new File(Constants.USERS_FILE_PATH);
-		Scanner input = new Scanner(csvFile);
-
-		while (input.hasNextLine()) {
-			String line = input.nextLine();
-			String[] lineSplit = line.split(Constants.COMMA);
-			String usernameRead = lineSplit[0];
-			if (usernameRead.equals(username)) {
-				input.close();
-				return true;
-			}
-		}
-		input.close();
-		return false;
+	public boolean checkUsernameAlreadyExists(String username) {
+		return getAllUsers().stream().anyMatch(u -> u.getUsername().equals(username));
 	}
 
 	/**
@@ -206,6 +192,7 @@ public class UserService {
 	 */
 	public boolean validateFirstTimeLogin(String username, String pass)
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+
 		if (username.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
@@ -234,6 +221,7 @@ public class UserService {
 	 */
 	public boolean validateResetPassword(User currentUser, String currentPass, String newPass, String repeatNewPass)
 		throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
 		if (currentPass.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter current password.");
 			return false;
@@ -265,14 +253,14 @@ public class UserService {
 	 * @param pass     - the temporary password of the new user
 	 * @return whether or not the new credentials are valid
 	 */
-	public boolean validateAddNewUserCreds(String username, String pass)
-		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
+	public boolean validateAddNewUserCreds(String username, String pass) {
 		if (username.length() == 0) {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter a username.");
 			return false;
 		}
 		if (checkUsernameAlreadyExists(username)) {
-			SystemNotification.display(SystemNotificationType.ERROR, "That username already exists.");
+			SystemNotification.display(SystemNotificationType.ERROR, "That username already exists." + Constants.NEWLINE
+				+ "Try adding a number on the end to make it unique!");
 			return false;
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {

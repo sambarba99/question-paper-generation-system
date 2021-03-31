@@ -58,10 +58,15 @@ public class ViewQuestionPaper {
 		lblDestinationDir.setTextAlignment(TextAlignment.CENTER);
 
 		Button btnExport = new ButtonBuilder().withWidth(120).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
-			boolean success = QuestionPaperService.getInstance().exportToTxt(questionPaper, destinationDir);
-			if (success) {
-				SystemNotification.display(SystemNotificationType.SUCCESS,
-					"Paper successfully exported to" + Constants.NEWLINE + destinationDir);
+			if ("C:\\".equals(destinationDir)) {
+				SystemNotification.display(SystemNotificationType.ERROR,
+					"Cannot export to C drive. Please choose another directory.");
+			} else {
+				boolean success = QuestionPaperService.getInstance().exportToTxt(questionPaper, destinationDir);
+				if (success) {
+					SystemNotification.display(SystemNotificationType.SUCCESS,
+						"Paper successfully exported to" + Constants.NEWLINE + destinationDir);
+				}
 			}
 		}).build();
 

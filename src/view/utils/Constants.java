@@ -14,13 +14,13 @@ public class Constants {
 	/*
 	 * File path constants
 	 */
-	public static final String USERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\users.csv";
+	public static final String USERS_FILE_PATH = "C:\\#QPGS\\users.csv";
 
-	public static final String QUESTIONS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\questions.csv";
+	public static final String QUESTIONS_FILE_PATH = "C:\\#QPGS\\questions.csv";
 
-	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\questionpapers.csv";
+	public static final String QUESTION_PAPERS_FILE_PATH = "C:\\#QPGS\\questionpapers.csv";
 
-	public static final String SUBJECTS_FILE_PATH = "C:\\#QuestionPaperGenerationSystem\\subjects.csv";
+	public static final String SUBJECTS_FILE_PATH = "C:\\#QPGS\\subjects.csv";
 
 	public static final String GENETIC_ALGORITHM_TEST_RESULTS = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\GA-test-results.csv";
 
@@ -68,13 +68,13 @@ public class Constants {
 
 	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
-	public static final int POP_SIZE = 200;
+	public static final int POP_SIZE = 2000;
 
-	public static final double MUTATION_RATE = 0.05;
+	public static final double MUTATION_RATE = 0.1;
 
 	public static final double CROSSOVER_RATE = 0.8;
 
-	public static final int GENERATIONS = 125;
+	public static final int GENERATIONS = 30;
 
 	public static final int TOURNAMENT_SIZE = 4;
 

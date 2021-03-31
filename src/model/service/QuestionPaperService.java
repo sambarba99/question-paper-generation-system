@@ -194,7 +194,8 @@ public class QuestionPaperService {
 				writer.close();
 				return true;
 			} else {
-				SystemNotification.display(SystemNotificationType.ERROR, "Paper already exists at selected directory");
+				SystemNotification.display(SystemNotificationType.ERROR,
+					"A paper with that name already exists at that directory.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

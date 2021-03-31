@@ -19,11 +19,9 @@ import model.builders.UserBuilder;
 import model.persisted.User;
 import model.service.UserService;
 
-import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
 import view.enums.BoxType;
-import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.enums.UserPrivilege;
 import view.utils.Constants;
@@ -109,21 +107,15 @@ public class AddUser {
 	 * @param privilege - the new user's privilege level
 	 */
 	private static void prepareDataAndAddUser(String username, String password, UserPrivilege privilege) {
-		try {
-			if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
-				User user = new UserBuilder().withUsername(username)
-					.withPassword(password)
-					.withPrivilege(privilege)
-					.build();
+		if (UserService.getInstance().validateAddNewUserCreds(username, password)) {
+			User user = new UserBuilder().withUsername(username)
+				.withPassword(password)
+				.withPrivilege(privilege)
+				.build();
 
-				UserService.getInstance().addUser(user);
-				added = true;
-				stage.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
+			UserService.getInstance().addUser(user);
+			added = true;
+			stage.close();
 		}
 	}
 }

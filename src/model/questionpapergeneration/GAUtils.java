@@ -104,13 +104,16 @@ public class GAUtils {
 			case ROULETTE_WHEEL:
 				// populate roulette wheel based on each individual's fitness
 				List<Individual> rouletteWheel = new ArrayList<>();
+				int numTimesToAdd;
 
 				for (Individual individual : population) {
-					int numTimesToAdd = (int) Math.abs(Math.round(individual.calculateFitness() * 100));
+					numTimesToAdd = (int) Math.round(map(individual.calculateFitness(), -250, 10, 1, 200));
 
-					// the fitter the individual, the more it gets added, so the higher the chance of selection
-					for (int n = 0; n < numTimesToAdd; n++) {
-						rouletteWheel.add(individual);
+					if (numTimesToAdd > 0) {
+						// the fitter the individual, the more it gets added, so the higher the chance of selection
+						for (int n = 0; n < numTimesToAdd; n++) {
+							rouletteWheel.add(individual);
+						}
 					}
 				}
 
@@ -308,6 +311,25 @@ public class GAUtils {
 	 */
 	public Individual findFittest(Individual[] population) {
 		return Arrays.stream(population).max(Comparator.comparing(Individual::calculateFitness)).get();
+	}
+
+	/**
+	 * Map a value from one range to another. E.g. If x = -60 and is in the range -250 to 10, what would x become if the
+	 * range were 1 to 200?
+	 * 
+	 * x = (-60 - -250) * (200 - 1) / (10 - -250) + 1
+	 * 
+	 * x = 146.42
+	 * 
+	 * @param x       - the value to map
+	 * @param r1start - the start of range 1
+	 * @param r1end   - the end of range 1
+	 * @param r2start - the start of range 2
+	 * @param r2end   - the end of range 2
+	 * @return the converted value
+	 */
+	private static double map(double x, double r1start, double r1end, double r2start, double r2end) {
+		return (x - r1start) * (r2end - r2start) / (r1end - r1start) + r2start;
 	}
 
 	public synchronized static GAUtils getInstance() {
