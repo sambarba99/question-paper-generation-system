@@ -1,7 +1,6 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -31,8 +30,8 @@ import model.service.SubjectService;
 import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
+import view.enums.BloomSkillLevel;
 import view.enums.BoxType;
-import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -181,17 +180,17 @@ public class AddQuestion {
 			SystemNotification.display(SystemNotificationType.ERROR, "Invalid number of minutes required.");
 			return false;
 		}
-		int id = QuestionService.getInstance().getHighestQuestionId() + 1;
+		int id = QuestionService.getInstance().getNewQuestionId();
 		int subjectId = SubjectService.getInstance()
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 
 		int correctAnswerPos = choiceCorrectAnsLetter.getSelectionModel().getSelectedIndex();
-		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
+		BloomSkillLevel skillLevel = BloomSkillLevel.getFromInt((int) sliderSkillLvl.getValue());
 
 		Question question = new QuestionBuilder().withId(id)
 			.withSubjectId(subjectId)
 			.withStatement(statement)
-			.withAnswers(makeAnswers(Arrays.asList(ansA, ansB, ansC, ansD), correctAnswerPos))
+			.withAnswers(makeAnswers(correctAnswerPos, ansA, ansB, ansC, ansD))
 			.withSkillLevel(skillLevel)
 			.withMarks(marks)
 			.withMinutesRequired(minsRequired)
@@ -215,15 +214,14 @@ public class AddQuestion {
 		txtAreaStatement.textProperty()
 			.addListener((obs, oldText, newText) -> {
 				// remove characters that could potentially harm CSV read/write functionality
-				txtAreaStatement
-					.setText(newText.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'"));
+				txtAreaStatement.setText(newText.replace("\n", Constants.EMPTY).replace(Constants.QUOT_MARK, "'"));
 			});
 
 		choiceCorrectAnsLetter.getItems().clear();
 		choiceCorrectAnsLetter.getItems().addAll("A", "B", "C", "D");
 		choiceCorrectAnsLetter.getSelectionModel().select(0);
 
-		List<SkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(SkillLevel.class));
+		List<BloomSkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(BloomSkillLevel.class));
 		sliderSkillLvl.setMin(1);
 		sliderSkillLvl.setMax(allSkillLvls.size());
 		sliderSkillLvl.setPrefWidth(200);
@@ -259,19 +257,15 @@ public class AddQuestion {
 	 * Make answers for a question, given a list of possible answers and the position of the correct one. Shuffle at the
 	 * end.
 	 * 
-	 * @param answersStr       - the list of possible answers
 	 * @param correctAnswerPos - the position of the correct answer
+	 * @param answersStr       - the set of possible answers
 	 * @return - list of Answer objects to be used in Question building
 	 */
-	private static List<Answer> makeAnswers(List<String> answersStr, int correctAnswerPos) {
+	private static List<Answer> makeAnswers(int correctAnswerPos, String... strAnswers) {
 		List<Answer> answers = new ArrayList<>();
 
-		for (int i = 0; i < answersStr.size(); i++) {
-			Answer answer = new AnswerBuilder().withValue(answersStr.get(i))
-				.withIsCorrect(i == correctAnswerPos)
-				.build();
-
-			answers.add(answer);
+		for (int i = 0; i < strAnswers.length; i++) {
+			answers.add(new AnswerBuilder().withValue(strAnswers[i]).withIsCorrect(i == correctAnswerPos).build());
 		}
 		Collections.shuffle(answers);
 

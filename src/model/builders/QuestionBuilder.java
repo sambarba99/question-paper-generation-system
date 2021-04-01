@@ -6,7 +6,7 @@ import java.util.List;
 import model.persisted.Answer;
 import model.persisted.Question;
 
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 
 /**
  * This class utilises the builder pattern, and is used to build persisted Question objects.
@@ -23,7 +23,7 @@ public class QuestionBuilder {
 
 	private List<Answer> answers;
 
-	private SkillLevel skillLevel;
+	private BloomSkillLevel skillLevel;
 
 	private int marks;
 
@@ -54,7 +54,7 @@ public class QuestionBuilder {
 		return this;
 	}
 
-	public QuestionBuilder withSkillLevel(SkillLevel skillLevel) {
+	public QuestionBuilder withSkillLevel(BloomSkillLevel skillLevel) {
 		this.skillLevel = skillLevel;
 		return this;
 	}

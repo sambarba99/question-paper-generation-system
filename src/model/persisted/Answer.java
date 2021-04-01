@@ -20,8 +20,8 @@ public class Answer {
 		return value;
 	}
 
-	public void setValue(String answerValue) {
-		this.value = answerValue;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public boolean isCorrect() {

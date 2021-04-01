@@ -72,7 +72,7 @@ public class AddSubject {
 	}
 
 	/**
-	 * Add a new subject.
+	 * Verify user-entered title and add the subject.
 	 * 
 	 * @param subjectTitle - the title of the subject
 	 */
@@ -83,7 +83,7 @@ public class AddSubject {
 			SystemNotification.display(SystemNotificationType.ERROR, "Please enter the subject title.");
 		} else {
 			if (subjectTitle.matches(Constants.TITLE_REGEX)) {
-				int id = SubjectService.getInstance().getHighestSubjectId() + 1;
+				int id = SubjectService.getInstance().getNewSubjectId();
 				Subject subject = new SubjectBuilder().withId(id).withTitle(subjectTitle).build();
 				SubjectService.getInstance().addSubject(subject);
 				added = true;

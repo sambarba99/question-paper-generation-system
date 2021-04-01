@@ -14,6 +14,16 @@ public class SecurityUtils {
 
 	private static SecurityUtils instance;
 
+	private SecurityUtils() {
+	}
+
+	public synchronized static SecurityUtils getInstance() {
+		if (instance == null) {
+			instance = new SecurityUtils();
+		}
+		return instance;
+	}
+
 	/**
 	 * Encrypt a string using SHA-512.
 	 * 
@@ -39,15 +49,5 @@ public class SecurityUtils {
 			result.append(Integer.toString((b & 255) + 256, 16).substring(1));
 		}
 		return result.toString();
-	}
-
-	public synchronized static SecurityUtils getInstance() {
-		if (instance == null) {
-			instance = new SecurityUtils();
-		}
-		return instance;
-	}
-
-	private SecurityUtils() {
 	}
 }

@@ -3,7 +3,7 @@ package model.persisted;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 
 /**
  * Represents a question paper.
@@ -24,7 +24,7 @@ public class QuestionPaper {
 
 	private List<Integer> questionIds;
 
-	private SkillLevel skillLevel;
+	private BloomSkillLevel skillLevel;
 
 	private int marks;
 
@@ -33,7 +33,8 @@ public class QuestionPaper {
 	private LocalDateTime dateCreated;
 
 	public QuestionPaper(int id, int subjectId, String title, String courseTitle, String courseCode,
-		List<Integer> questionIds, SkillLevel skillLevel, int marks, int minutesRequired, LocalDateTime dateCreated) {
+		List<Integer> questionIds, BloomSkillLevel skillLevel, int marks, int minutesRequired,
+		LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;
@@ -95,11 +96,11 @@ public class QuestionPaper {
 		this.questionIds = questionIds;
 	}
 
-	public SkillLevel getSkillLevel() {
+	public BloomSkillLevel getSkillLevel() {
 		return skillLevel;
 	}
 
-	public void setSkillLevel(SkillLevel skillLevel) {
+	public void setSkillLevel(BloomSkillLevel skillLevel) {
 		this.skillLevel = skillLevel;
 	}
 

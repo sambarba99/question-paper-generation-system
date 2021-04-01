@@ -20,7 +20,7 @@ import model.persisted.Question;
 import model.service.QuestionService;
 import model.service.SubjectService;
 
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 import view.utils.Constants;
 
 /**
@@ -54,9 +54,9 @@ public class RawQuestionTransformer {
 
 	private static final String INPUT_DIRECTORY = "C:\\#rawquestions\\";
 
-	private static final int MIN_SKILL_LVL = 1;
+	private static final int MIN_BLOOM_SKILL_LVL = 1;
 
-	private static final int MAX_SKILL_LVL = SkillLevel.values().length;
+	private static final int MAX_BLOOM_SKILL_LVL = 6;
 
 	private static final int MIN_MINUTES_REQUIRED = 1;
 
@@ -200,12 +200,14 @@ public class RawQuestionTransformer {
 
 			/*
 			 * Determine skill level, minutes required, and marks, by mapping question statement length to specified
-			 * range e.g. between 1 and 10 for marks
+			 * range e.g. between 1 and 10 for marks. This will aid the determining of how good a question paper is
+			 * after it is generated.
 			 */
 			String questionStatement = entry.getKey();
 			int len = questionStatement.length();
-			int skillLevelInt = (int) Math.round(map(len, minLength, maxLength, MIN_SKILL_LVL, MAX_SKILL_LVL));
-			SkillLevel skillLevel = SkillLevel.getFromInt(skillLevelInt);
+			int skillLevelInt = (int) Math
+				.round(map(len, minLength, maxLength, MIN_BLOOM_SKILL_LVL, MAX_BLOOM_SKILL_LVL));
+			BloomSkillLevel skillLevel = BloomSkillLevel.getFromInt(skillLevelInt);
 			int minsRequired = (int) Math
 				.round(map(len, minLength, maxLength, MIN_MINUTES_REQUIRED, MAX_MINUTES_REQUIRED));
 			int marks = (int) Math.round(map(len, minLength, maxLength, MIN_MARKS, MAX_MARKS));

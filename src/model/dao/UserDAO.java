@@ -29,6 +29,16 @@ public class UserDAO {
 
 	private static UserDAO instance;
 
+	private UserDAO() {
+	}
+
+	public synchronized static UserDAO getInstance() {
+		if (instance == null) {
+			instance = new UserDAO();
+		}
+		return instance;
+	}
+
 	/**
 	 * Add a user to the users CSV file.
 	 * 
@@ -153,15 +163,5 @@ public class UserDAO {
 		} else { // write
 			writer.write(line);
 		}
-	}
-
-	public synchronized static UserDAO getInstance() {
-		if (instance == null) {
-			instance = new UserDAO();
-		}
-		return instance;
-	}
-
-	private UserDAO() {
 	}
 }

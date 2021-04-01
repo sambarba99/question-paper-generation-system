@@ -16,7 +16,7 @@ import model.service.QuestionService;
 import model.service.SubjectService;
 
 import view.SystemNotification;
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
@@ -31,6 +31,16 @@ public class QuestionPaperGenerator {
 
 	private static QuestionPaperGenerator instance;
 
+	private QuestionPaperGenerator() {
+	}
+
+	public synchronized static QuestionPaperGenerator getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperGenerator();
+		}
+		return instance;
+	}
+
 	/**
 	 * Generate a question paper with the GA, then create the persisted object with the user-specified parameters.
 	 * 
@@ -43,14 +53,19 @@ public class QuestionPaperGenerator {
 	 * @return a generated question paper
 	 */
 	public Optional<QuestionPaper> generatePaper(int subjectId, String title, String courseTitle, String courseCode,
-		SkillLevel skillLevel, int minsRequired) throws IOException {
+		BloomSkillLevel skillLevel, int minsRequired) throws IOException {
 
 		LOGGER.info("Generating question paper...");
 
-		FileWriter writer = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
-		writer.append("Generation,Population mean fitness,Highest,Lowest" + Constants.NEWLINE);
+		FileWriter writer;
+		if (Constants.TEST_MODE) {
+			writer = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
+			writer.append("Generation,Population mean fitness,Highest,Lowest\n");
+		}
 
 		GAUtils gaUtils = GAUtils.getInstance();
+
+		long startTime = System.currentTimeMillis();
 
 		// get questions by user-selected subject; 'fit' questions are already identified with this parameter
 		List<Question> questions = QuestionService.getInstance()
@@ -59,14 +74,16 @@ public class QuestionPaperGenerator {
 			.filter(q -> q.getSubjectId() == subjectId)
 			.collect(Collectors.toList());
 
-		if (questions.size() < Constants.MIN_QUESTIONS_PER_SUBJECT) {
+		if (questions.size() < Constants.MIN_QUESTIONS_PER_PAPER) {
 			SystemNotification.display(SystemNotificationType.ERROR,
-				"Insufficient questions for this subject:" + Constants.NEWLINE
+				"Insufficient questions for this subject:\n"
 					+ SubjectService.getInstance().getSubjectById(subjectId).get().getTitle() + " (ID " + subjectId
-					+ ")" + Constants.NEWLINE + "Subjects require at least " + Constants.MIN_QUESTIONS_PER_SUBJECT
+					+ ")\nSubjects require at least " + Constants.MIN_QUESTIONS_PER_PAPER
 					+ " questions to generate a paper.");
 
 			return Optional.empty();
+		} else {
+			SystemNotification.display(SystemNotificationType.NEUTRAL, "Generating...\nPlease wait.");
 		}
 
 		int numGenes = gaUtils.calculateChromosomeLength(questions, skillLevel.getIntVal(), minsRequired);
@@ -77,36 +94,48 @@ public class QuestionPaperGenerator {
 		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
 
 		gaUtils.randomisePopulationGenes(population, numGenes, questions);
+		gaUtils.evaluate(population);
 
 		for (int g = 1; g <= Constants.GENERATIONS; g++) {
-			LOGGER.info("Generation: " + g + " / " + Constants.GENERATIONS);
-
 			gaUtils.selection(population, offspring);
+			gaUtils.evaluate(offspring);
 
 			gaUtils.crossover(offspring, skillLevel.getIntVal(), minsRequired);
+			gaUtils.evaluate(offspring);
 
 			gaUtils.mutation(offspring, questions);
+			gaUtils.evaluate(offspring);
 
 			/*
 			 * In this final selection step, the next population is defined using the new offspring, so 'population' and
 			 * 'offspring' are switched round when calling the function.
 			 */
 			gaUtils.selection(offspring, population);
+			gaUtils.evaluate(population);
 
 			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
-			writer.append(g + Constants.COMMA);
-			writer.append(Double.toString(meanHiLo.get(0)) + Constants.COMMA);
-			writer.append(Double.toString(meanHiLo.get(1)) + Constants.COMMA);
-			writer.append(Double.toString(meanHiLo.get(2)) + Constants.NEWLINE);
+			if (Constants.TEST_MODE) {
+				writer.append(g + ",");
+				writer.append(Double.toString(meanHiLo.get(0)) + ",");
+				writer.append(Double.toString(meanHiLo.get(1)) + ",");
+				writer.append(Double.toString(meanHiLo.get(2)) + "\n");
+			}
+
+			LOGGER.info("Generation: " + g + " / " + Constants.GENERATIONS + " mean fitness: " + meanHiLo.get(0)
+				+ " highest: " + meanHiLo.get(1) + " lowest: " + meanHiLo.get(2));
 		}
-		writer.flush();
-		writer.close();
+		if (Constants.TEST_MODE) {
+			writer.flush();
+			writer.close();
+		}
 
 		Individual fittest = gaUtils.findFittest(population);
 		QuestionPaper questionPaper = makePaperOutOfFittest(fittest, subjectId, title, courseTitle, courseCode,
 			skillLevel);
 
-		LOGGER.info("Question paper generated");
+		long finishTime = System.currentTimeMillis();
+
+		LOGGER.info("Question paper generated in " + (finishTime - startTime) + " ms");
 		return Optional.of(questionPaper);
 	}
 
@@ -123,17 +152,18 @@ public class QuestionPaperGenerator {
 	 * @return the equivalent QuestionPaper object
 	 */
 	private QuestionPaper makePaperOutOfFittest(Individual fittest, int subjectId, String title, String courseTitle,
-		String courseCode, SkillLevel skillLevel) {
+		String courseCode, BloomSkillLevel skillLevel) {
 
-		int id = QuestionPaperService.getInstance().getHighestQuestionPaperId() + 1;
+		int id = QuestionPaperService.getInstance().getNewQuestionPaperId();
 
 		// sort questions in ascending order of marks, meaning harder questions appear towards the end
-		fittest.getGenes().sort(Comparator.comparing(Question::getMarks));
+		List<Question> questions = fittest.getGenes();
+		questions.sort(Comparator.comparing(Question::getMarks));
 
-		List<Integer> questionIds = fittest.getGenes().stream().map(Question::getId).collect(Collectors.toList());
+		List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
 
-		int marks = fittest.getGenes().stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
-		int minsRequired = fittest.getGenes().stream().mapToInt(Question::getMinutesRequired).reduce(0, Integer::sum);
+		int marks = questions.stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
+		int minsRequired = questions.stream().mapToInt(Question::getMinutesRequired).reduce(0, Integer::sum);
 
 		return new QuestionPaperBuilder().withId(id)
 			.withSubjectId(subjectId)
@@ -145,15 +175,5 @@ public class QuestionPaperGenerator {
 			.withMarks(marks)
 			.withMinutesRequired(minsRequired)
 			.build();
-	}
-
-	public synchronized static QuestionPaperGenerator getInstance() {
-		if (instance == null) {
-			instance = new QuestionPaperGenerator();
-		}
-		return instance;
-	}
-
-	private QuestionPaperGenerator() {
 	}
 }

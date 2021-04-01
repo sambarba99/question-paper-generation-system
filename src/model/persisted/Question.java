@@ -3,7 +3,7 @@ package model.persisted;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 import view.utils.Constants;
 
 /**
@@ -21,7 +21,7 @@ public class Question {
 
 	private List<Answer> answers;
 
-	private SkillLevel skillLevel;
+	private BloomSkillLevel skillLevel;
 
 	private int marks;
 
@@ -29,8 +29,8 @@ public class Question {
 
 	private LocalDateTime dateCreated;
 
-	public Question(int id, int subjectId, String statement, List<Answer> answers, SkillLevel skillLevel, int marks,
-		int minutesRequired, LocalDateTime dateCreated) {
+	public Question(int id, int subjectId, String statement, List<Answer> answers, BloomSkillLevel skillLevel,
+		int marks, int minutesRequired, LocalDateTime dateCreated) {
 
 		this.id = id;
 		this.subjectId = subjectId;
@@ -74,11 +74,11 @@ public class Question {
 		this.answers = answers;
 	}
 
-	public SkillLevel getSkillLevel() {
+	public BloomSkillLevel getSkillLevel() {
 		return skillLevel;
 	}
 
-	public void setSkillLevel(SkillLevel skillLevel) {
+	public void setSkillLevel(BloomSkillLevel skillLevel) {
 		this.skillLevel = skillLevel;
 	}
 
@@ -114,12 +114,11 @@ public class Question {
 			if (answer.isCorrect()) {
 				answersBld.append(" <- CORRECT");
 			}
-			answersBld.append(Constants.NEWLINE);
+			answersBld.append("\n");
 		}
 
-		return "QUESTION: id=" + id + ", subjectId=" + subjectId + "," + Constants.NEWLINE + "statement='" + statement
-			+ "'," + Constants.NEWLINE + "answers=" + Constants.NEWLINE + answersBld.toString() + "skillLevel="
-			+ skillLevel.getStrVal() + ", marks=" + marks + ", minutesRequired=" + minutesRequired + Constants.NEWLINE
-			+ "dateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
+		return "QUESTION: id=" + id + ", subjectId=" + subjectId + ",\nstatement='" + statement + "',\nanswers=\n"
+			+ answersBld.toString() + "skillLevel=" + skillLevel.getStrVal() + ", marks=" + marks + ", minutesRequired="
+			+ minutesRequired + "\ndateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
 	}
 }

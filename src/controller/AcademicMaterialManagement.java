@@ -312,7 +312,7 @@ public class AcademicMaterialManagement {
 		tblQuestionPapers.getColumns()
 			.addAll(colPaperId, colPaperTitle, colPaperSubject, colPaperCourse, colPaperDateCreated);
 		tblQuestionPapers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		tblQuestionPapers.setPrefSize(800, 365);
+		tblQuestionPapers.setPrefSize(802, 365);
 		tblQuestionPapers.setEditable(false);
 
 		refreshSubjectsTbl();

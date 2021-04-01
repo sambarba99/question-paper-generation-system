@@ -54,7 +54,7 @@ public class ViewQuestionPaper {
 		 */
 		destinationDir = System.getProperty("user.home") + "\\Downloads";
 
-		Label lblDestinationDir = new Label("Export to:" + Constants.NEWLINE + destinationDir);
+		Label lblDestinationDir = new Label("Export to:\n" + destinationDir);
 		lblDestinationDir.setTextAlignment(TextAlignment.CENTER);
 
 		Button btnExport = new ButtonBuilder().withWidth(120).withUserAction(UserAction.EXPORT).withActionEvent(e -> {
@@ -65,7 +65,7 @@ public class ViewQuestionPaper {
 				boolean success = QuestionPaperService.getInstance().exportToTxt(questionPaper, destinationDir);
 				if (success) {
 					SystemNotification.display(SystemNotificationType.SUCCESS,
-						"Paper successfully exported to" + Constants.NEWLINE + destinationDir);
+						"Paper successfully exported to\n" + destinationDir);
 				}
 			}
 		}).build();
@@ -79,7 +79,7 @@ public class ViewQuestionPaper {
 
 				if (selectedDir != null) {
 					destinationDir = selectedDir.getAbsolutePath();
-					lblDestinationDir.setText("Export to:" + Constants.NEWLINE + destinationDir);
+					lblDestinationDir.setText("Export to:\n" + destinationDir);
 				}
 			})
 			.build();

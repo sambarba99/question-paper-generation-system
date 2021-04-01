@@ -32,8 +32,8 @@ import model.service.SubjectService;
 import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
+import view.enums.BloomSkillLevel;
 import view.enums.BoxType;
-import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -219,7 +219,7 @@ public class QuestionManagement {
 		vboxSubjects.getChildren().addAll(cbSubjects);
 		TitledPane tPaneSubjects = new TitledPane("Filter by subject", vboxSubjects);
 
-		cbSkillLvls = Arrays.stream(SkillLevel.values())
+		cbSkillLvls = Arrays.stream(BloomSkillLevel.values())
 			.map(skillLvl -> new CheckBox(skillLvl.getDisplayStr()))
 			.collect(Collectors.toList());
 
@@ -264,7 +264,7 @@ public class QuestionManagement {
 
 		skillLvlFilters = cbSkillLvls.stream()
 			.filter(CheckBox::isSelected)
-			.map(cb -> SkillLevel.getIntFromDisplayStr(cb.getText()))
+			.map(cb -> BloomSkillLevel.getIntFromDisplayStr(cb.getText()))
 			.collect(Collectors.toList());
 
 		List<QuestionDTO> questionDTOs = QuestionService.getInstance()

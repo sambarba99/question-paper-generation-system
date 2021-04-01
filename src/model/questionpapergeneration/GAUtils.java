@@ -20,9 +20,19 @@ import view.utils.Constants;
  */
 public class GAUtils {
 
+	private static final Random RAND = new Random();
+
 	private static GAUtils instance;
 
-	private static final Random RAND = new Random();
+	private GAUtils() {
+	}
+
+	public synchronized static GAUtils getInstance() {
+		if (instance == null) {
+			instance = new GAUtils();
+		}
+		return instance;
+	}
 
 	/**
 	 * Determine the optimal number of questions (genes) in a question paper, given list of possible questions to use,
@@ -96,34 +106,12 @@ public class GAUtils {
 	/**
 	 * Perform selection either to generate the offspring, or the next population.
 	 * 
-	 * @param population - the array of individuals in the current population
-	 * @param offspring  - the array of individuals in the current offspring set
+	 * @param population - the set of current population individuals in the current population
+	 * @param offspring  - the set of current offspring
 	 */
 	public void selection(Individual[] population, Individual[] offspring) {
 		switch (Constants.SELECTION_TYPE) {
-			case ROULETTE_WHEEL:
-				// populate roulette wheel based on each individual's fitness
-				List<Individual> rouletteWheel = new ArrayList<>();
-				int numTimesToAdd;
-
-				for (Individual individual : population) {
-					numTimesToAdd = (int) Math.round(map(individual.calculateFitness(), -250, 10, 1, 200));
-
-					if (numTimesToAdd > 0) {
-						// the fitter the individual, the more it gets added, so the higher the chance of selection
-						for (int n = 0; n < numTimesToAdd; n++) {
-							rouletteWheel.add(individual);
-						}
-					}
-				}
-
-				// select random individuals from wheel
-				for (Individual individual : offspring) {
-					Individual rouletteIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
-					individual.setGenes(rouletteIndividual.getGenes());
-				}
-				break;
-			default: // TOURNAMENT
+			case TOURNAMENT:
 				List<Individual> tournamentIndividuals = new ArrayList<>();
 
 				for (Individual individual : offspring) {
@@ -134,10 +122,36 @@ public class GAUtils {
 					}
 
 					Individual tournamentFittest = tournamentIndividuals.stream()
-						.max(Comparator.comparing(Individual::calculateFitness))
+						.max(Comparator.comparing(Individual::getFitness))
 						.get();
 
 					individual.setGenes(tournamentFittest.getGenes());
+				}
+				break;
+			default: // roulette wheel
+				// populate roulette wheel based on each individual's fitness
+				List<Individual> rouletteWheel = new ArrayList<>();
+				double worstFitness = findLeastFit(population).getFitness();
+				double bestFitness = findFittest(population).getFitness();
+				int numTimesToAdd;
+
+				for (Individual individual : population) {
+					double thisFitness = individual.getFitness();
+					/*
+					 * E.g. If thisFitness = -4.5, worstFitness = -17, bestFitness = 2: then numTimesToAdd = 66
+					 */
+					numTimesToAdd = (int) Math.round(map(thisFitness, worstFitness, bestFitness, 1, 100));
+
+					// the fitter the individual, the more it gets added, so the higher the chance of selection
+					for (int n = 0; n < numTimesToAdd; n++) {
+						rouletteWheel.add(individual);
+					}
+				}
+
+				// select random individuals from wheel
+				for (Individual individual : offspring) {
+					Individual rouletteIndividual = rouletteWheel.get(RAND.nextInt(rouletteWheel.size()));
+					individual.setGenes(rouletteIndividual.getGenes());
 				}
 		}
 	}
@@ -163,9 +177,10 @@ public class GAUtils {
 					paperMinsRequired);
 
 				// replace with fittest of the 2 new offspring, only if fitter than current offspring
-				Individual fittestOffspring = findFittest(new Individual[] { newOffspring1, newOffspring2 });
+				Individual fittestOffspring = findFittest(newOffspring1, newOffspring2);
+				evaluate(fittestOffspring);
 
-				if (fittestOffspring.calculateFitness() > offspring[i].calculateFitness()) {
+				if (fittestOffspring.getFitness() > offspring[i].getFitness()) {
 					offspring[i].setGenes(fittestOffspring.getGenes());
 				}
 			}
@@ -225,8 +240,8 @@ public class GAUtils {
 	 * probChooseP1 = 1 / (-15 - -20) = 0.2
 	 */
 	private double calculateP1selectionBias(Individual p1, Individual p2) {
-		double p1fit = p1.calculateFitness();
-		double p2fit = p2.calculateFitness();
+		double p1fit = p1.getFitness();
+		double p2fit = p2.getFitness();
 
 		double probChooseP1;
 
@@ -291,14 +306,9 @@ public class GAUtils {
 	 * @return list representing a CSV row, containing the mean, highest and lowest fitness of the generation
 	 */
 	public List<Double> getTableFitnesses(Individual[] population) {
-		double mean = Arrays.stream(population).mapToDouble(Individual::calculateFitness).average().getAsDouble();
-
-		double highest = findFittest(population).calculateFitness();
-
-		double lowest = Arrays.stream(population)
-			.min(Comparator.comparing(Individual::calculateFitness))
-			.get()
-			.calculateFitness();
+		double mean = Arrays.stream(population).mapToDouble(Individual::getFitness).average().getAsDouble();
+		double highest = findFittest(population).getFitness();
+		double lowest = findLeastFit(population).getFitness();
 
 		return Arrays.asList(mean, highest, lowest);
 	}
@@ -309,17 +319,36 @@ public class GAUtils {
 	 * @param population - the population to traverse
 	 * @return the individual representing the best question paper
 	 */
-	public Individual findFittest(Individual[] population) {
-		return Arrays.stream(population).max(Comparator.comparing(Individual::calculateFitness)).get();
+	public Individual findFittest(Individual... population) {
+		evaluate(population);
+		return Arrays.stream(population).max(Comparator.comparing(Individual::getFitness)).get();
+	}
+
+	/**
+	 * Find the least fit individual (question paper) of a population.
+	 * 
+	 * @param population - the population to traverse
+	 * @return the individual representing the worst question paper
+	 */
+	public Individual findLeastFit(Individual... population) {
+		evaluate(population);
+		return Arrays.stream(population).min(Comparator.comparing(Individual::getFitness)).get();
+	}
+
+	/**
+	 * Update the fitness values of all individuals in a population.
+	 */
+	public void evaluate(Individual... population) {
+		Arrays.stream(population).forEach(Individual::calculateFitness);
 	}
 
 	/**
 	 * Map a value from one range to another. E.g. If x = -60 and is in the range -250 to 10, what would x become if the
-	 * range were 1 to 200?
+	 * range were 1 to 100?
 	 * 
-	 * x = (-60 - -250) * (200 - 1) / (10 - -250) + 1
+	 * x = (-60 - -250) * (100 - 1) / (10 - -250) + 1
 	 * 
-	 * x = 146.42
+	 * x = 73.35
 	 * 
 	 * @param x       - the value to map
 	 * @param r1start - the start of range 1
@@ -330,15 +359,5 @@ public class GAUtils {
 	 */
 	private static double map(double x, double r1start, double r1end, double r2start, double r2end) {
 		return (x - r1start) * (r2end - r2start) / (r1end - r1start) + r2start;
-	}
-
-	public synchronized static GAUtils getInstance() {
-		if (instance == null) {
-			instance = new GAUtils();
-		}
-		return instance;
-	}
-
-	private GAUtils() {
 	}
 }

@@ -10,8 +10,6 @@ import model.dao.SubjectDAO;
 import model.dto.SubjectDTO;
 import model.persisted.Subject;
 
-import view.SystemNotification;
-import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
 /**
@@ -24,6 +22,20 @@ public class SubjectService {
 	private static SubjectService instance;
 
 	private SubjectDAO subjectDao = SubjectDAO.getInstance();
+
+	private SubjectService(SubjectDAO subjectDao) {
+		if (subjectDao == null) {
+			throw new IllegalArgumentException("Subject DAO cannot be null!");
+		}
+		this.subjectDao = subjectDao;
+	}
+
+	public synchronized static SubjectService getInstance() {
+		if (instance == null) {
+			instance = new SubjectService(SubjectDAO.getInstance());
+		}
+		return instance;
+	}
 
 	/**
 	 * Add a subject to the subjects CSV file.
@@ -60,17 +72,18 @@ public class SubjectService {
 	 * @return subject with specified ID
 	 */
 	public Optional<Subject> getSubjectById(int id) {
-		return subjectDao.getSubjectById(id);
+		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst();
 	}
 
 	/**
-	 * Get the highest existing subject ID, to be used when adding a new subject to ensure uniqueness.
+	 * Get a new subject ID, to be used when adding a new subject to ensure uniqueness.
 	 * 
 	 * @returns highest existing subject ID
 	 */
-	public int getHighestSubjectId() {
+	public int getNewSubjectId() {
 		List<Subject> allSubjects = getAllSubjects();
-		return allSubjects.isEmpty() ? 0 : allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId();
+		return allSubjects.isEmpty() ? 1
+			: allSubjects.stream().max(Comparator.comparing(Subject::getId)).get().getId() + 1;
 	}
 
 	/**
@@ -108,25 +121,9 @@ public class SubjectService {
 		 * Here and in getSelectedSubjectIds() final element is being retrieved, because there can be multiple spaces in
 		 * the subject, e.g. "Mathematical Analysis (ID 4)". The closing parentheses are then removed.
 		 */
-		String[] split = subjectDisplayStr.split(Constants.SPACE);
+		String[] split = subjectDisplayStr.split(" ");
 		String subjectIdStr = split[split.length - 1];
 		subjectIdStr = subjectIdStr.replace(")", Constants.EMPTY);
 		return Integer.parseInt(subjectIdStr);
-	}
-
-	public synchronized static SubjectService getInstance() {
-		if (instance == null) {
-			instance = new SubjectService(SubjectDAO.getInstance());
-		}
-		return instance;
-	}
-
-	private SubjectService(SubjectDAO subjectDao) {
-		if (subjectDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Subject DAO cannot be null!");
-			throw new IllegalArgumentException("Subject DAO cannot be null!");
-		}
-		this.subjectDao = subjectDao;
 	}
 }

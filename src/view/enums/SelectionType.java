@@ -1,4 +1,4 @@
-package model.questionpapergeneration;
+package view.enums;
 
 /**
  * Represents the type of selection to be used in the GA.

@@ -17,14 +17,17 @@ public class Individual {
 
 	private List<Question> genes;
 
+	private double fitness;
+
 	private int paperSkillLvl;
 
 	private int paperMinsRequired;
 
 	public Individual(int paperSkillLvl, int paperMinsRequired) {
+		this.genes = new ArrayList<>();
+		this.fitness = -Double.MAX_VALUE;
 		this.paperSkillLvl = paperSkillLvl;
 		this.paperMinsRequired = paperMinsRequired;
-		this.genes = new ArrayList<>();
 	}
 
 	public List<Question> getGenes() {
@@ -36,14 +39,8 @@ public class Individual {
 		this.genes.addAll(genes);
 	}
 
-	/**
-	 * Check if chromosome contains a question (gene).
-	 * 
-	 * @param gene - the question to check
-	 * @return whether or not the question exists in the gene
-	 */
-	public boolean containsGene(Question gene) {
-		return genes.stream().anyMatch(q -> q.getId() == gene.getId());
+	public double getFitness() {
+		return fitness;
 	}
 
 	/**
@@ -51,7 +48,7 @@ public class Individual {
 	 * 
 	 * @return the fitness of the individual
 	 */
-	public double calculateFitness() {
+	public void calculateFitness() {
 		List<Integer> skillLvls = genes.stream().map(q -> q.getSkillLevel().getIntVal()).collect(Collectors.toList());
 		List<Integer> minsRequired = genes.stream().map(Question::getMinutesRequired).collect(Collectors.toList());
 
@@ -75,7 +72,7 @@ public class Individual {
 		 * 
 		 * Hence, the fitness can be calculated as follows:
 		 */
-		return stDevSkillLvls + stDevMinsRequied - skillLvlDist - minsRequiredDist;
+		fitness = stDevSkillLvls + stDevMinsRequied - skillLvlDist - minsRequiredDist;
 	}
 
 	/**
@@ -95,6 +92,16 @@ public class Individual {
 		variance /= values.size();
 
 		return Math.sqrt(variance);
+	}
+
+	/**
+	 * Check if chromosome contains a question (gene).
+	 * 
+	 * @param gene - the question to check
+	 * @return whether or not the question exists in the gene
+	 */
+	public boolean containsGene(Question gene) {
+		return genes.stream().anyMatch(q -> q.getId() == gene.getId());
 	}
 
 	/**

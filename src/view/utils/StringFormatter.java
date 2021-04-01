@@ -19,12 +19,12 @@ public class StringFormatter {
 		}
 
 		// remove characters that could potentially harm CSV read/write functionality
-		title = title.replace(Constants.NEWLINE, Constants.EMPTY).replace(Constants.QUOT_MARK, "'");
+		title = title.replace("\n", Constants.EMPTY).replace(Constants.QUOT_MARK, "'");
 
-		String[] words = title.trim().split(Constants.SPACE);
+		String[] words = title.trim().split(" ");
 		StringBuilder result = new StringBuilder();
 		for (String word : words) {
-			result.append(capitalise(word) + Constants.SPACE);
+			result.append(capitalise(word) + " ");
 		}
 		return result.toString().trim(); // remove last space
 	}

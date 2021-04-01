@@ -28,8 +28,8 @@ import model.service.SubjectService;
 import view.SystemNotification;
 import view.builders.ButtonBuilder;
 import view.builders.PaneBuilder;
+import view.enums.BloomSkillLevel;
 import view.enums.BoxType;
-import view.enums.SkillLevel;
 import view.enums.SystemNotificationType;
 import view.enums.UserAction;
 import view.utils.Constants;
@@ -151,12 +151,9 @@ public class GenerateQuestionPaper {
 		int subjectId = SubjectService.getInstance()
 			.getSubjectIdFromDisplayStr(choiceSubject.getSelectionModel().getSelectedItem().toString());
 
-		SkillLevel skillLevel = SkillLevel.getFromInt((int) sliderSkillLvl.getValue());
+		BloomSkillLevel skillLevel = BloomSkillLevel.getFromInt((int) sliderSkillLvl.getValue());
 		int minsRequired = (int) sliderMinutesRequired.getValue();
 
-		/*
-		 * REMOVE THIS WHEN REMOVING FILE WRITING CODE
-		 */
 		Optional<QuestionPaper> generatedPaper = Optional.empty();
 		try {
 			generatedPaper = QuestionPaperGenerator.getInstance()
@@ -186,7 +183,7 @@ public class GenerateQuestionPaper {
 		choiceSubject.getSelectionModel().select(0);
 		choiceSubject.setPrefWidth(200);
 
-		List<SkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(SkillLevel.class));
+		List<BloomSkillLevel> allSkillLvls = new ArrayList<>(EnumSet.allOf(BloomSkillLevel.class));
 		sliderSkillLvl.setMin(1);
 		sliderSkillLvl.setMax(allSkillLvls.size());
 		sliderSkillLvl.setPrefWidth(200);

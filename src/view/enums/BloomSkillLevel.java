@@ -2,14 +2,12 @@ package view.enums;
 
 import java.util.Arrays;
 
-import view.utils.Constants;
-
 /**
  * Represents question skill level - values are based on Bloom's taxonomy for classifying educational objectives.
  *
  * @author Sam Barba
  */
-public enum SkillLevel {
+public enum BloomSkillLevel {
 
 	KNOWLEDGE(1, "KNOWLEDGE"),
 	COMPREHENSION(2, "COMPREHENSION"),
@@ -22,7 +20,7 @@ public enum SkillLevel {
 
 	private String strVal;
 
-	SkillLevel(int intVal, String strVal) {
+	BloomSkillLevel(int intVal, String strVal) {
 		this.intVal = intVal;
 		this.strVal = strVal;
 	}
@@ -45,7 +43,7 @@ public enum SkillLevel {
 	 * @param intVal - the int value of the SkillLevel
 	 * @return the SkillLevel with the specified int value
 	 */
-	public static SkillLevel getFromInt(int intVal) {
+	public static BloomSkillLevel getFromInt(int intVal) {
 		return Arrays.stream(values())
 			.filter(lvl -> lvl.getIntVal() == intVal)
 			.findFirst()
@@ -58,7 +56,7 @@ public enum SkillLevel {
 	 * @param strVal - the String value of the SkillLevel
 	 * @return the SkillLevel with the specified String value
 	 */
-	public static SkillLevel getFromStr(String strVal) {
+	public static BloomSkillLevel getFromStr(String strVal) {
 		return Arrays.stream(values())
 			.filter(lvl -> lvl.getStrVal().equals(strVal))
 			.findFirst()
@@ -71,7 +69,7 @@ public enum SkillLevel {
 	 * @return the int value of the selected skill level
 	 */
 	public static int getIntFromDisplayStr(String skillLvlDisplayStr) {
-		String[] split = skillLvlDisplayStr.split(Constants.SPACE);
+		String[] split = skillLvlDisplayStr.split(" ");
 		return Integer.parseInt(split[0]);
 	}
 }

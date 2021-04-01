@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -18,7 +17,7 @@ import model.persisted.Answer;
 import model.persisted.Question;
 
 import view.SystemNotification;
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
@@ -32,6 +31,16 @@ public class QuestionDAO {
 	private static final Logger LOGGER = Logger.getLogger(QuestionDAO.class.getName());
 
 	private static QuestionDAO instance;
+
+	private QuestionDAO() {
+	}
+
+	public synchronized static QuestionDAO getInstance() {
+		if (instance == null) {
+			instance = new QuestionDAO();
+		}
+		return instance;
+	}
 
 	/**
 	 * Add a question to the questions CSV file.
@@ -107,7 +116,7 @@ public class QuestionDAO {
 					String statement = lineArr[2];
 					List<String> strAnswers = Arrays.asList(lineArr[3], lineArr[4], lineArr[5], lineArr[6]);
 					String correctAnswerLetter = lineArr[7];
-					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[8]);
+					BloomSkillLevel skillLevel = BloomSkillLevel.getFromStr(lineArr[8]);
 					int marks = Integer.parseInt(lineArr[9]);
 					int minutesRequired = Integer.parseInt(lineArr[10]);
 					LocalDateTime dateCreated = LocalDateTime
@@ -133,16 +142,6 @@ public class QuestionDAO {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return questions;
-	}
-
-	/**
-	 * Retrieve question using its unique ID.
-	 * 
-	 * @param id - the ID of the question to retrieve
-	 * @return question with specified ID
-	 */
-	public Optional<Question> getQuestionById(int id) {
-		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst();
 	}
 
 	/**
@@ -210,15 +209,5 @@ public class QuestionDAO {
 			answers.add(answer);
 		}
 		return answers;
-	}
-
-	public synchronized static QuestionDAO getInstance() {
-		if (instance == null) {
-			instance = new QuestionDAO();
-		}
-		return instance;
-	}
-
-	private QuestionDAO() {
 	}
 }

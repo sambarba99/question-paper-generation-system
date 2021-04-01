@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import view.builders.PaneBuilder;
@@ -20,7 +19,7 @@ import view.utils.Constants;
  */
 public class SystemNotification {
 
-	private static Stage stage;
+	private static Stage stage = new Stage();
 
 	/**
 	 * Display a system notification.
@@ -29,8 +28,6 @@ public class SystemNotification {
 	 * @param msg              - the message to display
 	 */
 	public static void display(SystemNotificationType notificationType, String msg) {
-		stage = new Stage();
-
 		Label lbl = new Label(msg);
 		lbl.setTextAlignment(TextAlignment.CENTER);
 
@@ -44,8 +41,7 @@ public class SystemNotification {
 		stage.setScene(scene);
 		stage.setTitle(notificationType.getStrVal());
 		stage.setResizable(false);
-		// so multiple instances of this window can't be opened
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.showAndWait();
+		stage.setAlwaysOnTop(true);
+		stage.show();
 	}
 }

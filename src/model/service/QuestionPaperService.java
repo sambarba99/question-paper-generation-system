@@ -29,6 +29,20 @@ public class QuestionPaperService {
 
 	private QuestionPaperDAO questionPaperDao = QuestionPaperDAO.getInstance();
 
+	private QuestionPaperService(QuestionPaperDAO questionPaperDao) {
+		if (questionPaperDao == null) {
+			throw new IllegalArgumentException("Question paper DAO cannot be null!");
+		}
+		this.questionPaperDao = questionPaperDao;
+	}
+
+	public synchronized static QuestionPaperService getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperService(QuestionPaperDAO.getInstance());
+		}
+		return instance;
+	}
+
 	/**
 	 * Add a question paper to the question papers CSV file.
 	 * 
@@ -62,7 +76,7 @@ public class QuestionPaperService {
 	 * @return the question paper with the specified ID
 	 */
 	public Optional<QuestionPaper> getQuestionPaperById(int id) {
-		return questionPaperDao.getQuestionPaperById(id);
+		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst();
 	}
 
 	/**
@@ -72,18 +86,20 @@ public class QuestionPaperService {
 	 * @return list of papers containing question ID
 	 */
 	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
-		return questionPaperDao.getQuestionPapersByQuestionId(questionId);
+		return getAllQuestionPapers().stream()
+			.filter(qp -> qp.getQuestionIds().contains(questionId))
+			.collect(Collectors.toList());
 	}
 
 	/**
-	 * Get the highest existing question paper ID, to be used when generating a new question paper to ensure uniqueness.
+	 * Get a new question paper ID, to be used when generating a new question paper to ensure uniqueness.
 	 * 
 	 * @returns highest existing paper ID
 	 */
-	public int getHighestQuestionPaperId() {
+	public int getNewQuestionPaperId() {
 		List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-		return allQuestionPapers.isEmpty() ? 0
-			: allQuestionPapers.stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId();
+		return allQuestionPapers.isEmpty() ? 1
+			: allQuestionPapers.stream().max(Comparator.comparing(QuestionPaper::getId)).get().getId() + 1;
 	}
 
 	/**
@@ -136,32 +152,29 @@ public class QuestionPaperService {
 
 		StringBuilder resultBld = new StringBuilder();
 		resultBld.append(questionPaper.toString());
-		resultBld.append(Constants.NEWLINE + "Subject: " + subjectTitle);
-		resultBld.append(Constants.NEWLINE + "Course: " + questionPaper.getCourseTitle() + " ("
-			+ questionPaper.getCourseCode() + ")");
-		resultBld.append(
-			Constants.NEWLINE + "Approx. Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
-		resultBld.append(Constants.NEWLINE + "Marks: " + questionPaper.getMarks());
-		resultBld.append(Constants.NEWLINE + "Approx. duration: " + questionPaper.getMinutesRequired() + " mins");
+		resultBld.append("\nSubject: " + subjectTitle);
+		resultBld.append("\nCourse: " + questionPaper.getCourseTitle() + " (" + questionPaper.getCourseCode() + ")");
+		resultBld.append("\nApprox. Bloom skill level: " + questionPaper.getSkillLevel().getIntVal() + "/6");
+		resultBld.append("\nMarks: " + questionPaper.getMarks());
+		resultBld.append("\nApprox. duration: " + questionPaper.getMinutesRequired() + " mins");
 
 		List<Integer> questionIds = questionPaper.getQuestionIds();
 		int numQ = questionIds.size();
 		for (int i = 0; i < questionIds.size(); i++) {
-			resultBld.append(Constants.NEWLINE + Constants.NEWLINE + "Question " + (i + 1) + "/" + numQ);
+			resultBld.append("\n\nQuestion " + (i + 1) + "/" + numQ);
 
 			Optional<Question> questionOpt = QuestionService.getInstance().getQuestionById(questionIds.get(i));
 
 			if (questionOpt.isPresent()) {
 				Question question = questionOpt.get();
-				resultBld
-					.append(" (" + question.getMarks() + " marks). " + question.getStatement() + Constants.NEWLINE);
+				resultBld.append(" (" + question.getMarks() + " marks). " + question.getStatement() + "\n");
 
 				for (int j = 0; j < question.getAnswers().size(); j++) {
-					resultBld.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + j)) + ") "
-						+ question.getAnswers().get(j).getValue());
+					resultBld.append(
+						"\n(" + ((char) (Constants.ASCII_A + j)) + ") " + question.getAnswers().get(j).getValue());
 				}
 			} else {
-				resultBld.append(Constants.NEWLINE + Constants.QUESTION_DELETED);
+				resultBld.append("\n" + Constants.QUESTION_DELETED);
 			}
 		}
 
@@ -203,21 +216,5 @@ public class QuestionPaperService {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return false;
-	}
-
-	public synchronized static QuestionPaperService getInstance() {
-		if (instance == null) {
-			instance = new QuestionPaperService(QuestionPaperDAO.getInstance());
-		}
-		return instance;
-	}
-
-	private QuestionPaperService(QuestionPaperDAO questionPaperDao) {
-		if (questionPaperDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Question paper DAO cannot be null!");
-			throw new IllegalArgumentException("Question paper DAO cannot be null!");
-		}
-		this.questionPaperDao = questionPaperDao;
 	}
 }

@@ -7,16 +7,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import model.builders.QuestionPaperBuilder;
 import model.persisted.QuestionPaper;
 
 import view.SystemNotification;
-import view.enums.SkillLevel;
+import view.enums.BloomSkillLevel;
 import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
@@ -30,6 +28,16 @@ public class QuestionPaperDAO {
 	private static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
 
 	private static QuestionPaperDAO instance;
+
+	private QuestionPaperDAO() {
+	}
+
+	public synchronized static QuestionPaperDAO getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperDAO();
+		}
+		return instance;
+	}
 
 	/**
 	 * Add a question paper to the question papers CSV file.
@@ -110,7 +118,7 @@ public class QuestionPaperDAO {
 					for (String questionIdStr : questionIdsStr) {
 						questionIds.add(Integer.parseInt(questionIdStr));
 					}
-					SkillLevel skillLevel = SkillLevel.getFromStr(lineArr[6]);
+					BloomSkillLevel skillLevel = BloomSkillLevel.getFromStr(lineArr[6]);
 					int marks = Integer.parseInt(lineArr[7]);
 					int minutesRequired = Integer.parseInt(lineArr[8]);
 					LocalDateTime dateCreated = LocalDateTime
@@ -138,28 +146,6 @@ public class QuestionPaperDAO {
 				Constants.UNEXPECTED_ERROR + e.getClass().getName());
 		}
 		return questionPapers;
-	}
-
-	/**
-	 * Retrieve question paper by its unique ID.
-	 * 
-	 * @param id - the ID of the paper to retrieve
-	 * @return the question paper with the specified ID
-	 */
-	public Optional<QuestionPaper> getQuestionPaperById(int id) {
-		return getAllQuestionPapers().stream().filter(qp -> qp.getId() == id).findFirst();
-	}
-
-	/**
-	 * Retrieve all papers containing a certain question.
-	 * 
-	 * @param questionId - ID of the question to search for
-	 * @return list of papers containing question with specified ID
-	 */
-	public List<QuestionPaper> getQuestionPapersByQuestionId(int questionId) {
-		return getAllQuestionPapers().stream()
-			.filter(qp -> qp.getQuestionIds().contains(questionId))
-			.collect(Collectors.toList());
 	}
 
 	/**
@@ -201,15 +187,5 @@ public class QuestionPaperDAO {
 		} else { // write
 			writer.write(line);
 		}
-	}
-
-	public synchronized static QuestionPaperDAO getInstance() {
-		if (instance == null) {
-			instance = new QuestionPaperDAO();
-		}
-		return instance;
-	}
-
-	private QuestionPaperDAO() {
 	}
 }

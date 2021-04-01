@@ -36,16 +36,6 @@ public class Login extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		/*
-		 * If this is first-time system access, the first user needs to be created, and questions and subjects CSV files
-		 * (for demo purposes)
-		 */
-		if (!UserService.getInstance().usersFileExists()) {
-			RawQuestionTransformer.transformAndSaveRawQuestions();
-			SystemNotification.display(SystemNotificationType.NEUTRAL,
-				"You are the first user (an admin). Set a secure password.");
-		}
-
 		Label lblEnterUsername = new Label("Enter username:");
 		TextField txtUsername = new TextField();
 		Label lblEnterPass = new Label("Enter password:");
@@ -82,6 +72,18 @@ public class Login extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Login");
 		primaryStage.setResizable(false);
+
+		/*
+		 * If this is first-time system access, the first user needs to be created, and questions and subjects CSV files
+		 * (for demo purposes)
+		 */
+		if (!UserService.getInstance().usersFileExists()) {
+			SystemNotification.display(SystemNotificationType.NEUTRAL, "Adding multiple-choice questions...");
+			RawQuestionTransformer.transformAndSaveRawQuestions();
+			SystemNotification.display(SystemNotificationType.NEUTRAL,
+				"Welcome. You are the first user (an admin). Set a secure password.");
+		}
+
 		primaryStage.show();
 	}
 

@@ -13,8 +13,6 @@ import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.persisted.Subject;
 
-import view.SystemNotification;
-import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
 /**
@@ -27,6 +25,20 @@ public class QuestionService {
 	private static QuestionService instance;
 
 	private QuestionDAO questionDao = QuestionDAO.getInstance();
+
+	private QuestionService(QuestionDAO questionDao) {
+		if (questionDao == null) {
+			throw new IllegalArgumentException("Question DAO cannot be null!");
+		}
+		this.questionDao = questionDao;
+	}
+
+	public synchronized static QuestionService getInstance() {
+		if (instance == null) {
+			instance = new QuestionService(QuestionDAO.getInstance());
+		}
+		return instance;
+	}
 
 	/**
 	 * Add a question to the questions CSV file.
@@ -73,18 +85,18 @@ public class QuestionService {
 	 * @return question with specified ID
 	 */
 	public Optional<Question> getQuestionById(int id) {
-		return questionDao.getQuestionById(id);
+		return getAllQuestions().stream().filter(q -> q.getId() == id).findFirst();
 	}
 
 	/**
-	 * Get highest existing question ID, to be used when adding a new question to ensure uniqueness.
+	 * Get a new question ID, to be used when adding a new question to ensure uniqueness.
 	 * 
 	 * @return highest existing question ID
 	 */
-	public int getHighestQuestionId() {
+	public int getNewQuestionId() {
 		List<Question> allQuestions = getAllQuestions();
-		return allQuestions.isEmpty() ? 0
-			: allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId();
+		return allQuestions.isEmpty() ? 1
+			: allQuestions.stream().max(Comparator.comparing(Question::getId)).get().getId() + 1;
 	}
 
 	/**
@@ -144,49 +156,30 @@ public class QuestionService {
 			throw new IllegalArgumentException("Invalid question ID passed: " + id);
 		}
 
-		Optional<Subject> subjectOpt = SubjectService.getInstance().getSubjectById(question.getSubjectId());
-		String subjectTitle = subjectOpt.isPresent() ? subjectOpt.get().getTitle() : Constants.SUBJECT_DELETED;
-
 		List<Answer> answers = question.getAnswers();
 		List<QuestionPaper> papersContainingQuestion = QuestionPaperService.getInstance()
 			.getQuestionPapersByQuestionId(id);
 
 		StringBuilder txtAreaStr = new StringBuilder();
-		txtAreaStr.append("Subject: " + subjectTitle);
-		txtAreaStr.append(Constants.NEWLINE + "Bloom skill level: " + question.getSkillLevel().getDisplayStr());
 		if (papersContainingQuestion.isEmpty()) {
-			txtAreaStr.append(Constants.NEWLINE + "There are no papers which contain this question.");
+			txtAreaStr.append("There are no papers which contain this question.\n");
 		} else {
-			txtAreaStr.append(Constants.NEWLINE + "Question papers containing this question:");
+			txtAreaStr.append("Question papers containing this question:\n");
 			for (QuestionPaper questionPaper : papersContainingQuestion) {
-				txtAreaStr.append(Constants.NEWLINE + "- " + questionPaper.toString());
+				txtAreaStr.append("- " + questionPaper.toString() + "\n");
 			}
 		}
-		txtAreaStr.append(Constants.NEWLINE + Constants.NEWLINE + question.getStatement() + Constants.NEWLINE);
+		txtAreaStr.append("\n" + question.getStatement() + "\n");
+		int correctAns = 0;
 		for (int i = 0; i < answers.size(); i++) {
 			Answer ans = answers.get(i);
-			txtAreaStr.append(Constants.NEWLINE + "(" + ((char) (Constants.ASCII_A + i)) + ") " + ans.getValue());
+			txtAreaStr.append("\n(" + ((char) (Constants.ASCII_A + i)) + ") " + ans.getValue());
 			if (ans.isCorrect()) {
-				txtAreaStr.append(" <- CORRECT");
+				correctAns = i;
 			}
 		}
+		txtAreaStr.append("\n\nCorrect answer: " + ((char) (Constants.ASCII_A + correctAns)));
 
 		return txtAreaStr.toString();
-	}
-
-	public synchronized static QuestionService getInstance() {
-		if (instance == null) {
-			instance = new QuestionService(QuestionDAO.getInstance());
-		}
-		return instance;
-	}
-
-	private QuestionService(QuestionDAO questionDao) {
-		if (questionDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "Question DAO cannot be null!");
-			throw new IllegalArgumentException("Question DAO cannot be null!");
-		}
-		this.questionDao = questionDao;
 	}
 }

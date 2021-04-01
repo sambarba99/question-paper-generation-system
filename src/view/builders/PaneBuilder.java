@@ -6,10 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import view.SystemNotification;
 import view.enums.BoxType;
-import view.enums.SystemNotificationType;
-import view.utils.Constants;
 
 /**
  * This class utilises the builder pattern, and is used to generate HBox or VBox panes used in UI pages.
@@ -68,8 +65,6 @@ public class PaneBuilder {
 				}
 				return vbox;
 			default:
-				SystemNotification.display(SystemNotificationType.ERROR,
-					Constants.UNEXPECTED_ERROR + "Invalid box type passed: " + boxType.toString());
 				throw new IllegalArgumentException("Invalid box type passed: " + boxType.toString());
 		}
 	}

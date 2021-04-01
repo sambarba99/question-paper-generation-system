@@ -2,14 +2,14 @@ package view.utils;
 
 import java.time.format.DateTimeFormatter;
 
-import model.questionpapergeneration.SelectionType;
+import view.enums.SelectionType;
 
 /**
  * This class contains constants to be used system-wide.
  *
  * @author Sam Barba
  */
-public class Constants {
+public final class Constants {
 
 	/*
 	 * File path constants
@@ -22,8 +22,6 @@ public class Constants {
 
 	public static final String SUBJECTS_FILE_PATH = "C:\\#QPGS\\subjects.csv";
 
-	public static final String GENETIC_ALGORITHM_TEST_RESULTS = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\GA-test-results.csv";
-
 	public static final String TXT_EXT = ".txt";
 
 	/*
@@ -32,8 +30,6 @@ public class Constants {
 	public static final String EMPTY = "";
 
 	public static final String COMMA = ",";
-
-	public static final String SPACE = " ";
 
 	public static final String NEWLINE = "\n";
 
@@ -52,31 +48,36 @@ public class Constants {
 	public static final String TITLE_REGEX = "^(\\w\\s?)+$";
 
 	/**
-	 * Username must start with letter(s) and optionally have a number at the end, in case the same username exists.
+	 * Username must start with letter(s) and optionally have a number at the end, in case the same username exists
+	 * already and can be made unique.
 	 */
-	public static final String USERNAME_REGEX = "^[a-zA-Z]+\\d*$";
+	public static final String USERNAME_REGEX = "^[a-z]+\\d*$";
 
 	/**
 	 * Password must contain at least 1 of: 0-9, a-z, A-Z, and be at least 8 long.
 	 */
-	public static final String PASS_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+	public static final String PASSWORD_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$";
 
 	/*
 	 * Constants for the Genetic Algorithm
 	 */
-	public static final int MIN_QUESTIONS_PER_SUBJECT = 2;
+	public static final int MIN_QUESTIONS_PER_PAPER = 2;
 
 	public static final SelectionType SELECTION_TYPE = SelectionType.TOURNAMENT;
 
 	public static final int POP_SIZE = 2000;
 
-	public static final double MUTATION_RATE = 0.1;
+	public static final double MUTATION_RATE = 0.01;
 
 	public static final double CROSSOVER_RATE = 0.8;
 
-	public static final int GENERATIONS = 30;
+	public static final int GENERATIONS = 25;
 
-	public static final int TOURNAMENT_SIZE = 4;
+	public static final int TOURNAMENT_SIZE = 2;
+
+	public static final boolean TEST_MODE = false;
+
+	public static final String GENETIC_ALGORITHM_TEST_RESULTS = "C:\\Users\\Sam Barba\\Desktop\\Work\\Uni\\Year 3\\DSP\\GA-test-results.csv";
 
 	/*
 	 * UI design constants

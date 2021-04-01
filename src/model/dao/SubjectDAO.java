@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -28,6 +27,16 @@ public class SubjectDAO {
 	private static final Logger LOGGER = Logger.getLogger(SubjectDAO.class.getName());
 
 	private static SubjectDAO instance;
+
+	private SubjectDAO() {
+	}
+
+	public synchronized static SubjectDAO getInstance() {
+		if (instance == null) {
+			instance = new SubjectDAO();
+		}
+		return instance;
+	}
 
 	/**
 	 * Add a subject to the subjects CSV file.
@@ -120,16 +129,6 @@ public class SubjectDAO {
 	}
 
 	/**
-	 * Retrieve subject using its unique ID.
-	 * 
-	 * @param id - the ID of the subject to retrieve
-	 * @return subject with specified ID
-	 */
-	public Optional<Subject> getSubjectById(int id) {
-		return getAllSubjects().stream().filter(s -> s.getId() == id).findFirst();
-	}
-
-	/**
 	 * Add subject data to the subjects CSV file.
 	 * 
 	 * @param subject - the subject to add
@@ -149,15 +148,5 @@ public class SubjectDAO {
 		} else { // write
 			writer.write(line);
 		}
-	}
-
-	public synchronized static SubjectDAO getInstance() {
-		if (instance == null) {
-			instance = new SubjectDAO();
-		}
-		return instance;
-	}
-
-	private SubjectDAO() {
 	}
 }

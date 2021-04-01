@@ -31,6 +31,20 @@ public class UserService {
 
 	private UserDAO userDao = UserDAO.getInstance();
 
+	private UserService(UserDAO userDao) {
+		if (userDao == null) {
+			throw new IllegalArgumentException("User DAO cannot be null!");
+		}
+		this.userDao = userDao;
+	}
+
+	public synchronized static UserService getInstance() {
+		if (instance == null) {
+			instance = new UserService(UserDAO.getInstance());
+		}
+		return instance;
+	}
+
 	/**
 	 * Encrypt a user's password before adding them to the users CSV file.
 	 * 
@@ -118,18 +132,18 @@ public class UserService {
 	 * Check whether or not a user exists.
 	 * 
 	 * @param checkUser - the user to check
-	 * @return the user if found (if not, returns null)
+	 * @return the user if found (if not, returns empty Optional)
 	 */
-	public User checkUserExists(User checkUser)
+	public Optional<User> checkUserExists(User checkUser)
 		throws FileNotFoundException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		for (User user : getAllUsers()) {
 			if (user.getUsername().equals(checkUser.getUsername())
 				&& user.getPassword().equals(SecurityUtils.getInstance().sha512(checkUser.getPassword()))) {
-				return user;
+				return Optional.of(user);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -156,11 +170,11 @@ public class UserService {
 			if (usersFileExists()) {
 				// no need to pass the UserPrivilege here, as it is retrieved with checkUserExists(user).
 				User user = new UserBuilder().withUsername(username).withPassword(pass).build();
-				User validatedUser = checkUserExists(user);
-				if (validatedUser == null) {
+				Optional<User> validatedUser = checkUserExists(user);
+				if (!validatedUser.isPresent()) {
 					SystemNotification.display(SystemNotificationType.ERROR, "Invalid username or password.");
 				} else {
-					return Optional.of(validatedUser);
+					return validatedUser;
 				}
 			} else {
 				/*
@@ -202,7 +216,7 @@ public class UserService {
 				"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
-		if (!pass.matches(Constants.PASS_REGEX)) {
+		if (!pass.matches(Constants.PASSWORD_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
@@ -230,7 +244,7 @@ public class UserService {
 			SystemNotification.display(SystemNotificationType.ERROR, "Current password incorrect.");
 			return false;
 		}
-		if (!newPass.matches(Constants.PASS_REGEX)) {
+		if (!newPass.matches(Constants.PASSWORD_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
@@ -259,8 +273,8 @@ public class UserService {
 			return false;
 		}
 		if (checkUsernameAlreadyExists(username)) {
-			SystemNotification.display(SystemNotificationType.ERROR, "That username already exists." + Constants.NEWLINE
-				+ "Try adding a number on the end to make it unique!");
+			SystemNotification.display(SystemNotificationType.ERROR,
+				"That username already exists.\nTry adding a number on the end to make it unique!");
 			return false;
 		}
 		if (!username.matches(Constants.USERNAME_REGEX)) {
@@ -268,7 +282,7 @@ public class UserService {
 				"Username must be letters only, and optionally end with digits.");
 			return false;
 		}
-		if (!pass.matches(Constants.PASS_REGEX)) {
+		if (!pass.matches(Constants.PASSWORD_REGEX)) {
 			SystemNotification.display(SystemNotificationType.ERROR,
 				"Password must contain 0-9, a-z, A-Z, and be at least 8 long.");
 			return false;
@@ -284,21 +298,5 @@ public class UserService {
 	public boolean usersFileExists() {
 		File csvFile = new File(Constants.USERS_FILE_PATH);
 		return csvFile.exists();
-	}
-
-	public synchronized static UserService getInstance() {
-		if (instance == null) {
-			instance = new UserService(UserDAO.getInstance());
-		}
-		return instance;
-	}
-
-	private UserService(UserDAO userDao) {
-		if (userDao == null) {
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + "User DAO cannot be null!");
-			throw new IllegalArgumentException("User DAO cannot be null!");
-		}
-		this.userDao = userDao;
 	}
 }
