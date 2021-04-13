@@ -7,36 +7,36 @@ package model.dto;
  */
 public class UserDTO {
 
-	private String username;
+    private String username;
 
-	private String privilege;
+    private String privilege;
 
-	private String dateCreated;
+    private String dateCreated;
 
-	public UserDTO() {
-	}
+    public UserDTO() {
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPrivilege() {
-		return privilege;
-	}
+    public String getPrivilege() {
+        return privilege;
+    }
 
-	public void setPrivilege(String privilege) {
-		this.privilege = privilege;
-	}
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
+    }
 
-	public String getDateCreated() {
-		return dateCreated;
-	}
+    public String getDateCreated() {
+        return dateCreated;
+    }
 
-	public void setDateCreated(String dateCreated) {
-		this.dateCreated = dateCreated;
-	}
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 }

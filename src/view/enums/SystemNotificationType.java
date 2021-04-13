@@ -7,19 +7,19 @@ package view.enums;
  */
 public enum SystemNotificationType {
 
-	ERROR("Error"),
-	NEUTRAL("Notification"),
-	SUCCESS("Success!"),
-	CONFIRM_DELETION("Delete?"),
-	CONFIRM_EXIT_APPLICATION("Exit application?");
+    ERROR("Error"),
+    NEUTRAL("Notification"),
+    SUCCESS("Success!"),
+    CONFIRM_DELETION("Delete?"),
+    CONFIRM_EXIT_APPLICATION("Exit application?");
 
-	private String strVal;
+    private String strVal;
 
-	SystemNotificationType(String strVal) {
-		this.strVal = strVal;
-	}
+    SystemNotificationType(String strVal) {
+        this.strVal = strVal;
+    }
 
-	public String getStrVal() {
-		return strVal;
-	}
+    public String getStrVal() {
+        return strVal;
+    }
 }

@@ -11,55 +11,55 @@ import view.enums.UserPrivilege;
  */
 public class User {
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	private UserPrivilege privilege;
+    private UserPrivilege privilege;
 
-	private LocalDateTime dateCreated;
+    private LocalDateTime dateCreated;
 
-	public User(String username, String password, UserPrivilege privilege, LocalDateTime dateCreated) {
-		this.username = username;
-		this.password = password;
-		this.privilege = privilege;
-		this.dateCreated = dateCreated;
-	}
+    public User(String username, String password, UserPrivilege privilege, LocalDateTime dateCreated) {
+        this.username = username;
+        this.password = password;
+        this.privilege = privilege;
+        this.dateCreated = dateCreated;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public UserPrivilege getPrivilege() {
-		return privilege;
-	}
+    public UserPrivilege getPrivilege() {
+        return privilege;
+    }
 
-	public void setPrivilege(UserPrivilege privilege) {
-		this.privilege = privilege;
-	}
+    public void setPrivilege(UserPrivilege privilege) {
+        this.privilege = privilege;
+    }
 
-	public LocalDateTime getDateCreated() {
-		return dateCreated;
-	}
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
 
-	public void setDateCreated(LocalDateTime dateCreated) {
-		this.dateCreated = dateCreated;
-	}
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
-	@Override
-	public String toString() {
-		return username + " (" + privilege.toString() + ")";
-	}
+    @Override
+    public String toString() {
+        return username + " (" + privilege.toString() + ")";
+    }
 }

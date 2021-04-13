@@ -19,29 +19,30 @@ import view.utils.Constants;
  */
 public class SystemNotification {
 
-	private static Stage stage = new Stage();
+    private static Stage stage = new Stage();
 
-	/**
-	 * Display a system notification.
-	 * 
-	 * @param notificationType - the type of system notification
-	 * @param msg              - the message to display
-	 */
-	public static void display(SystemNotificationType notificationType, String msg) {
-		Label lbl = new Label(msg);
-		lbl.setTextAlignment(TextAlignment.CENTER);
+    /**
+     * Display a system notification.
+     * 
+     * @param notificationType - the type of system notification
+     * @param msg              - the message to display
+     */
+    public static void display(SystemNotificationType notificationType, String msg) {
+        Label lbl = new Label(msg);
+        lbl.setTextAlignment(TextAlignment.CENTER);
 
-		HBox hboxMain = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.CENTER)
-			.withNodes(lbl)
-			.build();
+        HBox hboxMain = (HBox) new PaneBuilder()
+            .withBoxType(BoxType.HBOX)
+            .withAlignment(Pos.CENTER)
+            .withNodes(lbl)
+            .build();
 
-		Scene scene = new Scene(hboxMain, 600, 150);
-		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
-		stage.setScene(scene);
-		stage.setTitle(notificationType.getStrVal());
-		stage.setResizable(false);
-		stage.setAlwaysOnTop(true);
-		stage.show();
-	}
+        Scene scene = new Scene(hboxMain, 600, 150);
+        scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
+        stage.setScene(scene);
+        stage.setTitle(notificationType.getStrVal());
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
+        stage.show();
+    }
 }

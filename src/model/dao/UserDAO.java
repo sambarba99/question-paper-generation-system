@@ -25,143 +25,142 @@ import view.utils.Constants;
  */
 public class UserDAO {
 
-	private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
 
-	private static UserDAO instance;
+    private static UserDAO instance;
 
-	private UserDAO() {
-	}
+    private UserDAO() {
+    }
 
-	public synchronized static UserDAO getInstance() {
-		if (instance == null) {
-			instance = new UserDAO();
-		}
-		return instance;
-	}
+    public synchronized static UserDAO getInstance() {
+        if (instance == null) {
+            instance = new UserDAO();
+        }
+        return instance;
+    }
 
-	/**
-	 * Add a user to the users CSV file.
-	 * 
-	 * @param user - the user to add
-	 */
-	public void addUser(User user) {
-		try {
-			File csvFile = new File(Constants.USERS_FILE_PATH);
-			if (!csvFile.exists()) {
-				csvFile.getParentFile().mkdirs();
-				csvFile.createNewFile();
-			}
+    /**
+     * Add a user to the users CSV file.
+     * 
+     * @param user - the user to add
+     */
+    public void addUser(User user) {
+        try {
+            File csvFile = new File(Constants.USERS_FILE_PATH);
+            if (!csvFile.exists()) {
+                csvFile.getParentFile().mkdirs();
+                csvFile.createNewFile();
+            }
 
-			FileWriter writer = new FileWriter(csvFile, true); // append = true
-			addUserDataToFile(user, writer, true);
-			writer.flush();
-			writer.close();
-			LOGGER.info("User '" + user.getUsername() + "' added");
-		} catch (IOException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-	}
+            FileWriter writer = new FileWriter(csvFile, true); // append = true
+            addUserDataToFile(user, writer, true);
+            writer.flush();
+            writer.close();
+            LOGGER.info("User '" + user.getUsername() + "' added");
+        } catch (IOException e) {
+            e.printStackTrace();
+            SystemNotification.display(SystemNotificationType.ERROR,
+                Constants.UNEXPECTED_ERROR + e.getClass().getName());
+        }
+    }
 
-	/**
-	 * Update a user password by deleting user and re-adding with new password.
-	 * 
-	 * @param user - user to update password
-	 * @param pass - the new password
-	 */
-	public void updatePassword(User user, String pass) {
-		user.setPassword(pass);
-		deleteUserByUsername(user.getUsername());
-		addUser(user);
-		LOGGER.info("Password of user '" + user.getUsername() + "' updated");
-	}
+    /**
+     * Update a user password by deleting user and re-adding with new password.
+     * 
+     * @param user - user to update password
+     * @param pass - the new password
+     */
+    public void updatePassword(User user, String pass) {
+        user.setPassword(pass);
+        deleteUserByUsername(user.getUsername());
+        addUser(user);
+        LOGGER.info("Password of user '" + user.getUsername() + "' updated");
+    }
 
-	/**
-	 * Delete a user by their unique username.
-	 * 
-	 * @param username - the username of the user to delete
-	 */
-	public void deleteUserByUsername(String username) {
-		try {
-			List<User> allUsers = getAllUsers();
-			File csvFile = new File(Constants.USERS_FILE_PATH);
-			FileWriter writer = new FileWriter(csvFile, false); // append = false
+    /**
+     * Delete a user by their unique username.
+     * 
+     * @param username - the username of the user to delete
+     */
+    public void deleteUserByUsername(String username) {
+        try {
+            List<User> allUsers = getAllUsers();
+            File csvFile = new File(Constants.USERS_FILE_PATH);
+            FileWriter writer = new FileWriter(csvFile, false); // append = false
 
-			for (User user : allUsers) {
-				if (!user.getUsername().equals(username)) {
-					addUserDataToFile(user, writer, false);
-				}
-			}
-			writer.flush();
-			writer.close();
-			LOGGER.info("User '" + username + "' deleted");
-		} catch (IOException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-	}
+            for (User user : allUsers) {
+                if (!user.getUsername().equals(username)) {
+                    addUserDataToFile(user, writer, false);
+                }
+            }
+            writer.flush();
+            writer.close();
+            LOGGER.info("User '" + username + "' deleted");
+        } catch (IOException e) {
+            e.printStackTrace();
+            SystemNotification.display(SystemNotificationType.ERROR,
+                Constants.UNEXPECTED_ERROR + e.getClass().getName());
+        }
+    }
 
-	/**
-	 * Retrieve all users from users CSV file.
-	 * 
-	 * @return list of all users
-	 */
-	public List<User> getAllUsers() {
-		List<User> users = new ArrayList<>();
+    /**
+     * Retrieve all users from users CSV file.
+     * 
+     * @return list of all users
+     */
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
 
-		try {
-			File csvFile = new File(Constants.USERS_FILE_PATH);
-			Scanner input = new Scanner(csvFile);
+        try {
+            File csvFile = new File(Constants.USERS_FILE_PATH);
+            Scanner input = new Scanner(csvFile);
 
-			while (input.hasNextLine()) {
-				String line = input.nextLine();
-				String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+            while (input.hasNextLine()) {
+                String line = input.nextLine();
+                String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
 
-				String username = lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY);
-				String passHash = lineArr[1];
-				UserPrivilege privilege = UserPrivilege.getFromStr(lineArr[2]);
-				LocalDateTime dateCreated = LocalDateTime
-					.parse(lineArr[3].replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
+                String username = lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY);
+                String passHash = lineArr[1];
+                UserPrivilege privilege = UserPrivilege.getFromStr(lineArr[2]);
+                LocalDateTime dateCreated = LocalDateTime.parse(lineArr[3]
+                    .replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
 
-				User user = new UserBuilder().withUsername(username)
-					.withPassword(passHash)
-					.withPrivilege(privilege)
-					.withDateCreated(dateCreated)
-					.build();
+                users.add(new UserBuilder()
+                    .withUsername(username)
+                    .withPassword(passHash)
+                    .withPrivilege(privilege)
+                    .withDateCreated(dateCreated)
+                    .build());
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            SystemNotification.display(SystemNotificationType.ERROR,
+                Constants.UNEXPECTED_ERROR + e.getClass().getName());
+        }
+        return users;
+    }
 
-				users.add(user);
-			}
-			input.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			SystemNotification.display(SystemNotificationType.ERROR,
-				Constants.UNEXPECTED_ERROR + e.getClass().getName());
-		}
-		return users;
-	}
+    /**
+     * Add user data to the users CSV file.
+     * 
+     * @param user   - the user to add
+     * @param writer - the file writer
+     * @param append - whether to append or write to the file
+     */
+    private void addUserDataToFile(User user, FileWriter writer, boolean append) throws IOException {
+        /*
+         * 1 line contains: unique username (ID), encrypted password, privilege level, date created
+         */
+        String line = Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
+            + Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+            + user.getPrivilege().toString() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
+            + Constants.DATE_FORMATTER.format(user.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
 
-	/**
-	 * Add user data to the users CSV file.
-	 * 
-	 * @param user   - the user to add
-	 * @param writer - the file writer
-	 * @param append - whether to append or write to the file
-	 */
-	private void addUserDataToFile(User user, FileWriter writer, boolean append) throws IOException {
-		/*
-		 * 1 line contains: unique username (ID), encrypted password, privilege level, date created
-		 */
-		String line = Constants.QUOT_MARK + user.getUsername() + Constants.QUOT_MARK + Constants.COMMA
-			+ Constants.QUOT_MARK + user.getPassword() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ user.getPrivilege().toString() + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-			+ Constants.DATE_FORMATTER.format(user.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
-
-		if (append) {
-			writer.append(line);
-		} else { // write
-			writer.write(line);
-		}
-	}
+        if (append) {
+            writer.append(line);
+        } else { // write
+            writer.write(line);
+        }
+    }
 }

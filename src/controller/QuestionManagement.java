@@ -46,237 +46,247 @@ import view.utils.LogoMaker;
  */
 public class QuestionManagement {
 
-	private static Stage stage;
+    private static Stage stage;
 
-	private static Label lblSelectQuestion = new Label();
+    private static Label lblSelectQuestion = new Label();
 
-	private static TableView tblQuestions = new TableView();
+    private static TableView tblQuestions = new TableView();
 
-	private static List<CheckBox> cbSubjects;
+    private static List<CheckBox> cbSubjects;
 
-	private static List<CheckBox> cbSkillLvls;
+    private static List<CheckBox> cbSkillLvls;
 
-	private static Accordion accFilters;
+    private static Accordion accFilters;
 
-	private static List<Integer> subjectIdFilters = new ArrayList<>();
+    private static List<Integer> subjectIdFilters = new ArrayList<>();
 
-	private static List<Integer> skillLvlFilters = new ArrayList<>();
+    private static List<Integer> skillLvlFilters = new ArrayList<>();
 
-	private static TextArea txtAreaQuestion = new TextArea();
+    private static TextArea txtAreaQuestion = new TextArea();
 
-	/**
-	 * Display all questions and capability to filter and modify them.
-	 */
-	public static void display() {
-		stage = new Stage();
-		accFilters = new Accordion();
+    /**
+     * Display all questions and capability to filter and modify them.
+     */
+    public static void display() {
+        stage = new Stage();
+        accFilters = new Accordion();
 
-		Label lblSelectFilters = new Label("Select filters to apply?");
+        Label lblSelectFilters = new Label("Select filters to apply?");
 
-		Button btnAddQuestion = new ButtonBuilder().withWidth(160)
-			.withUserAction(UserAction.ADD_NEW_QUESTION)
-			.withActionEvent(e -> {
-				// if added a new question, refresh questions TableView
-				if (AddQuestion.display()) {
-					refreshQuestionsTbl();
-					SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
-				}
-			})
-			.build();
-		Button btnDelQuestion = new ButtonBuilder().withWidth(160)
-			.withUserAction(UserAction.DELETE_QUESTION)
-			.withActionEvent(e -> {
-				deleteSelectedQuestions();
-			})
-			.build();
+        Button btnAddQuestion = new ButtonBuilder()
+            .withWidth(160)
+            .withUserAction(UserAction.ADD_NEW_QUESTION)
+            .withActionEvent(e -> {
+                // if added a new question, refresh questions TableView
+                if (AddQuestion.display()) {
+                    refreshQuestionsTbl();
+                    SystemNotification.display(SystemNotificationType.SUCCESS, "Question added!");
+                }
+            })
+            .build();
+        Button btnDelQuestion = new ButtonBuilder()
+            .withWidth(160)
+            .withUserAction(UserAction.DELETE_QUESTION)
+            .withActionEvent(e -> {
+                deleteSelectedQuestions();
+            })
+            .build();
 
-		VBox vboxTbl = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(10)
-			.withNodes(lblSelectQuestion, tblQuestions)
-			.build();
-		VBox vboxFilter = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(10)
-			.withNodes(lblSelectFilters, accFilters)
-			.build();
-		HBox hbox1 = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.TOP_CENTER)
-			.withSpacing(20)
-			.withNodes(vboxTbl, vboxFilter)
-			.build();
-		VBox vboxBtns = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER)
-			.withSpacing(10)
-			.withNodes(btnAddQuestion, btnDelQuestion, new ButtonBuilder().buildExitBtn(308, 136))
-			.build();
-		HBox hbox2 = (HBox) new PaneBuilder().withBoxType(BoxType.HBOX)
-			.withAlignment(Pos.CENTER)
-			.withSpacing(30)
-			.withNodes(txtAreaQuestion, vboxBtns)
-			.build();
-		VBox vboxMain = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER)
-			.withSpacing(30)
-			.withNodes(LogoMaker.makeLogo(300), hbox1, hbox2)
-			.build();
+        VBox vboxTbl = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.TOP_CENTER)
+            .withSpacing(10)
+            .withNodes(lblSelectQuestion, tblQuestions)
+            .build();
+        VBox vboxFilter = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.TOP_CENTER)
+            .withSpacing(10)
+            .withNodes(lblSelectFilters, accFilters)
+            .build();
+        HBox hbox1 = (HBox) new PaneBuilder()
+            .withBoxType(BoxType.HBOX)
+            .withAlignment(Pos.TOP_CENTER)
+            .withSpacing(20)
+            .withNodes(vboxTbl, vboxFilter)
+            .build();
+        VBox vboxBtns = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.CENTER)
+            .withSpacing(10)
+            .withNodes(btnAddQuestion, btnDelQuestion, new ButtonBuilder().buildExitBtn(308, 136))
+            .build();
+        HBox hbox2 = (HBox) new PaneBuilder()
+            .withBoxType(BoxType.HBOX)
+            .withAlignment(Pos.CENTER)
+            .withSpacing(30)
+            .withNodes(txtAreaQuestion, vboxBtns)
+            .build();
+        VBox vboxMain = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.CENTER)
+            .withSpacing(30)
+            .withNodes(LogoMaker.makeLogo(300), hbox1, hbox2)
+            .build();
 
-		setup();
+        setup();
 
-		Scene scene = new Scene(vboxMain, 1400, 900);
-		scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
-		stage.setScene(scene);
-		stage.setTitle("Question Management");
-		stage.setResizable(false);
-		// so multiple instances of this window can't be opened
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.showAndWait();
-	}
+        Scene scene = new Scene(vboxMain, 1400, 900);
+        scene.getStylesheets().add(Constants.CSS_STYLE_PATH);
+        stage.setScene(scene);
+        stage.setTitle("Question Management");
+        stage.setResizable(false);
+        // so multiple instances of this window can't be opened
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
 
-	/**
-	 * Delete selected questions with confirmation.
-	 */
-	private static void deleteSelectedQuestions() {
-		ObservableList<QuestionDTO> questionDtos = tblQuestions.getSelectionModel().getSelectedItems();
+    /**
+     * Delete selected questions with confirmation.
+     */
+    private static void deleteSelectedQuestions() {
+        ObservableList<QuestionDTO> questionDtos = tblQuestions.getSelectionModel().getSelectedItems();
 
-		if (questionDtos.isEmpty()) {
-			SystemNotification.display(SystemNotificationType.ERROR, "Please select at least 1 question.");
-		} else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
-			questionDtos.forEach(q -> QuestionService.getInstance().deleteQuestionById(q.getId()));
-			refreshQuestionsTbl();
-			SystemNotification.display(SystemNotificationType.SUCCESS, "Selected questions deleted.");
-		}
-	}
+        if (questionDtos.isEmpty()) {
+            SystemNotification.display(SystemNotificationType.ERROR, "Please select at least 1 question.");
+        } else if (UserConfirmation.confirm(SystemNotificationType.CONFIRM_DELETION)) {
+            questionDtos.forEach(q -> QuestionService.getInstance().deleteQuestionById(q.getId()));
+            refreshQuestionsTbl();
+            SystemNotification.display(SystemNotificationType.SUCCESS, "Selected questions deleted.");
+        }
+    }
 
-	/**
-	 * Set up window.
-	 */
-	private static void setup() {
-		/*
-		 * Set up TableView of questions
-		 */
-		TableColumn<QuestionDTO, Integer> colId = new TableColumn<>("ID");
-		TableColumn<QuestionDTO, String> colSubjectTitle = new TableColumn<>("Subject");
-		TableColumn<QuestionDTO, String> colStatement = new TableColumn<>("Statement");
-		TableColumn<QuestionDTO, String> colSkillLevel = new TableColumn<>("Skill level");
-		TableColumn<QuestionDTO, Integer> colMarks = new TableColumn<>("Marks");
-		TableColumn<QuestionDTO, Integer> colMinsRequired = new TableColumn<>("Minutes required");
-		TableColumn<QuestionDTO, String> colDateCreated = new TableColumn<>("Date created");
+    /**
+     * Set up window.
+     */
+    private static void setup() {
+        /*
+         * Set up TableView of questions
+         */
+        TableColumn<QuestionDTO, Integer> colId = new TableColumn<>("ID");
+        TableColumn<QuestionDTO, String> colSubjectTitle = new TableColumn<>("Subject");
+        TableColumn<QuestionDTO, String> colStatement = new TableColumn<>("Statement");
+        TableColumn<QuestionDTO, String> colSkillLevel = new TableColumn<>("Skill level");
+        TableColumn<QuestionDTO, Integer> colMarks = new TableColumn<>("Marks");
+        TableColumn<QuestionDTO, Integer> colMinsRequired = new TableColumn<>("Minutes required");
+        TableColumn<QuestionDTO, String> colDateCreated = new TableColumn<>("Date created");
 
-		colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		colSubjectTitle.setCellValueFactory(new PropertyValueFactory<>("subjectTitle"));
-		colStatement.setCellValueFactory(new PropertyValueFactory<>("statement"));
-		colSkillLevel.setCellValueFactory(new PropertyValueFactory<>("skillLevel"));
-		colMarks.setCellValueFactory(new PropertyValueFactory<>("marks"));
-		colMinsRequired.setCellValueFactory(new PropertyValueFactory<>("minutesRequired"));
-		colDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colSubjectTitle.setCellValueFactory(new PropertyValueFactory<>("subjectTitle"));
+        colStatement.setCellValueFactory(new PropertyValueFactory<>("statement"));
+        colSkillLevel.setCellValueFactory(new PropertyValueFactory<>("skillLevel"));
+        colMarks.setCellValueFactory(new PropertyValueFactory<>("marks"));
+        colMinsRequired.setCellValueFactory(new PropertyValueFactory<>("minutesRequired"));
+        colDateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
 
-		colId.setPrefWidth(50);
-		colSubjectTitle.setPrefWidth(200);
-		colStatement.setPrefWidth(250);
-		colSkillLevel.setPrefWidth(200);
-		colMarks.setPrefWidth(70);
-		colMinsRequired.setPrefWidth(180);
-		colDateCreated.setPrefWidth(150);
+        colId.setPrefWidth(50);
+        colSubjectTitle.setPrefWidth(200);
+        colStatement.setPrefWidth(250);
+        colSkillLevel.setPrefWidth(200);
+        colMarks.setPrefWidth(70);
+        colMinsRequired.setPrefWidth(180);
+        colDateCreated.setPrefWidth(150);
 
-		tblQuestions.getColumns().clear();
-		tblQuestions.getColumns()
-			.addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colMinsRequired, colDateCreated);
-		tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-			QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
-			if (questionDto != null) {
-				txtAreaQuestion.setText(QuestionService.getInstance().getTxtAreaQuestionStr(questionDto.getId()));
-			}
-		});
-		tblQuestions.setPrefSize(1119, 300);
-		tblQuestions.setEditable(false);
+        tblQuestions.getColumns().clear();
+        tblQuestions.getColumns()
+            .addAll(colId, colSubjectTitle, colStatement, colSkillLevel, colMarks, colMinsRequired, colDateCreated);
+        tblQuestions.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tblQuestions.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            QuestionDTO questionDto = (QuestionDTO) tblQuestions.getSelectionModel().getSelectedItem();
+            if (questionDto != null) {
+                txtAreaQuestion.setText(QuestionService.getInstance().getTxtAreaQuestionStr(questionDto.getId()));
+            }
+        });
+        tblQuestions.setPrefSize(1119, 300);
+        tblQuestions.setEditable(false);
 
-		/*
-		 * Set up table filters accordion control
-		 */
-		cbSubjects = SubjectService.getInstance()
-			.getAllSubjects()
-			.stream()
-			.map(subject -> new CheckBox(subject.toString()))
-			.collect(Collectors.toList());
+        /*
+         * Set up table filters accordion control
+         */
+        cbSubjects = SubjectService.getInstance()
+            .getAllSubjects()
+            .stream()
+            .map(subject -> new CheckBox(subject.toString()))
+            .collect(Collectors.toList());
 
-		// TableView of questions must be refreshed if these CheckBoxes are toggled
-		for (CheckBox cb : cbSubjects) {
-			cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        // TableView of questions must be refreshed if these CheckBoxes are toggled
+        for (CheckBox cb : cbSubjects) {
+            cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
-				@Override
-				public void changed(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
-					refreshQuestionsTbl();
-				}
-			});
-		}
+                @Override
+                public void changed(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
+                    refreshQuestionsTbl();
+                }
+            });
+        }
 
-		VBox vboxSubjects = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER_LEFT)
-			.withSpacing(3)
-			.build();
-		vboxSubjects.getChildren().addAll(cbSubjects);
-		TitledPane tPaneSubjects = new TitledPane("Filter by subject", vboxSubjects);
+        VBox vboxSubjects = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.CENTER_LEFT)
+            .withSpacing(3)
+            .build();
+        vboxSubjects.getChildren().addAll(cbSubjects);
+        TitledPane tPaneSubjects = new TitledPane("Filter by subject", vboxSubjects);
 
-		cbSkillLvls = Arrays.stream(BloomSkillLevel.values())
-			.map(skillLvl -> new CheckBox(skillLvl.getDisplayStr()))
-			.collect(Collectors.toList());
+        cbSkillLvls = Arrays.stream(BloomSkillLevel.values())
+            .map(skillLvl -> new CheckBox(skillLvl.getDisplayStr()))
+            .collect(Collectors.toList());
 
-		// TableView of questions must be refreshed if these CheckBoxes are toggled
-		for (CheckBox cb : cbSkillLvls) {
-			cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        // TableView of questions must be refreshed if these CheckBoxes are toggled
+        for (CheckBox cb : cbSkillLvls) {
+            cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
-				@Override
-				public void changed(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
-					refreshQuestionsTbl();
-				}
-			});
-		}
+                @Override
+                public void changed(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
+                    refreshQuestionsTbl();
+                }
+            });
+        }
 
-		VBox vboxskillLvls = (VBox) new PaneBuilder().withBoxType(BoxType.VBOX)
-			.withAlignment(Pos.CENTER_LEFT)
-			.withSpacing(3)
-			.build();
-		vboxskillLvls.getChildren().addAll(cbSkillLvls);
-		TitledPane tPaneSkillLvls = new TitledPane("Filter by skill level", vboxskillLvls);
+        VBox vboxskillLvls = (VBox) new PaneBuilder()
+            .withBoxType(BoxType.VBOX)
+            .withAlignment(Pos.CENTER_LEFT)
+            .withSpacing(3)
+            .build();
+        vboxskillLvls.getChildren().addAll(cbSkillLvls);
+        TitledPane tPaneSkillLvls = new TitledPane("Filter by skill level", vboxskillLvls);
 
-		accFilters.getPanes().addAll(tPaneSubjects, tPaneSkillLvls);
+        accFilters.getPanes().addAll(tPaneSubjects, tPaneSkillLvls);
 
-		/*
-		 * Set up question info TextArea
-		 */
-		txtAreaQuestion.setEditable(false);
-		txtAreaQuestion.setPrefSize(700, 350);
-		txtAreaQuestion.setText("No question selected.");
+        /*
+         * Set up question info TextArea
+         */
+        txtAreaQuestion.setEditable(false);
+        txtAreaQuestion.setPrefSize(700, 350);
+        txtAreaQuestion.setText("No question selected.");
 
-		refreshQuestionsTbl();
-	}
+        refreshQuestionsTbl();
+    }
 
-	/**
-	 * Refresh TableView of questions.
-	 */
-	private static void refreshQuestionsTbl() {
-		subjectIdFilters = cbSubjects.stream()
-			.filter(CheckBox::isSelected)
-			.map(cb -> SubjectService.getInstance().getSubjectIdFromDisplayStr(cb.getText()))
-			.collect(Collectors.toList());
+    /**
+     * Refresh TableView of questions.
+     */
+    private static void refreshQuestionsTbl() {
+        subjectIdFilters = cbSubjects.stream()
+            .filter(CheckBox::isSelected)
+            .map(cb -> SubjectService.getInstance().getSubjectIdFromDisplayStr(cb.getText()))
+            .collect(Collectors.toList());
 
-		skillLvlFilters = cbSkillLvls.stream()
-			.filter(CheckBox::isSelected)
-			.map(cb -> BloomSkillLevel.getIntFromDisplayStr(cb.getText()))
-			.collect(Collectors.toList());
+        skillLvlFilters = cbSkillLvls.stream()
+            .filter(CheckBox::isSelected)
+            .map(cb -> BloomSkillLevel.getIntFromDisplayStr(cb.getText()))
+            .collect(Collectors.toList());
 
-		List<QuestionDTO> questionDTOs = QuestionService.getInstance()
-			.getQuestionDTOsWithFilters(skillLvlFilters, subjectIdFilters);
-		tblQuestions.getItems().clear();
-		tblQuestions.getItems().addAll(questionDTOs);
+        List<QuestionDTO> questionDTOs = QuestionService.getInstance()
+            .getQuestionDTOsWithFilters(skillLvlFilters, subjectIdFilters);
+        tblQuestions.getItems().clear();
+        tblQuestions.getItems().addAll(questionDTOs);
 
-		if (questionDTOs.isEmpty()) {
-			lblSelectQuestion.setText("No questions to show.");
-		} else {
-			lblSelectQuestion.setText("Select one of " + questionDTOs.size() + " questions to view!");
-		}
-		txtAreaQuestion.setText("No question selected.");
-	}
+        if (questionDTOs.isEmpty()) {
+            lblSelectQuestion.setText("No questions to show.");
+        } else {
+            lblSelectQuestion.setText("Select one of " + questionDTOs.size() + " questions to view!");
+        }
+        txtAreaQuestion.setText("No question selected.");
+    }
 }
