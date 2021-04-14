@@ -6,6 +6,6 @@ package view.enums;
  * @author Sam Barba
  */
 public enum BoxType {
-    HBOX,
-    VBOX;
+	HBOX,
+	VBOX;
 }

@@ -69,9 +69,13 @@
 .check-box {
 	-fx-font-family: "Arial";
 	-fx-font-size: 15px;
+	-fx-text-fill: #dcdcdc;
+}
+
+.check-box-accordion {
 	-fx-text-fill: #1e1e1e;
 }
 
 .check-box .box {
-	-fx-background-color: #dcdcdc;
+	-fx-background-color: #bbbbbb;
 }

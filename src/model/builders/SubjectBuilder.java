@@ -11,31 +11,31 @@ import model.persisted.Subject;
  */
 public class SubjectBuilder {
 
-    private int id;
+	private int id;
 
-    private String title;
+	private String title;
 
-    private LocalDateTime dateCreated;
+	private LocalDateTime dateCreated;
 
-    public SubjectBuilder() {
-    }
+	public SubjectBuilder() {
+	}
 
-    public SubjectBuilder withId(int id) {
-        this.id = id;
-        return this;
-    }
+	public SubjectBuilder withId(int id) {
+		this.id = id;
+		return this;
+	}
 
-    public SubjectBuilder withTitle(String title) {
-        this.title = title;
-        return this;
-    }
+	public SubjectBuilder withTitle(String title) {
+		this.title = title;
+		return this;
+	}
 
-    public SubjectBuilder withDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-        return this;
-    }
+	public SubjectBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
 
-    public Subject build() {
-        return new Subject(id, title, dateCreated);
-    }
+	public Subject build() {
+		return new Subject(id, title, dateCreated);
+	}
 }

@@ -6,6 +6,6 @@ package view.enums;
  * @author Sam Barba
  */
 public enum SelectionType {
-    ROULETTE_WHEEL,
-    TOURNAMENT;
+	ROULETTE_WHEEL,
+	TOURNAMENT;
 }

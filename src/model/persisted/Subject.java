@@ -9,44 +9,47 @@ import java.time.LocalDateTime;
  */
 public class Subject {
 
-    private int id;
+	private int id;
 
-    private String title;
+	private String title;
 
-    private LocalDateTime dateCreated;
+	private LocalDateTime dateCreated;
 
-    public Subject(int id, String title, LocalDateTime dateCreated) {
-        this.id = id;
-        this.title = title;
-        this.dateCreated = dateCreated;
-    }
+	public Subject() {
+	}
 
-    public int getId() {
-        return id;
-    }
+	public Subject(int id, String title, LocalDateTime dateCreated) {
+		this.id = id;
+		this.title = title;
+		this.dateCreated = dateCreated;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
 
-    @Override
-    public String toString() {
-        return title + " (ID " + id + ")";
-    }
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	@Override
+	public String toString() {
+		return title + " (ID " + id + ")";
+	}
 }

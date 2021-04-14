@@ -1,22 +1,18 @@
 package model.dao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import model.builders.QuestionPaperBuilder;
 import model.persisted.QuestionPaper;
+import model.xml.XMLQuestionPaperSerialiser;
 
-import view.SystemNotification;
-import view.enums.BloomSkillLevel;
 import view.enums.SystemNotificationType;
 import view.utils.Constants;
+
+import controller.SystemNotification;
 
 /**
  * This class is a singleton, the use of which is any database operation regarding question papers.
@@ -25,166 +21,84 @@ import view.utils.Constants;
  */
 public class QuestionPaperDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(QuestionPaperDAO.class.getName());
 
-    private static QuestionPaperDAO instance;
+	private XMLQuestionPaperSerialiser questionPaperSerialiser = XMLQuestionPaperSerialiser.getInstance();
 
-    private QuestionPaperDAO() {
-    }
+	private static QuestionPaperDAO instance;
 
-    public synchronized static QuestionPaperDAO getInstance() {
-        if (instance == null) {
-            instance = new QuestionPaperDAO();
-        }
-        return instance;
-    }
+	private QuestionPaperDAO() {
+	}
 
-    /**
-     * Add a question paper to the question papers CSV file.
-     * 
-     * @param questionPaper - the question paper to add
-     */
-    public void addQuestionPaper(QuestionPaper questionPaper) {
-        try {
-            File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-            if (!csvFile.exists()) {
-                csvFile.getParentFile().mkdirs();
-                csvFile.createNewFile();
-            }
+	public synchronized static QuestionPaperDAO getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperDAO();
+		}
+		return instance;
+	}
 
-            FileWriter writer = new FileWriter(csvFile, true); // append = true
-            addQuestionPaperDataToFile(questionPaper, writer, true);
-            writer.flush();
-            writer.close();
-            LOGGER.info("Question paper '" + questionPaper.getTitle() + "' added");
-        } catch (Exception e) {
-            e.printStackTrace();
-            SystemNotification.display(SystemNotificationType.ERROR,
-                Constants.UNEXPECTED_ERROR + e.getClass().getName());
-        }
-    }
+	/**
+	 * Add a question paper to the papers XML file.
+	 * 
+	 * @param questionPaper - the paper to add
+	 */
+	public void addQuestionPaper(QuestionPaper questionPaper) {
+		try {
+			File xmlFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
+			List<QuestionPaper> allPapers = getAllQuestionPapers();
+			if (!xmlFile.exists()) {
+				xmlFile.getParentFile().mkdirs();
+				xmlFile.createNewFile();
+			}
 
-    /**
-     * Delete a question paper by its unique ID.
-     * 
-     * @param id - the ID of the paper to delete
-     */
-    public void deleteQuestionPaperById(int id) {
-        try {
-            List<QuestionPaper> allQuestionPapers = getAllQuestionPapers();
-            File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
-            FileWriter writer = new FileWriter(csvFile, false); // append = false
+			allPapers.add(questionPaper);
+			questionPaperSerialiser.write(allPapers);
+			LOGGER.info("Question paper with ID " + questionPaper.getId() + " added");
+		} catch (Exception e) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + e.getClass().getName() + "\nIn: " + this.getClass().getName());
+		}
+	}
 
-            for (QuestionPaper questionPaper : allQuestionPapers) {
-                if (questionPaper.getId() != id) {
-                    addQuestionPaperDataToFile(questionPaper, writer, false);
-                }
-            }
-            writer.flush();
-            writer.close();
-            LOGGER.info("Question paper with ID " + id + " deleted");
-        } catch (IOException e) {
-            e.printStackTrace();
-            SystemNotification.display(SystemNotificationType.ERROR,
-                Constants.UNEXPECTED_ERROR + e.getClass().getName());
-        }
-    }
+	/**
+	 * Delete papers by their unique IDs.
+	 * 
+	 * @param ids - the IDs of the papers to delete
+	 */
+	public void deleteQuestionPapersByIds(List<Integer> ids) {
+		try {
+			List<QuestionPaper> allPapers = getAllQuestionPapers();
+			List<QuestionPaper> writePapers = allPapers.stream()
+				.filter(p -> !ids.contains(p.getId()))
+				.collect(Collectors.toList());
 
-    /**
-     * Retrieve all question papers from CSV file.
-     * 
-     * @return list of all question papers
-     */
-    public List<QuestionPaper> getAllQuestionPapers() {
-        List<QuestionPaper> questionPapers = new ArrayList<>();
+			questionPaperSerialiser.write(writePapers);
 
-        try {
-            File csvFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
+			LOGGER.info("Question papers with specified IDs deleted");
+		} catch (Exception e) {
+			SystemNotification.display(SystemNotificationType.ERROR,
+				Constants.UNEXPECTED_ERROR + e.getClass().getName() + "\nIn: " + this.getClass().getName());
+		}
+	}
 
-            if (csvFile.exists()) {
-                Scanner input = new Scanner(csvFile);
+	/**
+	 * Retrieve all question papers.
+	 * 
+	 * @return list of all papers
+	 */
+	public List<QuestionPaper> getAllQuestionPapers() {
+		List<QuestionPaper> allPapers = new ArrayList<>();
 
-                while (input.hasNextLine()) {
-                    String line = input.nextLine();
-                    String[] lineArr = line.split(Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK);
+		File xmlFile = new File(Constants.QUESTION_PAPERS_FILE_PATH);
+		if (xmlFile.exists()) {
+			try {
+				allPapers = (List<QuestionPaper>) questionPaperSerialiser.readAll();
+			} catch (Exception e) {
+				SystemNotification.display(SystemNotificationType.ERROR,
+					Constants.UNEXPECTED_ERROR + e.getClass().getName() + "\nIn: " + this.getClass().getName());
+			}
+		}
 
-                    int id = Integer.parseInt(lineArr[0].replace(Constants.QUOT_MARK, Constants.EMPTY));
-                    int subjectId = Integer.parseInt(lineArr[1]);
-                    String title = lineArr[2];
-                    String courseTitle = lineArr[3];
-                    String courseCode = lineArr[4];
-                    String[] questionIdsStr = lineArr[5].split(Constants.COMMA);
-                    List<Integer> questionIds = new ArrayList<>();
-                    for (String questionIdStr : questionIdsStr) {
-                        questionIds.add(Integer.parseInt(questionIdStr));
-                    }
-                    BloomSkillLevel skillLevel = BloomSkillLevel.getFromStr(lineArr[6]);
-                    int marks = Integer.parseInt(lineArr[7]);
-                    int minutesRequired = Integer.parseInt(lineArr[8]);
-                    LocalDateTime dateCreated = LocalDateTime.parse(lineArr[9]
-                        .replace(Constants.QUOT_MARK, Constants.EMPTY), Constants.DATE_FORMATTER);
-
-                    questionPapers.add(new QuestionPaperBuilder()
-                        .withId(id)
-                        .withSubjectId(subjectId)
-                        .withTitle(title)
-                        .withCourseTitle(courseTitle)
-                        .withCourseCode(courseCode)
-                        .withQuestionIds(questionIds)
-                        .withSkillLevel(skillLevel)
-                        .withMarks(marks)
-                        .withMinutesRequired(minutesRequired)
-                        .withDateCreated(dateCreated)
-                        .build());
-                }
-                input.close();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            SystemNotification.display(SystemNotificationType.ERROR,
-                Constants.UNEXPECTED_ERROR + e.getClass().getName());
-        }
-        return questionPapers;
-    }
-
-    /**
-     * Add question paper data to the question papers CSV file.
-     * 
-     * @param questionPaper - the question paper to add
-     * @param writer        - the file writer
-     * @param append        - whether to append or write to the file
-     */
-    private void addQuestionPaperDataToFile(QuestionPaper questionPaper, FileWriter writer, boolean append)
-        throws IOException {
-
-        StringBuilder questionIdsBld = new StringBuilder();
-        for (Integer id : questionPaper.getQuestionIds()) {
-            questionIdsBld.append(id);
-            questionIdsBld.append(Constants.COMMA);
-        }
-        String questionIds = questionIdsBld.toString();
-        questionIds = questionIds.substring(0, questionIds.length() - 1); // remove last comma
-
-        /*
-         * 1 line contains: ID, subject ID, title, course title, course code, question IDs, skill
-         * level, marks, minutes required, date created
-         */
-        String line = Constants.QUOT_MARK + Integer.toString(questionPaper.getId()) + Constants.QUOT_MARK
-            + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getSubjectId())
-            + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getTitle()
-            + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseTitle()
-            + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getCourseCode()
-            + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK + questionIds + Constants.QUOT_MARK
-            + Constants.COMMA + Constants.QUOT_MARK + questionPaper.getSkillLevel().getStrVal() + Constants.QUOT_MARK
-            + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMarks()) + Constants.QUOT_MARK
-            + Constants.COMMA + Constants.QUOT_MARK + Integer.toString(questionPaper.getMinutesRequired())
-            + Constants.QUOT_MARK + Constants.COMMA + Constants.QUOT_MARK
-            + Constants.DATE_FORMATTER.format(questionPaper.getDateCreated()) + Constants.QUOT_MARK + Constants.NEWLINE;
-
-        if (append) {
-            writer.append(line);
-        } else { // write
-            writer.write(line);
-        }
-    }
+		return allPapers;
+	}
 }

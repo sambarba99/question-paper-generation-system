@@ -7,46 +7,46 @@ package model.dto;
  */
 public class SubjectDTO {
 
-    private int id;
+	private int id;
 
-    private String title;
+	private String title;
 
-    private int numQuestions;
+	private int numQuestions;
 
-    private String dateCreated;
+	private String dateCreated;
 
-    public SubjectDTO() {
-    }
+	public SubjectDTO() {
+	}
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public int getNumQuestions() {
-        return numQuestions;
-    }
+	public int getNumQuestions() {
+		return numQuestions;
+	}
 
-    public void setNumQuestions(int numQuestions) {
-        this.numQuestions = numQuestions;
-    }
+	public void setNumQuestions(int numQuestions) {
+		this.numQuestions = numQuestions;
+	}
 
-    public String getDateCreated() {
-        return dateCreated;
-    }
+	public String getDateCreated() {
+		return dateCreated;
+	}
 
-    public void setDateCreated(String dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
+	}
 }

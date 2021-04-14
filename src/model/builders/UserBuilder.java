@@ -13,38 +13,38 @@ import view.enums.UserPrivilege;
  */
 public class UserBuilder {
 
-    private String username;
+	private String username;
 
-    private String password;
+	private String password;
 
-    private UserPrivilege privilege;
+	private UserPrivilege privilege;
 
-    private LocalDateTime dateCreated;
+	private LocalDateTime dateCreated;
 
-    public UserBuilder() {
-    }
+	public UserBuilder() {
+	}
 
-    public UserBuilder withUsername(String username) {
-        this.username = username;
-        return this;
-    }
+	public UserBuilder withUsername(String username) {
+		this.username = username;
+		return this;
+	}
 
-    public UserBuilder withPassword(String password) {
-        this.password = password;
-        return this;
-    }
+	public UserBuilder withPassword(String password) {
+		this.password = password;
+		return this;
+	}
 
-    public UserBuilder withPrivilege(UserPrivilege privilege) {
-        this.privilege = privilege;
-        return this;
-    }
+	public UserBuilder withPrivilege(UserPrivilege privilege) {
+		this.privilege = privilege;
+		return this;
+	}
 
-    public UserBuilder withDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-        return this;
-    }
+	public UserBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
 
-    public User build() {
-        return new User(username, password, privilege, dateCreated);
-    }
+	public User build() {
+		return new User(username, password, privilege, dateCreated);
+	}
 }

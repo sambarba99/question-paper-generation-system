@@ -7,28 +7,31 @@ package model.persisted;
  */
 public class Answer {
 
-    private String value;
+	private String value;
 
-    private boolean correct;
+	private boolean correct;
 
-    public Answer(String value, boolean correct) {
-        this.value = value;
-        this.correct = correct;
-    }
+	public Answer() {
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public Answer(String value, boolean correct) {
+		this.value = value;
+		this.correct = correct;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public boolean isCorrect() {
-        return correct;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public void setCorrect(boolean correct) {
-        this.correct = correct;
-    }
+	public boolean isCorrect() {
+		return correct;
+	}
+
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
+	}
 }

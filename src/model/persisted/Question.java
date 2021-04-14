@@ -1,10 +1,10 @@
 package model.persisted;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import view.enums.BloomSkillLevel;
-import view.utils.Constants;
 
 /**
  * Represents a question.
@@ -13,112 +13,100 @@ import view.utils.Constants;
  */
 public class Question {
 
-    private int id;
+	private int id;
 
-    private int subjectId;
+	private int subjectId;
 
-    private String statement;
+	private String statement;
 
-    private List<Answer> answers;
+	private List<Answer> answers;
 
-    private BloomSkillLevel skillLevel;
+	private BloomSkillLevel skillLevel;
 
-    private int marks;
+	private int marks;
 
-    private int minutesRequired;
+	private int minutesRequired;
 
-    private LocalDateTime dateCreated;
+	private LocalDateTime dateCreated;
 
-    public Question(int id, int subjectId, String statement, List<Answer> answers, BloomSkillLevel skillLevel,
-        int marks, int minutesRequired, LocalDateTime dateCreated) {
+	public Question() {
+		answers = new ArrayList<>();
+	}
 
-        this.id = id;
-        this.subjectId = subjectId;
-        this.statement = statement;
-        this.answers = answers;
-        this.skillLevel = skillLevel;
-        this.marks = marks;
-        this.minutesRequired = minutesRequired;
-        this.dateCreated = dateCreated;
-    }
+	public Question(int id, int subjectId, String statement, List<Answer> answers, BloomSkillLevel skillLevel,
+		int marks, int minutesRequired, LocalDateTime dateCreated) {
 
-    public int getId() {
-        return id;
-    }
+		this.id = id;
+		this.subjectId = subjectId;
+		this.statement = statement;
+		this.answers = answers;
+		this.skillLevel = skillLevel;
+		this.marks = marks;
+		this.minutesRequired = minutesRequired;
+		this.dateCreated = dateCreated;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public int getSubjectId() {
-        return subjectId;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setSubjectId(int subjectId) {
-        this.subjectId = subjectId;
-    }
+	public int getSubjectId() {
+		return subjectId;
+	}
 
-    public String getStatement() {
-        return statement;
-    }
+	public void setSubjectId(int subjectId) {
+		this.subjectId = subjectId;
+	}
 
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
+	public String getStatement() {
+		return statement;
+	}
 
-    public List<Answer> getAnswers() {
-        return answers;
-    }
+	public void setStatement(String statement) {
+		this.statement = statement;
+	}
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
-    }
+	public List<Answer> getAnswers() {
+		return answers;
+	}
 
-    public BloomSkillLevel getSkillLevel() {
-        return skillLevel;
-    }
+	public void setAnswers(List<Answer> answers) {
+		this.answers = answers;
+	}
 
-    public void setSkillLevel(BloomSkillLevel skillLevel) {
-        this.skillLevel = skillLevel;
-    }
+	public BloomSkillLevel getSkillLevel() {
+		return skillLevel;
+	}
 
-    public int getMarks() {
-        return marks;
-    }
+	public void setSkillLevel(BloomSkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
+	}
 
-    public void setMarks(int marks) {
-        this.marks = marks;
-    }
+	public int getMarks() {
+		return marks;
+	}
 
-    public int getMinutesRequired() {
-        return minutesRequired;
-    }
+	public void setMarks(int marks) {
+		this.marks = marks;
+	}
 
-    public void setMinutesRequired(int minutesRequired) {
-        this.minutesRequired = minutesRequired;
-    }
+	public int getMinutesRequired() {
+		return minutesRequired;
+	}
 
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
+	public void setMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
+	}
 
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder answersBld = new StringBuilder();
-        for (Answer answer : answers) {
-            answersBld.append("'" + answer.getValue() + "'");
-            if (answer.isCorrect()) {
-                answersBld.append(" <- CORRECT");
-            }
-            answersBld.append("\n");
-        }
-
-        return "QUESTION: id=" + id + ", subjectId=" + subjectId + ",\nstatement='" + statement + "',\nanswers=\n"
-            + answersBld.toString() + "skillLevel=" + skillLevel.getStrVal() + ", marks=" + marks + ", minutesRequired="
-            + minutesRequired + "\ndateCreated=" + Constants.DATE_FORMATTER.format(dateCreated);
-    }
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
 }

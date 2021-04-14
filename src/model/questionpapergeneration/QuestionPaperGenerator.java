@@ -12,12 +12,8 @@ import model.builders.QuestionPaperBuilder;
 import model.persisted.Question;
 import model.persisted.QuestionPaper;
 import model.service.QuestionPaperService;
-import model.service.QuestionService;
-import model.service.SubjectService;
 
-import view.SystemNotification;
 import view.enums.BloomSkillLevel;
-import view.enums.SystemNotificationType;
 import view.utils.Constants;
 
 /**
@@ -27,155 +23,137 @@ import view.utils.Constants;
  */
 public class QuestionPaperGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(QuestionPaperGenerator.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(QuestionPaperGenerator.class.getName());
 
-    private static QuestionPaperGenerator instance;
+	private static QuestionPaperGenerator instance;
 
-    private QuestionPaperGenerator() {
-    }
+	private QuestionPaperGenerator() {
+	}
 
-    public synchronized static QuestionPaperGenerator getInstance() {
-        if (instance == null) {
-            instance = new QuestionPaperGenerator();
-        }
-        return instance;
-    }
+	public synchronized static QuestionPaperGenerator getInstance() {
+		if (instance == null) {
+			instance = new QuestionPaperGenerator();
+		}
+		return instance;
+	}
 
-    /**
-     * Generate a question paper with the GA, then create the persisted object with the
-     * user-specified parameters.
-     * 
-     * @param subjectId    - the subject ID of the paper
-     * @param title        - the title of the paper
-     * @param courseTitle  - the course title of the paper
-     * @param courseCode   - the course code of the paper
-     * @param skillLevel   - the mean skill level of the paper
-     * @param minsRequired - the approximate minutes required the user wants for the paper
-     * @return a generated question paper
-     */
-    public Optional<QuestionPaper> generatePaper(int subjectId, String title, String courseTitle, String courseCode,
-        BloomSkillLevel skillLevel, int minsRequired) throws IOException {
+	/**
+	 * Generate a question paper with the GA, then create the persisted object with the
+	 * user-specified parameters.
+	 * 
+	 * @param questions    - the list of possible questions to include in the paper
+	 * @param subjectId    - the subject ID of the paper
+	 * @param title        - the title of the paper
+	 * @param courseTitle  - the course title of the paper
+	 * @param courseCode   - the course code of the paper
+	 * @param skillLevel   - the mean skill level of the paper
+	 * @param minsRequired - the approximate minutes required the user wants for the paper
+	 * @return a generated question paper
+	 */
+	public Optional<QuestionPaper> generatePaper(List<Question> questions, int subjectId, String title,
+		String courseTitle, String courseCode, BloomSkillLevel skillLevel, int minsRequired) throws IOException {
 
-        LOGGER.info("Generating question paper...");
+		LOGGER.info("Generating question paper...");
 
-        FileWriter writer;
-        if (Constants.TEST_MODE) {
-            writer = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
-            writer.append("Generation,Population mean fitness,Highest,Lowest\n");
-        }
+		FileWriter writer;
+		if (Constants.TEST_MODE) {
+			writer = new FileWriter(Constants.GENETIC_ALGORITHM_TEST_RESULTS);
+			writer.append("Generation,Population mean fitness,Highest,Lowest\n");
+		}
 
-        GAUtils gaUtils = GAUtils.getInstance();
+		GAUtils gaUtils = GAUtils.getInstance();
 
-        long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
-        // get questions by user-selected subject; 'fit' questions are already identified with this parameter
-        List<Question> questions = QuestionService.getInstance()
-            .getAllQuestions()
-            .stream()
-            .filter(q -> q.getSubjectId() == subjectId)
-            .collect(Collectors.toList());
+		int numGenes = gaUtils.calculateChromosomeLength(questions, skillLevel.getIntVal(), minsRequired);
 
-        if (questions.size() < Constants.MIN_QUESTIONS_PER_PAPER) {
-            SystemNotification.display(SystemNotificationType.ERROR,
-                "Insufficient questions for this subject:\n"
-                    + SubjectService.getInstance().getSubjectById(subjectId).get().getTitle() + " (ID " + subjectId
-                    + ")\nSubjects require at least " + Constants.MIN_QUESTIONS_PER_PAPER
-                    + " questions to generate a paper.");
+		LOGGER.info("No. questions: " + numGenes);
 
-            return Optional.empty();
-        } else {
-            SystemNotification.display(SystemNotificationType.NEUTRAL, "Generating...\nPlease wait.");
-        }
+		Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
+		Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
 
-        int numGenes = gaUtils.calculateChromosomeLength(questions, skillLevel.getIntVal(), minsRequired);
+		gaUtils.randomisePopulationGenes(population, numGenes, questions);
+		gaUtils.evaluate(population);
 
-        LOGGER.info("No. questions: " + numGenes);
+		for (int g = 1; g <= Constants.GENERATIONS; g++) {
+			gaUtils.selection(population, offspring);
+			gaUtils.evaluate(offspring);
 
-        Individual[] population = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
-        Individual[] offspring = gaUtils.initialiseIndividualArray(skillLevel.getIntVal(), minsRequired);
+			gaUtils.crossover(offspring, skillLevel.getIntVal(), minsRequired);
+			gaUtils.evaluate(offspring);
 
-        gaUtils.randomisePopulationGenes(population, numGenes, questions);
-        gaUtils.evaluate(population);
+			gaUtils.mutation(offspring, questions);
+			gaUtils.evaluate(offspring);
 
-        for (int g = 1; g <= Constants.GENERATIONS; g++) {
-            gaUtils.selection(population, offspring);
-            gaUtils.evaluate(offspring);
+			/*
+			 * In this final selection step, the next population is defined using the new offspring,
+			 * so 'population' and 'offspring' are switched round when calling the function.
+			 */
+			gaUtils.selection(offspring, population);
+			gaUtils.evaluate(population);
 
-            gaUtils.crossover(offspring, skillLevel.getIntVal(), minsRequired);
-            gaUtils.evaluate(offspring);
+			List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
+			if (Constants.TEST_MODE) {
+				writer.append(g + ",");
+				writer.append(Double.toString(meanHiLo.get(0)) + ",");
+				writer.append(Double.toString(meanHiLo.get(1)) + ",");
+				writer.append(Double.toString(meanHiLo.get(2)) + "\n");
 
-            gaUtils.mutation(offspring, questions);
-            gaUtils.evaluate(offspring);
+				LOGGER.info("Generation: " + g + " / " + Constants.GENERATIONS + " mean fitness: " + meanHiLo.get(0)
+					+ " highest: " + meanHiLo.get(1) + " lowest: " + meanHiLo.get(2));
+			}
+		}
+		if (Constants.TEST_MODE) {
+			writer.flush();
+			writer.close();
+		}
 
-            /*
-             * In this final selection step, the next population is defined using the new offspring,
-             * so 'population' and 'offspring' are switched round when calling the function.
-             */
-            gaUtils.selection(offspring, population);
-            gaUtils.evaluate(population);
+		Individual fittest = gaUtils.findFittest(population);
+		QuestionPaper questionPaper = makePaperOutOfFittest(fittest, subjectId, title, courseTitle, courseCode,
+			skillLevel);
 
-            List<Double> meanHiLo = gaUtils.getTableFitnesses(population);
-            if (Constants.TEST_MODE) {
-                writer.append(g + ",");
-                writer.append(Double.toString(meanHiLo.get(0)) + ",");
-                writer.append(Double.toString(meanHiLo.get(1)) + ",");
-                writer.append(Double.toString(meanHiLo.get(2)) + "\n");
-            }
+		long finishTime = System.currentTimeMillis();
 
-            LOGGER.info("Generation: " + g + " / " + Constants.GENERATIONS + " mean fitness: " + meanHiLo.get(0)
-                + " highest: " + meanHiLo.get(1) + " lowest: " + meanHiLo.get(2));
-        }
-        if (Constants.TEST_MODE) {
-            writer.flush();
-            writer.close();
-        }
+		LOGGER.info("Question paper generated in " + (finishTime - startTime) + " ms");
+		return Optional.of(questionPaper);
+	}
 
-        Individual fittest = gaUtils.findFittest(population);
-        QuestionPaper questionPaper = makePaperOutOfFittest(fittest, subjectId, title, courseTitle, courseCode,
-            skillLevel);
+	/**
+	 * Create a QuestionPaper object in order to write it to the papers XML file, out of an
+	 * Individual and other question paper parameters.
+	 * 
+	 * @param fittest     - the fittest individual to use, produced by the genetic algorithm
+	 * @param subjectId   - the subject ID of the paper
+	 * @param title       - the title of the paper
+	 * @param courseTitle - the course title of the paper
+	 * @param courseCode  - the course code of the paper
+	 * @param skillLevel  - the skill level of the paper
+	 * @return the equivalent QuestionPaper object
+	 */
+	private QuestionPaper makePaperOutOfFittest(Individual fittest, int subjectId, String title, String courseTitle,
+		String courseCode, BloomSkillLevel skillLevel) {
 
-        long finishTime = System.currentTimeMillis();
+		int id = QuestionPaperService.getInstance().getNewQuestionPaperId();
 
-        LOGGER.info("Question paper generated in " + (finishTime - startTime) + " ms");
-        return Optional.of(questionPaper);
-    }
+		// sort questions in ascending order of marks, meaning longer questions appear towards the end
+		List<Question> questions = fittest.getGenes();
+		questions.sort(Comparator.comparing(Question::getMarks));
 
-    /**
-     * Create a QuestionPaper object in order to write it to the papers CSV file, out of an
-     * Individual and other question paper parameters.
-     * 
-     * @param fittest     - the fittest individual to use, produced by the genetic algorithm
-     * @param subjectId   - the subject ID of the paper
-     * @param title       - the title of the paper
-     * @param courseTitle - the course title of the paper
-     * @param courseCode  - the course code of the paper
-     * @param skillLevel  - the skill level of the paper
-     * @return the equivalent QuestionPaper object
-     */
-    private QuestionPaper makePaperOutOfFittest(Individual fittest, int subjectId, String title, String courseTitle,
-        String courseCode, BloomSkillLevel skillLevel) {
+		List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
 
-        int id = QuestionPaperService.getInstance().getNewQuestionPaperId();
+		int marks = questions.stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
+		int minsRequired = questions.stream().mapToInt(Question::getMinutesRequired).reduce(0, Integer::sum);
 
-        // sort questions in ascending order of marks, meaning harder questions appear towards the end
-        List<Question> questions = fittest.getGenes();
-        questions.sort(Comparator.comparing(Question::getMarks));
-
-        List<Integer> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
-
-        int marks = questions.stream().mapToInt(Question::getMarks).reduce(0, Integer::sum);
-        int minsRequired = questions.stream().mapToInt(Question::getMinutesRequired).reduce(0, Integer::sum);
-
-        return new QuestionPaperBuilder()
-            .withId(id)
-            .withSubjectId(subjectId)
-            .withTitle(title)
-            .withCourseTitle(courseTitle)
-            .withCourseCode(courseCode)
-            .withQuestionIds(questionIds)
-            .withSkillLevel(skillLevel)
-            .withMarks(marks)
-            .withMinutesRequired(minsRequired)
-            .build();
-    }
+		return new QuestionPaperBuilder()
+			.withId(id)
+			.withSubjectId(subjectId)
+			.withTitle(title)
+			.withCourseTitle(courseTitle)
+			.withCourseCode(courseCode)
+			.withQuestionIds(questionIds)
+			.withSkillLevel(skillLevel)
+			.withMarks(marks)
+			.withMinutesRequired(minsRequired)
+			.build();
+	}
 }

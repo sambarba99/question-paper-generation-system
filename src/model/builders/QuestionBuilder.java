@@ -15,66 +15,66 @@ import view.enums.BloomSkillLevel;
  */
 public class QuestionBuilder {
 
-    private int id;
+	private int id;
 
-    private int subjectId;
+	private int subjectId;
 
-    private String statement;
+	private String statement;
 
-    private List<Answer> answers;
+	private List<Answer> answers;
 
-    private BloomSkillLevel skillLevel;
+	private BloomSkillLevel skillLevel;
 
-    private int marks;
+	private int marks;
 
-    private int minutesRequired;
+	private int minutesRequired;
 
-    private LocalDateTime dateCreated;
+	private LocalDateTime dateCreated;
 
-    public QuestionBuilder() {
-    }
+	public QuestionBuilder() {
+	}
 
-    public QuestionBuilder withId(int id) {
-        this.id = id;
-        return this;
-    }
+	public QuestionBuilder withId(int id) {
+		this.id = id;
+		return this;
+	}
 
-    public QuestionBuilder withSubjectId(int subjectId) {
-        this.subjectId = subjectId;
-        return this;
-    }
+	public QuestionBuilder withSubjectId(int subjectId) {
+		this.subjectId = subjectId;
+		return this;
+	}
 
-    public QuestionBuilder withStatement(String statement) {
-        this.statement = statement;
-        return this;
-    }
+	public QuestionBuilder withStatement(String statement) {
+		this.statement = statement;
+		return this;
+	}
 
-    public QuestionBuilder withAnswers(List<Answer> answers) {
-        this.answers = answers;
-        return this;
-    }
+	public QuestionBuilder withAnswers(List<Answer> answers) {
+		this.answers = answers;
+		return this;
+	}
 
-    public QuestionBuilder withSkillLevel(BloomSkillLevel skillLevel) {
-        this.skillLevel = skillLevel;
-        return this;
-    }
+	public QuestionBuilder withSkillLevel(BloomSkillLevel skillLevel) {
+		this.skillLevel = skillLevel;
+		return this;
+	}
 
-    public QuestionBuilder withMarks(int marks) {
-        this.marks = marks;
-        return this;
-    }
+	public QuestionBuilder withMarks(int marks) {
+		this.marks = marks;
+		return this;
+	}
 
-    public QuestionBuilder withMinutesRequired(int minutesRequired) {
-        this.minutesRequired = minutesRequired;
-        return this;
-    }
+	public QuestionBuilder withMinutesRequired(int minutesRequired) {
+		this.minutesRequired = minutesRequired;
+		return this;
+	}
 
-    public QuestionBuilder withDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-        return this;
-    }
+	public QuestionBuilder withDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+		return this;
+	}
 
-    public Question build() {
-        return new Question(id, subjectId, statement, answers, skillLevel, marks, minutesRequired, dateCreated);
-    }
+	public Question build() {
+		return new Question(id, subjectId, statement, answers, skillLevel, marks, minutesRequired, dateCreated);
+	}
 }

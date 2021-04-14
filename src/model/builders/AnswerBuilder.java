@@ -9,24 +9,24 @@ import model.persisted.Answer;
  */
 public class AnswerBuilder {
 
-    private String value;
+	private String value;
 
-    private boolean correct;
+	private boolean correct;
 
-    public AnswerBuilder() {
-    }
+	public AnswerBuilder() {
+	}
 
-    public AnswerBuilder withValue(String value) {
-        this.value = value;
-        return this;
-    }
+	public AnswerBuilder withValue(String value) {
+		this.value = value;
+		return this;
+	}
 
-    public AnswerBuilder withIsCorrect(boolean correct) {
-        this.correct = correct;
-        return this;
-    }
+	public AnswerBuilder withIsCorrect(boolean correct) {
+		this.correct = correct;
+		return this;
+	}
 
-    public Answer build() {
-        return new Answer(value, correct);
-    }
+	public Answer build() {
+		return new Answer(value, correct);
+	}
 }

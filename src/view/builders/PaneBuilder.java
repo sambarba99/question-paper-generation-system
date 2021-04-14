@@ -16,57 +16,53 @@ import view.enums.BoxType;
  */
 public class PaneBuilder {
 
-    private BoxType boxType;
+	private BoxType boxType;
 
-    private Pos alignment;
+	private Pos alignment;
 
-    private double spacing;
+	private double spacing;
 
-    private Node[] nodes;
+	private Node[] nodes;
 
-    public PaneBuilder() {
-    }
+	public PaneBuilder(BoxType boxType) {
+		this.boxType = boxType;
+	}
 
-    public PaneBuilder withBoxType(BoxType boxType) {
-        this.boxType = boxType;
-        return this;
-    }
+	public PaneBuilder withAlignment(Pos alignment) {
+		this.alignment = alignment;
+		return this;
+	}
 
-    public PaneBuilder withAlignment(Pos alignment) {
-        this.alignment = alignment;
-        return this;
-    }
+	public PaneBuilder withSpacing(double spacing) {
+		this.spacing = spacing;
+		return this;
+	}
 
-    public PaneBuilder withSpacing(double spacing) {
-        this.spacing = spacing;
-        return this;
-    }
+	public PaneBuilder withNodes(Node... nodes) {
+		this.nodes = nodes;
+		return this;
+	}
 
-    public PaneBuilder withNodes(Node... nodes) {
-        this.nodes = nodes;
-        return this;
-    }
-
-    public Pane build() {
-        switch (boxType) {
-            case HBOX:
-                HBox hbox = new HBox();
-                hbox.setAlignment(alignment);
-                hbox.setSpacing(spacing);
-                if (nodes != null) {
-                    hbox.getChildren().addAll(nodes);
-                }
-                return hbox;
-            case VBOX:
-                VBox vbox = new VBox();
-                vbox.setAlignment(alignment);
-                vbox.setSpacing(spacing);
-                if (nodes != null) {
-                    vbox.getChildren().addAll(nodes);
-                }
-                return vbox;
-            default:
-                throw new IllegalArgumentException("Invalid box type passed: " + boxType.toString());
-        }
-    }
+	public Pane build() {
+		switch (boxType) {
+			case HBOX:
+				HBox hbox = new HBox();
+				hbox.setAlignment(alignment);
+				hbox.setSpacing(spacing);
+				if (nodes != null) {
+					hbox.getChildren().setAll(nodes);
+				}
+				return hbox;
+			case VBOX:
+				VBox vbox = new VBox();
+				vbox.setAlignment(alignment);
+				vbox.setSpacing(spacing);
+				if (nodes != null) {
+					vbox.getChildren().setAll(nodes);
+				}
+				return vbox;
+			default:
+				throw new IllegalArgumentException("Invalid box type passed: " + boxType.toString());
+		}
+	}
 }
